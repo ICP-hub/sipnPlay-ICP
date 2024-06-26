@@ -1,0 +1,38 @@
+{
+  "canisters": {
+    "internet_identity": {
+      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "frontend": {},
+      "remote": {
+        "id": {
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+        }
+      },
+      "type": "custom",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+    },
+    "sipnPlay-ICP-backend": {
+      "candid": "src/sipnPlay-ICP-backend/sipnPlay-ICP-backend.did",
+      "package": "sipnPlay-ICP-backend",
+      "type": "rust"
+    },
+    "sipnPlay-ICP-frontend": {
+      "dependencies": [
+        "sipnPlay-ICP-backend"
+      ],
+      "source": [
+        "src/sipnPlay-ICP-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "sipnPlay-ICP-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
