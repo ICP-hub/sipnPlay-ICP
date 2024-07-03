@@ -1,15 +1,13 @@
 import React from 'react'
 import { Route, Routes } from "react-router-dom";
-import BlackJack from "./Pages/BlackJack"
+
 function AllRoutes() {
   return (
     <Routes>
-        <Route
+      <Route
         path="/"
         element={
-          
-            <BlackJack />
-          
+          <iframe title="Blackjack Game" src="/blackjack.html" style={{ width: '100%', height: '100vh', border: 'none' }} />
         }
       />
     </Routes>
