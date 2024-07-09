@@ -17,6 +17,7 @@
     "src/sipnPlay-ICP-blackjack"
   ],
   "dependencies": {
+    "@dfinity/auth-client": "^1.4.0",
     "react-router-dom": "^6.24.1"
   }
 }
