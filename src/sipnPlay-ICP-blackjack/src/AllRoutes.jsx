@@ -7,11 +7,11 @@ function AllRoutes() {
       <Route
         path="/"
         element={
-          <></>
+          <iframe title="Blackjack Game" src="/blackjack.html" style={{ width: '100%', height: '100vh', border: 'none' }} />
         }
       />
     </Routes>
   )
 }
 
-export default AllRoutes;
+export default AllRoutes

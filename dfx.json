@@ -12,9 +12,8 @@
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     },
     "sipnPlay-ICP-backend": {
-      "candid": "src/sipnPlay-ICP-backend/sipnPlay-ICP-backend.did",
-      "package": "sipnPlay-ICP-backend",
-      "type": "rust"
+      "main":"src/sipnPlay-ICP-backend/src/main.mo",
+      "type": "motoko"
     },
     "sipnPlay-ICP-frontend": {
       "dependencies": [
@@ -25,6 +24,16 @@
       ],
       "type": "assets",
       "workspace": "sipnPlay-ICP-frontend"
+    },
+    "sipnPlay-ICP-blackjack": {
+      "dependencies": [
+        "sipnPlay-ICP-backend"
+      ],
+      "source": [
+        "src/sipnPlay-ICP-blackjack/dist"
+      ],
+      "type": "assets",
+      "workspace": "sipnPlay-ICP-blackjack"
     }
   },
   "defaults": {
