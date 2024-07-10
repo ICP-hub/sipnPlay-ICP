@@ -6,6 +6,4 @@ export const ids={
     userCan:(production)?
         "wenzb-uyaaa-aaaan-qlwsa-cai":
         "b77ix-eeaaa-aaaaa-qaada-cai",
-        
-   
 }

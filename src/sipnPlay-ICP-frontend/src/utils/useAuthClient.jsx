@@ -26,10 +26,12 @@ export const useAuthClient = () => {
 
         if (isAuthenticated && identity && principal && principal.isAnonymous() === false) {
             let userActor = createUserActor(ids.userCan, { agentOptions: { identity: identity } });
-           console.log(userActor);
+        //    console.log(await userActor?.greet("tushar"));
+            const res=await userActor?.createUser({name:"tushsa",email:"t2ijewj2@g.com"})
             setActors({
                 userActor:userActor,
             })
+            console.log("res : ",res)
         }
         return true;
     }
