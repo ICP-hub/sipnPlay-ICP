@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Route, Routes } from "react-router-dom";
 import Home from "./Pages/Home";
-import Login from "./Pages/Login";
+import BlackJack from "./Pages/BlackJack";
 import {AuthProvider} from "./utils/useAuthClient"
 function AllRoutes() {
   const [loggedIn,setLoggedIn]=useState(localStorage.getItem("loggedIn")||true)
@@ -14,9 +14,14 @@ function AllRoutes() {
           <Home />
         }
       />
+       <Route
+        path="/blackjack"
+        element={
+          <BlackJack />
+        }
+      />
     
     </Routes>
-    // </AuthProvider>
   )
 }
 

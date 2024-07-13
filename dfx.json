@@ -26,16 +26,6 @@
       ],
       "type": "assets",
       "workspace": "sipnPlay-ICP-frontend"
-    },
-    "sipnPlay-ICP-blackjack": {
-      "dependencies": [
-        "sipnPlay-ICP-backend"
-      ],
-      "source": [
-        "src/sipnPlay-ICP-blackjack/dist"
-      ],
-      "type": "assets",
-      "workspace": "sipnPlay-ICP-blackjack"
     }
   },
   "defaults": {

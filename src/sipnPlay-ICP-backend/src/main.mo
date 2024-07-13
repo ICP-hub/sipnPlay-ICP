@@ -22,7 +22,7 @@ actor{
              return "User created!";
             };
             case(?user) {
-                return "chala jaa bhosdike"
+                return "Already exists"
             };
         };
 
