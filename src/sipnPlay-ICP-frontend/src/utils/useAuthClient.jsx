@@ -12,7 +12,7 @@ export const useAuthClient = () => {
     const [identity, setIdentity] = useState(null);
     const [principal, setPrincipal] = useState(null);
     const [actors, setActors] = useState(null);
-        
+    
     const clientInfo = async (client) => {
         const isAuthenticated = await client.isAuthenticated();
         const identity = client.getIdentity();
@@ -20,20 +20,18 @@ export const useAuthClient = () => {
         console.log(principal)
 
         setAuthClient(client);
-        // setIsAuthenticated(isAuthenticated);
         setIdentity(identity);
+        let userActor = null;
         setPrincipal(principal);
 
         if (isAuthenticated && identity && principal && principal.isAnonymous() === false) {
-            let userActor = createUserActor(ids.userCan, { agentOptions: { identity: identity } });
+            userActor = createUserActor(ids.userCan, { agentOptions: { identity: identity } });
         //    console.log(await userActor?.greet("tushar"));
-            const res=await userActor?.createUser({name:"tushsa",email:"t2ijewj2@g.com"})
             setActors({
                 userActor:userActor,
             })
-            console.log("res : ",res)
         }
-        return true;
+        return userActor;
     }
 
     useEffect(() => {
@@ -43,12 +41,13 @@ export const useAuthClient = () => {
         })();
     }, []);
 
-    const login = async () => {
+    const login = async (val) => {
         return new Promise(async (resolve, reject) => {
             try {
                 if (authClient.isAuthenticated() && ((await authClient.getIdentity().getPrincipal().isAnonymous()) === false)) {
                     resolve(clientInfo(authClient));
                 } else {
+                    if(val==="ii"){
                     await authClient.login({
                         identityProvider: process.env.DFX_NETWORK === "ic"
                             ? "https://identity.ic0.app/"
@@ -57,7 +56,17 @@ export const useAuthClient = () => {
                         onError: (error) => reject((error)),
                         onSuccess: () => resolve(clientInfo(authClient)),
                     });
+                }else{
+                    await authClient.login({
+                        identityProvider: process.env.DFX_NETWORK === "ic"
+                            ? `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
+                            :`https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`,
+                        onError: (error) => reject((error)),
+                        onSuccess: () => resolve(clientInfo(authClient)),
+                    });
                 }
+            }
+                
             } catch (error) {
                 reject(error);
             }
