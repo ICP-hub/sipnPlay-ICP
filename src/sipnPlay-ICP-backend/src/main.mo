@@ -29,6 +29,7 @@ actor {
                     id = caller;
                     name = userData.name;
                     email = userData.email;
+                    phoneNo= userData.phoneNo;
                     points = 1000;
                 };
                 userDataRecord.put(caller, newUser);

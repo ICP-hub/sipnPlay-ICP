@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AuthClient } from "@dfinity/auth-client";
 import { createActor as createUserActor } from '../../../declarations/sipnPlay-ICP-backend';
 import {ids} from '../../../../AdminDevelopmentConfig'
-import Login from '../Pages/Login'
+import Home from '../Pages/Home';
 
 const AuthContext = createContext();
 
@@ -21,6 +21,7 @@ export const useAuthClient = () => {
 
         setAuthClient(client);
         setIdentity(identity);
+        setIsAuthenticated(isAuthenticated);
         let userActor = null;
         setPrincipal(principal);
 
@@ -82,12 +83,12 @@ export const useAuthClient = () => {
     };
 }
 
-export const AuthProvider = ({ children,setLoggedIn }) => {
+export const AuthProvider = ({ children }) => {
     const auth = useAuthClient();
     if (!auth.isAuthenticated || !auth.actors) {
         return (
             <AuthContext.Provider value={auth}>
-                <Login setLoggedIn={setLoggedIn}/>
+                <Home/>
             </AuthContext.Provider>
         )
     }

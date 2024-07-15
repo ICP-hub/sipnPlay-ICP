@@ -5,10 +5,12 @@ module{
         id : Principal;
         name: Text;
         email: Text;
+        phoneNo: Nat;
         points:Nat;
     };
     public type UserCreationInput={
         name: Text;
         email: Text;
+        phoneNo: Nat;
     }
 }

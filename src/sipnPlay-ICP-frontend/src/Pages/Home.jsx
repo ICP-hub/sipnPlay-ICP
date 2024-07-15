@@ -1,6 +1,6 @@
 import React from 'react'
 import {useAuthClient} from "../utils/useAuthClient"
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 function Home() {
   const navigate = useNavigate();
     const {login, logout} = useAuthClient();
@@ -14,17 +14,17 @@ function Home() {
       }
     }
   return (
-    <>
-    <div onClick={()=>Letslogin("ii")} className='bg-red-500 rounded-lg px[29px] py-[13px] text-[23px] '>
+    <div className=''>
+    <div onClick={()=>Letslogin("ii")} className='bg-red-500 rounded-lg px-[29px] py-[13px] text-[23px] '>
         Login with icp
     </div>
-    <div onClick={()=>Letslogin("nfid")} className='bg-red-500 rounded-lg px[29px] py-[13px] text-[23px] '>
+    <div onClick={()=>Letslogin("nfid")} className='bg-red-500 rounded-lg px-[29px] py-[13px] text-[23px] '>
         Login with NFID
     </div>
-    <div onClick={()=>{logout(); window.location.reload()}} className='bg-red-500 rounded-lg px[29px] py-[13px] text-[23px] '>
+    <div onClick={()=>{logout(); window.location.reload()}} className='bg-red-500 rounded-lg px-[29px] py-[13px] text-[23px] '>
     Logout
 </div>
-</>
+</div>
   )
 }
 

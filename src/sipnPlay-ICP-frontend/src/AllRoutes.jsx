@@ -3,10 +3,11 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./Pages/Home";
 import BlackJack from "./Pages/BlackJack";
 import {AuthProvider} from "./utils/useAuthClient"
+import Register from './Pages/Register';
 function AllRoutes() {
   const [loggedIn,setLoggedIn]=useState(localStorage.getItem("loggedIn")||true)
   return (
-    // <AuthProvider setLoggedIn={setLoggedIn}>
+    <AuthProvider >
     <Routes>
       <Route
         path="/"
@@ -20,8 +21,15 @@ function AllRoutes() {
           <BlackJack />
         }
       />
-    
+       <Route
+        path="/register"
+        element={
+          <Register />
+        }
+      />
+
     </Routes>
+    </AuthProvider>
   )
 }
 
