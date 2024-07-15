@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import {useAuthClient} from "../utils/useAuthClient"
+import {useAuth} from "../utils/useAuthClient"
 const Register = () => {
 
-  const {isAuthenticated, actors} = useAuthClient();
-  console.log("isAuthenticated ",isAuthenticated);
-
+  const {backendActor} = useAuth();
+console.log("actor",backendActor);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,8 +20,9 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log({name:formData.name, email:formData.email, phoneNo:parseInt(formData.phoneNo)});
     try {
-      const response = await actors?.createUser(formData.name, formData.email, formData.phoneNo);
+      const response = await backendActor.createUser({name:formData.name, email:formData.email, phoneNo:parseInt(formData.phoneNo)});
       console.log('Response:', response);
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -34,7 +33,7 @@ const Register = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
     <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
       <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
-      <form onSubmit={handleSubmit}>
+      <form >
         <div className="mb-4">
           <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">Name:</label>
           <input
@@ -62,7 +61,7 @@ const Register = () => {
         <div className="mb-6">
           <label htmlFor="phoneNo" className="block text-gray-700 font-semibold mb-2">Phone Number:</label>
           <input
-            type="tel"
+            type="number"
             id="phoneNo"
             name="phoneNo"
             value={formData.phoneNo}
@@ -73,6 +72,7 @@ const Register = () => {
         </div>
         <button
           type="submit"
+          onClick={handleSubmit}
           className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
         >
           Register
