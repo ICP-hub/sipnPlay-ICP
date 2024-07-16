@@ -69,16 +69,17 @@
                            if(getParamValue('ctl-arcade') === "true"){
                                parent.__ctlArcadeEndSession();
                            }
-                           //...ADD YOUR CODE HERE EVENTUALLY
+                           console.log("game over");
                     });
-
 
                     $(oMain).on("save_score", function(evt,iScore) {
                            if(getParamValue('ctl-arcade') === "true"){
                                parent.__ctlArcadeSaveScore({score:iScore});
                            }
-                           //...ADD YOUR CODE HERE EVENTUALLY
+                           window.parent.postMessage({ type: 'save_score', score: iScore }, '*');
                     });
+
+                    
 
                     $(oMain).on("show_interlevel_ad", function(evt) {
                            if(getParamValue('ctl-arcade') === "true"){

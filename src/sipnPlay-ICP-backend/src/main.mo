@@ -40,4 +40,26 @@ actor {
             };
         };
     };
+    public shared ({caller}) func deductPoints(): async Result.Result<UserTypes.UserData, Text> {
+        switch (userDataRecord.get(caller)) {
+            case (null) {
+                return #err("User not found");
+            };
+            case (?user) {
+                if (user.points >= 200) {
+                    let newUser: UserTypes.UserData = {
+                        id = caller;
+                        name = user.name;
+                        email = user.email;
+                        phoneNo= user.phoneNo;
+                        points = user.points -200;
+                    };
+                    ignore userDataRecord.replace(caller, newUser);
+                    return #ok(newUser);
+                } else {
+                    return #err("Not enough points to deduct");
+                }
+            };
+        };
+    };
 }
