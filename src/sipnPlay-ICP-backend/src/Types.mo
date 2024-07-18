@@ -12,5 +12,7 @@ module{
         name: Text;
         email: Text;
         phoneNo: Nat;
-    }
+    };
+   
+
 }
