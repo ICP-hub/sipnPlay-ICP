@@ -4,6 +4,7 @@ import Home from "./Pages/Home";
 import BlackJack from "./Pages/BlackJack";
 import {AuthProvider} from "./utils/useAuthClient"
 import Register from './Pages/Register';
+import Payment from './Pages/Payment';
 function AllRoutes() {
   const [loggedIn,setLoggedIn]=useState(localStorage.getItem("loggedIn")||true)
   return (
@@ -25,6 +26,12 @@ function AllRoutes() {
         path="/register"
         element={
           <Register />
+        }
+      />
+          <Route
+        path="/payment"
+        element={
+          <Payment />
         }
       />
 

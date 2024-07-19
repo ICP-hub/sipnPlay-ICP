@@ -1,9 +1,8 @@
 import { AuthClient } from "@dfinity/auth-client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { HttpAgent, Actor } from "@dfinity/agent";
-import { AccountIdentifier } from "@dfinity/ledger-icp";
 import { createActor, idlFactory } from "../../../declarations/sipnPlay-ICP-backend/index";
-
+import { createLedgerActor} from "../../../declarations/ledger/index"
 // Create a React context for authentication state
 const AuthContext = createContext();
 
@@ -47,6 +46,7 @@ export const useAuthClient = (options = defaultOptions) => {
   const [principal, setPrincipal] = useState(null);
   const [backendActor, setBackendActor] = useState(null);
   const [accountId, setAccountId] = useState(null);
+  const [ledgerActor, setLedgerActor] = useState(null);
 
   useEffect(() => {
     // On component mount, create an authentication client
@@ -139,6 +139,8 @@ export const useAuthClient = (options = defaultOptions) => {
       const agent = new HttpAgent({ identity });
 
       const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agent });
+      const ledgerActor1 = createLedgerActor("ryjl3-tyaaa-aaaaa-aaaba-cai", {agent});
+      setLedgerActor(ledgerActor1)
       setBackendActor(backendActor);
 
     } catch (error) {
@@ -147,17 +149,19 @@ export const useAuthClient = (options = defaultOptions) => {
   };
 
   // Function to create an actor for interacting with the ledger
-  const createLedgerActor = (canisterId) => {
-    const agent = new HttpAgent({ identity });
+  // const createLedgerActor = (canisterId) => {
+  //   const agent = new HttpAgent({ 
+      
+  //    });
 
-    if (process.env.DFX_NETWORK !== 'production') {
-      agent.fetchRootKey().catch(err => {
-        console.warn('Unable to fetch root key. Check to ensure that your local replica is running');
-        console.error(err);
-      });
-    }
-    return Actor.createActor(idlFactory, { agent, canisterId });
-  };
+  //   if (process.env.DFX_NETWORK !== 'production') {
+  //     agent.fetchRootKey().catch(err => {
+  //       console.warn('Unable to fetch root key. Check to ensure that your local replica is running');
+  //       console.error(err);
+  //     });
+  //   }
+  //   return Actor.createActor(idlFactory, { agent, canisterId });
+  // };
 
   // Function to refresh login without user interaction
   const reloadLogin = async () => {
@@ -181,7 +185,7 @@ export const useAuthClient = (options = defaultOptions) => {
     principal,
     backendActor,
     accountId,
-    createLedgerActor,
+    ledgerActor,
     reloadLogin,
     accountIdString,
   };
