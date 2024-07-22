@@ -6,14 +6,15 @@ import {principalToAccountIdentifier } from '@dfinity/ledger-icp'
 const Payment = () => {
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState('');
-  const [metaData, setMetaData] = useState(null);
-  const {principal, ledgerActor } = useAuth();
+
+
+  const {principal, ledgerActor, backendActor } = useAuth();
 
   const formatTokenMetaData = (arr) => {
     const resultObject = {};
     arr.forEach((item) => {
       const key = item[0];
-      const value = item[1][Object.keys(item[1])[0]]; // Extracting the value from the nested object
+      const value = item[1][Object.keys(item[1])[0]]; 
       resultObject[key] = value;
     });
     return resultObject;
@@ -24,14 +25,20 @@ const Payment = () => {
     console.log("balance : ",parseInt(bal))
     return parseInt(bal)
   }
- 
+
+  const afterPaymentFlow = async(amnt)=>{
+    const res = await backendActor.place_order(amnt);
+    console.log(res);
+  } 
   
   const transferApprove = async (sendAmount) => {
       setLoading(true);
+      let metaData = null;
       await ledgerActor.icrc1_metadata().then((res)=>{
-        console.log("icrc1_metadata res : ",res)
+        console.log("icrc1_metadata res : ",res);
         
-        setMetaData(formatTokenMetaData(res))
+        metaData = formatTokenMetaData(res);
+        
       }).catch((err)=>{console.log(err)})
 
       console.log('metaData[decimals]', metaData);
@@ -69,6 +76,7 @@ const Payment = () => {
               console.log(res);
               return;
             } else {
+              afterPaymentFlow(amnt);
               console.log(res);
             }
           })

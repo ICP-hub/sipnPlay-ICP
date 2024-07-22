@@ -3,7 +3,6 @@ import {useAuth} from "../utils/useAuthClient"
 const Register = () => {
 
   const {backendActor} = useAuth();
-console.log("actor",backendActor);
   const [formData, setFormData] = useState({
     name: '',
     email: '',

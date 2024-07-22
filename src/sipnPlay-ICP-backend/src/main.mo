@@ -4,11 +4,12 @@ import TrieMap "mo:base/TrieMap";
 import Result "mo:base/Result";
 import UserTypes "./Types";
 import ICRC "./ICRC";
+import Nat "mo:base/Nat";
 
 actor {
     var userDataRecord = TrieMap.TrieMap<Principal, UserTypes.UserData>(Principal.equal, Principal.hash);
     let icpLedger = "ryjl3-tyaaa-aaaaa-aaaba-cai";
-    let payment_address = Principal.fromText("b77ix-eeaaa-aaaaa-qaada-cai");
+    let payment_address = Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai");
 
     public shared query ({ caller }) func getUser() : async Result.Result<UserTypes.UserData, Text> {
         switch (userDataRecord.get(caller)) {
@@ -81,32 +82,33 @@ actor {
     };
 
     public shared ({ caller }) func place_order(amount : Nat) : async Result.Result<Text, Text> {
-        let response : ICRC.Result_2 = await icrc2_transferFrom(icpLedger, caller, payment_address, amount);
-        switch (response) {
-            case (#Err(index)) {
-                return #err(debug_show(index));
+        switch (userDataRecord.get(caller)) {
+            case (null) {
+                return #err("User not found");
             };
-            case (#Ok(_res)) {
-                let user = switch (userDataRecord.get(caller)) {
-                    case (null) {
-                        return #err("User not found");
+            case (?user) {
+                let response : ICRC.Result_2 = await icrc2_transferFrom(icpLedger, caller, payment_address, amount);
+                switch (response) {
+                    case (#Ok(value)) {
+                        let newPoints = user.points + (amount * 100);
+                        let updatedUser : UserTypes.UserData = {
+                            id = user.id;
+                            name = user.name;
+                            email = user.email;
+                            phoneNo = user.phoneNo;
+                            points = newPoints;
+                        };
+                        userDataRecord.put(caller, updatedUser);
+                        return #ok("Order placed successfully, points updated" # Nat.toText(value));
                     };
-                    case (?user) {
-                        user;
+                    case (#Err(e)) {
+                        return #err("Payment error ");
                     };
                 };
 
-                let newPoints = user.points + (amount * 100);
-                let updatedUser : UserTypes.UserData = { 
-                    id = user.id;
-                    name = user.name;
-                    email = user.email;
-                    phoneNo = user.phoneNo;
-                    points = newPoints;
-                };
-                userDataRecord.put(caller, updatedUser);
-                return #ok("Order placed successfully, points updated");
             };
         };
+
     };
-}
+
+};
