@@ -3,6 +3,7 @@ import { useAuth } from "../utils/useAuthClient";
 import { useNavigate } from 'react-router-dom';
 import toast from "react-hot-toast";
 import Modal from 'react-modal'; // You might need to install this
+import SendMessage from '../components/HomePageComponents/SendMessage';
 
 Modal.setAppElement('#root');
 
@@ -95,6 +96,7 @@ function Home() {
           </button>
         </div>
       </Modal>
+      <SendMessage />
     </div>
   );
 }
