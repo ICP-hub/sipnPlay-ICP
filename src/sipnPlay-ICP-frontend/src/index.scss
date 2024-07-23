@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "Monckeberg";
+    src: url("./assets/fonts/Monckeberg-Regular.woff") format("woff");
+} 
+
+@font-face {
+    font-family: "Inter";
+    src: url("./assets/fonts/Inter-VariableFont_slnt\,wght.ttf") format("truetype");
+} 
+
+@font-face {
+    font-family: "Adam";
+    src: url("./assets/fonts/Adam-Light.ttf") format("truetype");
+} 
+  

@@ -46,7 +46,7 @@ function Home() {
       {!isAuthenticated ? (
         <button
           onClick={() => setModalIsOpen(true)}
-          className="bg-blue-500 rounded-lg px-6 py-3 text-white text-lg"
+          className="bg-blue-500 font-monckeberg font-[700] text-[59px] rounded-lg px-6 py-3 text-white text-lg"
         >
           Login
         </button>
