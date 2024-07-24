@@ -18,12 +18,12 @@ const SendMessage = () => {
     };
 
     return (
-        <div className="flex  mt-20 min-h-screen bg-black-100">
-           <h2 className="text-6xl  font-monckeberg  mt-[2%] ml-[9%]  text-white">
+        <div className="flex mx-[9%]  mt-20 min-h-screen bg-black-100">
+           <h2 className="text-6xl  font-monckeberg  mt-[2%]  text-white">
            Send us
                 a message
             </h2>
-            <form className=" p-8 rounded-lg shadow-md w-full mr-[9%] ml-10 " onSubmit={handleSubmit}>
+            <form className=" p-8 rounded-lg shadow-md w-full ml-10 " onSubmit={handleSubmit}>
                
                 <div className="mb-4">
                     <label className="block text-White font-adam font-bold text-sm  mb-0.2" htmlFor="name">
@@ -52,7 +52,7 @@ const SendMessage = () => {
                     />
                 </div>
                 <div className="mb-6">
-                    <label className="block text-White font-adam font-bold text-sm  mb-0.2" htmlFor="message">
+                    <label className="block text-White font-adam font-bold text-sm mb-0.2" htmlFor="message">
                         MESSAGE
                     </label>
                     <textarea
