@@ -6,7 +6,7 @@ import Modal from 'react-modal'; // You might need to install this
 import SendMessage from '../components/HomePageComponents/SendMessage';
 import OurTeam from '../components/HomePageComponents/OurTeam';
 import TrustedBy from '../components/HomePageComponents/TrustedBy';
-
+import Intro from '../components/HomePageComponents/Intro';
 Modal.setAppElement('#root');
 
 function Home() {
@@ -99,6 +99,7 @@ function Home() {
         </div>
       </Modal>
       <TrustedBy />
+      <Intro />
       <OurTeam />
       <SendMessage />
     </div>
