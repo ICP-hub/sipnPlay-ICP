@@ -29,7 +29,7 @@ const OurTeam = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0">
         
         <div className="rounded-lg shadow-md p-6 ">
-          <div className=' bg-slate-300 h-96 w-64 bg-opacity-10 border  rounded'
+          <div className=' bg-slate-100 h-96 w-64 bg-opacity-10 border  rounded'
           style={{ borderColor: '#696969' }}>
           <img src={Member1} alt="Team Member 1" className=" h-96 w-64 object-cover   rounded-t-lg"/>
           </div>
@@ -41,7 +41,7 @@ const OurTeam = () => {
 
      
         <div className="bg-black rounded-lg shadow-md p-6">
-        <div className=' bg-slate-300 h-96 w-64 bg-opacity-10 border  rounded'
+        <div className=' bg-slate-100 h-96 w-64 bg-opacity-10 border  rounded'
           style={{ borderColor: '#696969' }}>
           <img src={Member2} alt="Team Member 2" className=" h-96 w-64 object-cover   rounded-t-lg" />
           </div>
@@ -53,7 +53,7 @@ const OurTeam = () => {
 
         
         <div className="bg-black rounded-lg shadow-md p-6">
-        <div className=' bg-slate-300 h-96 w-64 bg-opacity-10 border  rounded'
+        <div className=' bg-slate-100 h-96 w-64 bg-opacity-10 border  rounded'
           style={{ borderColor: '#696969' }}>
           <img src={Member3} alt="Team Member 3" className=" h-96 w-64 object-cover   rounded-t-lg" />
           </div>
