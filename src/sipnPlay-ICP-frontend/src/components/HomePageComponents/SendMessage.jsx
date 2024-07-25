@@ -23,7 +23,7 @@ const SendMessage = () => {
            Send us
                 a message
             </h2>
-            <form className=" p-8 rounded-lg shadow-md w-full ml-10 " onSubmit={handleSubmit}>
+            <form className=" relative p-8 rounded-lg shadow-md w-full ml-10 " onSubmit={handleSubmit}>
                
                 <div className="mb-4">
                     <label className="block text-White font-adam font-bold text-sm  mb-0.2" htmlFor="name">
@@ -51,6 +51,7 @@ const SendMessage = () => {
                         required
                     />
                 </div>
+                
                 <div className="mb-6">
                     <label className="block text-White font-adam font-bold text-sm mb-0.2" htmlFor="message">
                         MESSAGE
@@ -64,14 +65,30 @@ const SendMessage = () => {
                         required
                     ></textarea>
                 </div>
-                <div className="flex items-center justify-end">
+                
+                <div
+  className="absolute  right-0 w-[50%] h-[50%] "
+  style={{
+    backgroundImage: 'radial-gradient(circle, rgba(136, 47, 93, 0.4), transparent)',
+    clipPath: 'circle(50% at 50% 100%)',
+    transform: 'rotate(270deg)',
+    transformOrigin: 'right',
+
+   
+  }}
+>
+</div>
+
+                <div className="flex items-center justify-end " >
+                
                     <button
-                        className="bg-transparent border border-pink-600 text-white font-bold py-2 px-6  focus:outline-none focus:shadow-outline"
+                        className="bg-transparent border border-pink-600  text-white font-bold py-2 px-6 "
                         type="submit"
                     >
                         Send
                     </button>
-                </div>
+                    </div>
+                  
             </form>
         </div>
     );
