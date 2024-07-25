@@ -4,7 +4,7 @@ import girl from "../../assets/images/girl.png";
 import kOT from "../../assets/images/kOT.png";
 const Intro = () => {
     return (
-        <div className='mx-[9%] grid grid-cols-2 '>
+        <div className='px-[9%] grid grid-cols-2 overflow-hidden '>
             <div className='pb-[129px] relative'>
                 <p className='font-inter text-[54px] w-[60%] font-[900]'>THE GAMING
                     ECOSYSTEM
@@ -28,10 +28,24 @@ const Intro = () => {
                     </div>
                 </div>
                 <img src={girl} draggable="false" className='w-[297px] absolute left-[128px] ' />
+                <div
+                    className="absolute top-[10px] -right-[200px] rounded-full h-[700px] blur-lg opacity-70 w-[700px] "
+                    style={{
+                        backgroundImage: 'radial-gradient(circle, rgba(136, 47, 93, 0.4), rgba(169, 62, 62, 0.2), rgba(37, 29, 118, 0.2), transparent)',
+                    }}
+                >
+                </div>
             </div>
 
-            <div>
+            <div className='relative'>
                 <img src={kOT} draggable="false" className='w-[406px]' />
+                <div
+                    className="absolute -top-[100px] -left-[250px] rounded-full h-[700px] blur-lg opacity-70 w-[700px] "
+                    style={{
+                        backgroundImage: 'radial-gradient(circle, rgba(136, 47, 93, 0.4), rgba(169, 62, 62, 0.2), rgba(37, 29, 118, 0.2), transparent)',
+                    }}
+                >
+                </div>
             </div>
 
             <div className='pb-[129px] relative'>

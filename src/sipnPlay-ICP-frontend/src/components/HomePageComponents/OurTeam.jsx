@@ -31,7 +31,7 @@ const OurTeam = () => {
         <div className="rounded-lg shadow-md p-6 ">
           <div className=' bg-slate-100 h-96 w-64 bg-opacity-10 border  rounded'
           style={{ borderColor: '#696969' }}>
-          <img src={Member1} alt="Team Member 1" className=" h-96 w-64 object-cover   rounded-t-lg"/>
+          <img draggable="false" src={Member1} alt="Team Member 1" className=" h-96 w-64 object-cover   rounded-t-lg"/>
           </div>
           <div className="mt-4 text-center ">
             <h3 className="text-xl font-normal pr-10 font-monckeberg">Ankz</h3>
@@ -43,7 +43,7 @@ const OurTeam = () => {
         <div className="bg-black rounded-lg shadow-md p-6">
         <div className=' bg-slate-100 h-96 w-64 bg-opacity-10 border  rounded'
           style={{ borderColor: '#696969' }}>
-          <img src={Member2} alt="Team Member 2" className=" h-96 w-64 object-cover   rounded-t-lg" />
+          <img draggable="false" src={Member2} alt="Team Member 2" className=" h-96 w-64 object-cover   rounded-t-lg" />
           </div>
           <div className="mt-4 text-center">
             <h3 className="text-xl font-normal pr-10 font-monckeberg">KatochXcrypto</h3>
@@ -55,7 +55,7 @@ const OurTeam = () => {
         <div className="bg-black rounded-lg shadow-md p-6">
         <div className=' bg-slate-100 h-96 w-64 bg-opacity-10 border  rounded'
           style={{ borderColor: '#696969' }}>
-          <img src={Member3} alt="Team Member 3" className=" h-96 w-64 object-cover   rounded-t-lg" />
+          <img draggable="false" src={Member3} alt="Team Member 3" className=" h-96 w-64 object-cover   rounded-t-lg" />
           </div>
           <div className="mt-4 text-center">
             <h3 className="text-xl font-normal pr-10 font-monckeberg">Vinny K</h3>

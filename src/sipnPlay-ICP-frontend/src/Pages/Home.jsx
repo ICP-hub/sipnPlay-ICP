@@ -7,6 +7,7 @@ import SendMessage from '../components/HomePageComponents/SendMessage';
 import OurTeam from '../components/HomePageComponents/OurTeam';
 import TrustedBy from '../components/HomePageComponents/TrustedBy';
 import Intro from '../components/HomePageComponents/Intro';
+import GameMania from '../components/HomePageComponents/GameMania';
 Modal.setAppElement('#root');
 
 function Home() {
@@ -100,6 +101,7 @@ function Home() {
       </Modal>
       <TrustedBy />
       <Intro />
+      <GameMania />
       <OurTeam />
       <SendMessage />
     </div>

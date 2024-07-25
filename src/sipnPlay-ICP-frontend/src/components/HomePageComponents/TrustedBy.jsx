@@ -17,13 +17,13 @@ const TrustedBy = () => {
       </div>
 
       <div className="grid grid-cols-3 gap-10 mx-[9%]">
-        <img src={difinitylogo} alt="Trusted Brand 1" 
+        <img draggable="false" src={difinitylogo} alt="Trusted Brand 1" 
         className="w-40 h-20 object-contain mx-auto 
         grayscale transition-transform duration-300 ease-in-out hover:grayscale-0"  />
-        <img src={IClogo} alt="Trusted Brand 2" 
+        <img draggable="false" src={IClogo} alt="Trusted Brand 2" 
         className="w-64 h-14 object-contain mx-auto
         grayscale transition-transform duration-300 ease-in-out hover:grayscale-0 "/>
-        <img src={hublogo} alt="Trusted Brand 3" 
+        <img draggable="false" src={hublogo} alt="Trusted Brand 3" 
         className="w-80 h-14 object-contain mx-auto
         grayscale transition-transform duration-300 ease-in-out hover:grayscale-0" />
       </div>

@@ -55,7 +55,6 @@ const SendMessage = () => {
                 <div className="mb-6">
                     <label className="block text-White font-adam font-bold text-sm mb-0.2" htmlFor="message">
                         MESSAGE
-                        <GradientText> </GradientText>
                     </label>
                     <textarea
                         className="border-b-2  w-full py-2 mb-3 mt-4  text-white bg-black leading-tight focus:outline-none focus:shadow-outline"
