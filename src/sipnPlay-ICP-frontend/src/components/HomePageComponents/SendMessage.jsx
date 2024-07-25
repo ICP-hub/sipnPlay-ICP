@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AnimationButton from '../../common/AnimationButton';
 
 const SendMessage = () => {
     const [name, setName] = useState('');
@@ -7,24 +8,22 @@ const SendMessage = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle the form submission
         console.log('Name:', name);
         console.log('Email:', email);
         console.log('Message:', message);
-        // Clear the form
         setName('');
         setEmail('');
         setMessage('');
     };
 
     return (
-        <div className="flex mx-[9%]  mt-20 min-h-screen bg-black-100">
-           <h2 className="text-6xl  font-monckeberg  mt-[2%]  text-white">
-           Send us
+        <div className="flex px-[9%] pb-[147px] relative z-20 overflow-hidden mt-20">
+            <h2 className="text-6xl  font-monckeberg  mt-[2%]  text-white">
+                Send us
                 a message
             </h2>
-            <form className=" relative p-8 rounded-lg shadow-md w-full ml-10 " onSubmit={handleSubmit}>
-               
+            <form className="p-8 rounded-lg shadow-md w-full ml-10 " onSubmit={handleSubmit}>
+
                 <div className="mb-4">
                     <label className="block text-White font-adam font-bold text-sm  mb-0.2" htmlFor="name">
                         YOUR NAME
@@ -51,7 +50,7 @@ const SendMessage = () => {
                         required
                     />
                 </div>
-                
+
                 <div className="mb-6">
                     <label className="block text-White font-adam font-bold text-sm mb-0.2" htmlFor="message">
                         MESSAGE
@@ -65,30 +64,19 @@ const SendMessage = () => {
                         required
                     ></textarea>
                 </div>
-                
-                <div
-  className="absolute  right-0 w-[50%] h-[50%] "
-  style={{
-    backgroundImage: 'radial-gradient(circle, rgba(136, 47, 93, 0.4), transparent)',
-    clipPath: 'circle(50% at 50% 100%)',
-    transform: 'rotate(270deg)',
-    transformOrigin: 'right',
 
-   
-  }}
->
-</div>
+                <div
+                    className="absolute -bottom-[300px] -right-[200px] rounded-full h-[700px] blur-lg opacity-70 w-[700px] "
+                    style={{
+                        backgroundImage: 'radial-gradient(circle, rgba(136, 47, 93, 0.4), rgba(169, 62, 62, 0.2), rgba(37, 29, 118, 0.2), transparent)',
+                    }}
+                >
+                </div>
 
                 <div className="flex items-center justify-end " >
-                
-                    <button
-                        className="bg-transparent border border-pink-600  text-white font-bold py-2 px-6 "
-                        type="submit"
-                    >
-                        Send
-                    </button>
-                    </div>
-                  
+                    <AnimationButton text="Send" />
+                </div>
+
             </form>
         </div>
     );
