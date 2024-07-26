@@ -7,6 +7,7 @@ import SendMessage from '../components/HomePageComponents/SendMessage';
 import OurTeam from '../components/HomePageComponents/OurTeam';
 import TrustedBy from '../components/HomePageComponents/TrustedBy';
 import Intro from '../components/HomePageComponents/Intro';
+import Header from '../components/Header/Header';
 import GameMania from '../components/HomePageComponents/GameMania';
 Modal.setAppElement('#root');
 
@@ -46,7 +47,9 @@ function Home() {
   };
 
   return (
+    
     <div className="p-4">
+      
       {!isAuthenticated ? (
         <button
           onClick={() => setModalIsOpen(true)}
@@ -104,6 +107,7 @@ function Home() {
       <GameMania />
       <OurTeam />
       <SendMessage />
+      
     </div>
   );
 }
