@@ -8,6 +8,7 @@ import OurTeam from '../components/HomePageComponents/OurTeam';
 import TrustedBy from '../components/HomePageComponents/TrustedBy';
 import Intro from '../components/HomePageComponents/Intro';
 import Header from '../components/Header/Header';
+import Hero from '../components/HomePageComponents/Hero';
 import GameMania from '../components/HomePageComponents/GameMania';
 Modal.setAppElement('#root');
 
@@ -102,6 +103,7 @@ function Home() {
           </button>
         </div>
       </Modal>
+      <Hero/>
       <TrustedBy />
       <Intro />
       <GameMania />
