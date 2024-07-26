@@ -11,7 +11,7 @@ const Intro = () => {
                     YOU OWN.</p>
                 <div className='flex justify-center'>
                     <svg width="325" height="45" viewBox="0 0 325 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 40.6104C43.5828 22.291 162.396 -9.44062 320.989 10.1872" stroke="white" stroke-width="7" stroke-linecap="round" />
+                        <path d="M4 40.6104C43.5828 22.291 162.396 -9.44062 320.989 10.1872" stroke="white" strokeWidth="7" strokeLinecap="round" />
                     </svg>
                 </div>
 
@@ -53,7 +53,7 @@ const Intro = () => {
                     <p className='font-inter text-[54px] font-[900]'>WHAT ARE WE COOKING?</p>
                     <div className='flex justify-center'>
                     <svg width="325" height="45" viewBox="0 0 325 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 40.6104C43.5828 22.291 162.396 -9.44062 320.989 10.1872" stroke="white" stroke-width="7" stroke-linecap="round" />
+                        <path d="M4 40.6104C43.5828 22.291 162.396 -9.44062 320.989 10.1872" stroke="white" strokeWidth="7" strokeLinecap="round" />
                     </svg>
                 </div>
                     <p className='font-adam text-[24px] w-[79%] mt-[2px] font-[300]'>

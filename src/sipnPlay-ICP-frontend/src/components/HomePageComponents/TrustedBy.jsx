@@ -16,15 +16,15 @@ const TrustedBy = () => {
         <h2 className="text-2xl absolute top-8 font-bold font-adam text-center mb-[6%]">Trusted by</h2>
       </div>
 
-      <div className="grid grid-cols-3 gap-10 mx-[9%]">
+      <div className="flex justify-between gap-10 mx-[9%]">
         <img draggable="false" src={difinitylogo} alt="Trusted Brand 1" 
-        className="w-40 h-20 object-contain mx-auto 
+        className="w-40 h-20 object-contain  
         grayscale transition-transform duration-300 ease-in-out hover:grayscale-0"  />
         <img draggable="false" src={IClogo} alt="Trusted Brand 2" 
-        className="w-64 h-14 object-contain mx-auto
+        className="w-64 h-14 object-contain 
         grayscale transition-transform duration-300 ease-in-out hover:grayscale-0 "/>
         <img draggable="false" src={hublogo} alt="Trusted Brand 3" 
-        className="w-80 h-14 object-contain mx-auto
+        className="w-80 h-14 object-contain 
         grayscale transition-transform duration-300 ease-in-out hover:grayscale-0" />
       </div>
     </div>
