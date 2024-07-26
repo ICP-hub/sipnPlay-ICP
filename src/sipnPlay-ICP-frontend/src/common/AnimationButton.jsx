@@ -1,9 +1,9 @@
 import React from 'react'
 import './AnimationButton.css'
-const AnimationButton = ({ text }) => {
+const AnimationButton = ({ text, onClick }) => {
     return (
         <>
-            <button className='border relative flip-card font-adam  text-[15px] font-[300] border-[#EE3EC9]'>
+            <button onClick={onClick} className='border text-white relative flip-card font-adam  text-[15px] font-[300] border-[#EE3EC9]'>
                 {text}
                 <div className='absolute h-[5px] w-[5px] -top-[1px] -left-[1px] border-t-[1px] border-l-[1px] '></div>
                 <div className='absolute h-[5px] w-[5px] -top-[1px] -right-[1px] border-t-[1px] border-r-[1px] '></div>

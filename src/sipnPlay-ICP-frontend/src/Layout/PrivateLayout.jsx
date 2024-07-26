@@ -4,7 +4,7 @@ import Footer from '../components/Footer/Footer';
 
 const PrivateLayout = ({ children }) => {
   return (
-    <div>
+    <div className='overflow-hidden'>
       <Header />
       <main>{children}</main>
       <Footer />

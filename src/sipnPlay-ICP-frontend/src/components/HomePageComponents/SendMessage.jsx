@@ -18,7 +18,7 @@ const SendMessage = () => {
     };
 
     return (
-        <div className="flex px-[9%] pb-[147px] relative z-20 overflow-hidden mt-20">
+        <div className="flex px-[9%] pb-[147px] relative z-20 mt-20">
             <h2 className="text-6xl  font-monckeberg  mt-[2%]  text-white">
                 Send us
                 a message
