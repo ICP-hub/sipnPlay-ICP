@@ -5,6 +5,7 @@ import TrustedBy from '../components/HomePageComponents/TrustedBy';
 import Intro from '../components/HomePageComponents/Intro';
 import Hero from '../components/HomePageComponents/Hero';
 import GameMania from '../components/HomePageComponents/GameMania';
+import ArcadeCommunity from '../components/HomePageComponents/ArcadeCommunity';
 
 function Home() {
   return (
@@ -14,6 +15,7 @@ function Home() {
       <Intro />
       <GameMania />
       <OurTeam />
+      <ArcadeCommunity />
       <SendMessage />
     </div>
   );
