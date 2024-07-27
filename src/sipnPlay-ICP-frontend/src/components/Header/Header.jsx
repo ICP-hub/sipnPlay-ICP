@@ -6,6 +6,7 @@ import JoinWaitlist from '../Modals/JoinWaitlist';
 import { useAuth } from "../../utils/useAuthClient";
 import toast from "react-hot-toast";
 import Modal from 'react-modal'; 
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -48,7 +49,7 @@ const Header = () => {
 
 
   return (
-    <nav className="relative text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-9 flex justify-between items-center ">
+    <nav className="relative z-50 text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-9 flex justify-between items-center ">
 
       <div className="flex items-center">
         <img src={logo} alt="Logo" className="h-[50px] w-[200px]" />
