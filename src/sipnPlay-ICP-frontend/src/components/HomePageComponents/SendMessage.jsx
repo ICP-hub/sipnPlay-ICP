@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AnimationButton from '../../common/AnimationButton';
-import GradientText from '../../common/GradientText';
+import GradientText from '../../common/GradientText'
 
 const SendMessage = () => {
     const [name, setName] = useState('');
@@ -21,6 +21,10 @@ const SendMessage = () => {
         <div className="flex flex-col md:flex-row px-4 md:px-[9%] pb-[147px] relative z-20 overflow-hidden mt-20">
             <h2 className="text-4xl md:text-6xl font-monckeberg mt-4 md:mt-[2%] text-white text-center md:text-left">
                 Send us a message
+        <div className="flex px-[9%] pb-[147px] relative z-20 mt-20">
+            <h2 className="text-6xl  font-monckeberg  mt-[2%]  text-white">
+                Send us
+                a message
             </h2>
             <form className="p-4 md:p-8 rounded-lg shadow-md w-full mt-4 md:mt-0 md:ml-10 bg-black bg-opacity-80" onSubmit={handleSubmit}>
                 <div className="mb-4">

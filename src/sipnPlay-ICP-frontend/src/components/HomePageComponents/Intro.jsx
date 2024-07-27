@@ -4,7 +4,7 @@ import girl from "../../assets/images/girl.png";
 import kOT from "../../assets/images/kOT.png";
 const Intro = () => {
     return (
-        <div className='px-[9%] grid grid-cols-2 overflow-hidden '>
+        <div className='px-[9%] grid grid-cols-2 '>
             <div className='pb-[129px] relative'>
                 <p className='font-inter text-[54px] w-[60%] font-[900]'>THE GAMING
                     ECOSYSTEM

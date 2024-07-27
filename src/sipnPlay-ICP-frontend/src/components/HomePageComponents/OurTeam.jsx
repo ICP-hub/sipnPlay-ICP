@@ -6,7 +6,7 @@ import backgroundImage from '../../assets/images/ourTeambg.png';
 
 const OurTeam = () => {
   return (
-    <div className="relative p-10 mx-36 bg-black-100 overflow-hidden">
+    <div className="relative p-10 mx-36 bg-black-100">
       
 
       {/* Background Image */}
