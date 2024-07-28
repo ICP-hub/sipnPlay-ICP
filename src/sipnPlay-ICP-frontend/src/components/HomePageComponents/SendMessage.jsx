@@ -24,7 +24,7 @@ const SendMessage = () => {
                 </h2>
             <form className="p-4 md:p-8 rounded-lg shadow-md w-full mt-4 md:mt-0 md:ml-10 bg-black bg-opacity-80" onSubmit={handleSubmit}>
                 <div className="mb-4">
-                    <label className="block text-white font-adam font-bold text-sm mb-2" htmlFor="name">
+                    <label className="block text-[14px] md:text-[22.5px] text-white font-adam font-bold text-sm mb-2" htmlFor="name">
                         YOUR NAME
                     </label>
                     <input
@@ -37,7 +37,7 @@ const SendMessage = () => {
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-white font-adam font-bold text-sm mb-2" htmlFor="email">
+                    <label className="block text-[14px] md:text-[22.5px] text-white font-adam font-bold text-sm mb-2" htmlFor="email">
                         EMAIL ADDRESS
                     </label>
                     <input
@@ -51,7 +51,7 @@ const SendMessage = () => {
                 </div>
 
                 <div className="mb-6">
-                    <label className="block text-white font-adam font-bold text-sm mb-2" htmlFor="message">
+                    <label className="block text-[14px] md:text-[22.5px] text-white font-adam font-bold text-sm mb-2" htmlFor="message">
                         MESSAGE
                     </label>
                     <textarea
