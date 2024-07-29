@@ -128,7 +128,7 @@ actor {
         return #ok("Message sent successfully!");
     };
 
-    public shared ({ caller }) func joinWaitlist(name : Text, email : Text, icpAddress : ?Text) : async Result.Result<Text, Text> {
+    public shared ({ caller }) func joinWaitlist(name : Text, email : Text, icpAddress : Text) : async Result.Result<Text, Text> {
         if (Text.size(name) == 0 or Text.size(email) == 0) {
             return #err("Name and email must be filled");
         };

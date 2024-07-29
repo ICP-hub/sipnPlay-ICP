@@ -23,7 +23,7 @@ module {
     public type WaitlistData = {
         name : Text;
         email : Text;
-        icpAddress : ?Text;
+        icpAddress : Text;
     };
 
 };
