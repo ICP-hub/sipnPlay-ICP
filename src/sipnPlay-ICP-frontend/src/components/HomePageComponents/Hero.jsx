@@ -18,8 +18,8 @@ const Hero = () => {
 
       {/* Right Div */}
       <div className="lg:border-b-[0.5px] h-[392px] md:h-[722px] relative">
-        <p className="font-monument absolute -left-4 md:-left-6 bottom-3 font-bold opacity-10 w-full text-[156px] md:text-[330px] ">NFT</p>
-        <p className='font-monument absolute -left-2 bottom-0 opacity-10 font-bold text-[55px] md:text-[100px]'>PASSPORT</p>
+        <p className="font-monument absolute -left-4 md:left-0 bottom-8 font-bold opacity-10 w-full text-[156px] md:text-[200px] ">NFT</p>
+        <p className='font-monument absolute left-0 bottom-0 opacity-10 font-bold text-[55px] md:text-[100px]'>PASSPORT</p>
         
         <div
           className="absolute hidden md:block -top-[124px] opacity-85 -right-[500px] rounded-full h-[120%] blur-lg w-[1587px] "

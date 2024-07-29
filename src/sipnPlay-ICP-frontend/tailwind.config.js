@@ -48,6 +48,7 @@ export default {
         'monckeberg': ['Monckeberg', 'sans-serif'],
         'inter': ['Inter', 'sans-serif'],
         'adam': ['Adam', 'sans-serif'],
+        'monument': ['Monument', 'sans-serif'],
       },
       keyframes: {
         translateY: {
