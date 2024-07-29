@@ -11,7 +11,7 @@ const TrustedBy = () => {
         <img
           src={textoutline}
           alt="outlines"
-          className="h-[84px] md:w-56 w-[161px] md:h-22 object-cover"
+          className="h-[84px] md:w-56 w-[161px] md:h-22"
         />
         <h2 className="text-[24px] md:text-2xl absolute top-4 md:top-8 font-bold font-adam text-center mb-[6%]">Trusted by</h2>
       </div>
