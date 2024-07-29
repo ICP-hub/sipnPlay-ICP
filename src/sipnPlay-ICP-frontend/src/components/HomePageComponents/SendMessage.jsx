@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AnimationButton from '../../common/AnimationButton';
-import GradientText from '../../common/GradientText'
+
 
 const SendMessage = () => {
     const [name, setName] = useState('');
@@ -18,7 +18,7 @@ const SendMessage = () => {
     };
 
     return (
-        <div className="flex flex-col md:flex-row px-4 md:px-[9%] pb-[147px] relative z-20 overflow-hidden mt-20">
+        <div id='contact-us' className="flex flex-col md:flex-row px-4 md:px-[9%] pb-[147px] relative z-20 overflow-hidden mt-20">
             <h2 className="text-4xl md:text-6xl font-monckeberg mt-4 md:mt-[2%] text-white text-center md:text-left">
                 Send us a message
                 </h2>

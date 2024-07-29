@@ -1,7 +1,5 @@
 .flip-card {
     background-color: transparent;
-    width: 190px;
-    height: 48px;
     perspective: 1000px;
   }
   
