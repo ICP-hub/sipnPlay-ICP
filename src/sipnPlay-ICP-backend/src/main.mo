@@ -8,6 +8,9 @@ import Nat "mo:base/Nat";
 
 actor {
     var userDataRecord = TrieMap.TrieMap<Principal, UserTypes.UserData>(Principal.equal, Principal.hash);
+    var messageDataRecord = TrieMap.TrieMap<Principal, UserTypes.MessageData>(Principal.equal, Principal.hash);
+    var waitlistDataRecord = TrieMap.TrieMap<Principal, UserTypes.WaitlistData>(Principal.equal, Principal.hash);
+
     let icpLedger = "ryjl3-tyaaa-aaaaa-aaaba-cai";
     let payment_address = Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai");
 
@@ -111,4 +114,31 @@ actor {
 
     };
 
+    public shared ({ caller }) func sendMessage(name : Text, email : Text, message : Text) : async Result.Result<Text, Text> {
+        if (Text.size(name) == 0 or Text.size(email) == 0 or Text.size(message) == 0) {
+            return #err("All fields must be filled");
+        };
+        
+        let newMessage : UserTypes.MessageData = {
+            name = name;
+            email = email;
+            message = message;
+        };
+        messageDataRecord.put(caller, newMessage);
+        return #ok("Message sent successfully!");
+    };
+
+    public shared ({ caller }) func joinWaitlist(name : Text, email : Text, icpAddress : ?Text) : async Result.Result<Text, Text> {
+        if (Text.size(name) == 0 or Text.size(email) == 0) {
+            return #err("Name and email must be filled");
+        };
+        
+        let newWaitlistEntry : UserTypes.WaitlistData = {
+            name = name;
+            email = email;
+            icpAddress = icpAddress;
+        };
+        waitlistDataRecord.put(caller, newWaitlistEntry);
+        return #ok("Joined the waitlist successfully!");
+    };
 };

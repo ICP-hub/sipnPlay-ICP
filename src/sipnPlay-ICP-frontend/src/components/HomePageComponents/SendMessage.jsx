@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import AnimationButton from '../../common/AnimationButton';
-
+import { useAuth } from "../../utils/useAuthClient"
+import toast from 'react-hot-toast';
 
 const SendMessage = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
+    const { backendActor } = useAuth();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        console.log('Name:', name);
-        console.log('Email:', email);
-        console.log('Message:', message);
+        const response = await backendActor.sendMessage(name,email,message);
+        if(response.ok){
+            toast.success(response.ok)
+        }else{
+            toast.error("Error sending message");
+        }
         setName('');
         setEmail('');
         setMessage('');
@@ -21,7 +26,7 @@ const SendMessage = () => {
         <div id='contact-us' className="flex flex-col md:flex-row px-4 md:px-[9%] pb-[147px] relative z-20 overflow-hidden mt-20">
             <h2 className="text-4xl md:text-6xl font-monckeberg mt-4 md:mt-[2%] text-white text-center md:text-left">
                 Send us a message
-                </h2>
+            </h2>
             <form className="p-4 md:p-8 rounded-lg shadow-md w-full mt-4 md:mt-0 md:ml-10 bg-black bg-opacity-80" onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-[14px] md:text-[22.5px] text-white font-adam font-bold text-sm mb-2" htmlFor="name">
