@@ -19,13 +19,13 @@ const TrustedBy = () => {
       <div className="flex items-center flex-wrap md:justify-between gap-10 mx-[9%]">
         <img draggable="false" src={difinitylogo} alt="Trusted Brand 1" 
         className="w-[112px] md:w-40 h-[58px] md:h-20 mx-auto object-contain  
-        grayscale transition-transform duration-300 ease-in-out hover:grayscale-0"  />
+        md:grayscale transition-transform duration-300 ease-in-out  md:hover:grayscale-0"  />
         <img draggable="false" src={IClogo} alt="Trusted Brand 2" 
         className="w-[181px] md:w-64 h-[37px] md:h-14 mx-auto object-contain 
-        grayscale transition-transform duration-300 ease-in-out hover:grayscale-0 "/>
+        md:grayscale transition-transform duration-300 ease-in-out md:hover:grayscale-0 "/>
         <img draggable="false" src={hublogo} alt="Trusted Brand 3" 
         className="w-[178px] md:w-80 h-[31px] md:h-14 mx-auto object-contain 
-        grayscale transition-transform duration-300 ease-in-out hover:grayscale-0" />
+        md:grayscale transition-transform duration-300 ease-in-out  md:hover:grayscale-0" />
       </div>
     </div>
   );

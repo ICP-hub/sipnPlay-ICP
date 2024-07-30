@@ -26,59 +26,60 @@ const ArcadeCommunity = () => {
         <h1>Join <span className='text-[#EE3EC9]'>SipnPlay</span> Arcade Community</h1>
         </div>
 
-        {/* Community person images */}
-        <div className='relative  flex  h-[310.02px] xl:h-screen'>
-        <div className='xl:w-[131px]  w-[68.72px] absolute right-[0.01%] bottom-[10%] xl:right-[20%] xl:bottom-[25%] '>
-        <img  src={person1} draggable="false" />
-    </div>
-    <div className='absolute xl:left-[30%] xl:bottom-[22%] w-[46.16px] xl:w-[88px] bottom-[1%] left-[5%]'>
-        <img  src={person2} draggable="false" />
-    </div>
-    <div className='absolute xl:left-[30%] xl:top-[10%] left-[20%] top-[10%] w-[50.88px] xl:w-[97px]  '>
-        <img  src={person3} draggable="false" />
-    </div>
-    <div className='absolute w-[98.09px] xl:w-[187px] right-[10%] bottom-[35%] xl:right-[30%] xl:bottom-[44%] '>
-        <img  src={person4} draggable="false" />
-    </div>
-    <div className='absolute w-[56.65px] xl:w-[108px]  right-[28%] top-[10%] xl:right-[39%] xl:bottom-[77%]  '>
-        <img  src={person5} draggable="false" />
-    </div>
-    <div className=' absolute w-[69.24px] xl:w-[132px] right-[20%] bottom-[2%] xl:right-[32%] xl:bottom-[19%]'>
-        <img  src={person6} draggable="false" />
-    </div>
-    <div className='absolute xl:left-[28%] xl:bottom-[42%] left-[20%] bottom-[8%] w-[98.09px] xl:w-[187px]  '>
-        <img  src={person7} draggable="false" />
-    </div>
-    <div className='xl:w-[94px] w-[49.31px] absolute right-[5%] top-[15%] xl:right-[26%] xl:bottom-[70%]'>
-        <img  src={person8} draggable="false" />
-    </div>
-    <div className=' absolute hidden xl:block  xl:w-[94px] xl:right-[8%] xl:bottom-[35%]  '>
-        <img  src={person9} draggable="false" />
-    </div>
-    <div className=' absolute hidden xl:block  xl:w-[94px] xl:right-[1%] xl:bottom-[55%]'>
-        <img  src={person10} draggable="false" />
-    </div>
-    <div className='absolute w-[49.31px] left-[50%] bottom-[30%] xl:w-[94px] xl:left-[45%] xl:bottom-[42%] '>
-        <img  src={person11} draggable="false" />
-    </div>
-    <div className='absolute hidden xl:block xl:left-[17%] xl:bottom-[30%]  xl:w-[128px]  '>
-        <img  src={person12} draggable="false" />
-    </div>
-    <div className='absolute w-[80.78px] xl:w-[187px] left-[45%] -bottom-[10%] xl:left-[40%] xl:bottom-[10%] '>
-        <img  src={person13} draggable="false" />
-    </div>
-    <div className='absolute w-[53px] xl:w-[154px] -right-[5%] top-[34%] xl:right-[15%] xl:bottom-[50%] '>
-        <img  src={person14} draggable="false" />
-    </div>
-    <div className=' absolute top-[35%] left-[10%]  xl:left-[15%] xl:top-[20%]  w-[80.78px] xl:w-[154px]  '>
-        <img  src={person15} draggable="false" />
-    </div>
-    <div className='absolute left-[40%] top-[25%] xl:left-[40%] xl:top-[15%] w-[65.05px]  xl:w-[124px]  '>
-        <img  src={person16} draggable="false" />
-    </div>
-    <div className='absolute xl:left-[5%] xl:bottom-[42%] hidden xl:block xl:w-[128px]  '>
-        <img  src={person17} draggable="false" />
-    </div>
+             {/* Community person images */}
+      <div className='relative flex h-[310.02px] xl:h-screen'>
+        <div className='absolute right-[0.01%] bottom-[10%] xl:right-[20%] xl:bottom-[25%] w-[68.72px] dlg:w-[90px] xl:w-[131px]'>
+          <img src={person1} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute left-[5%] bottom-[1%] xl:left-[30%] xl:bottom-[22%] w-[46.16px] dlg:w-[60px] xl:w-[88px]'>
+          <img src={person2} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute left-[20%] top-[10%] xl:left-[30%] xl:top-[10%] w-[50.88px] dlg:w-[70px] xl:w-[97px]'>
+          <img src={person3} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute right-[10%] bottom-[35%] xl:right-[30%] xl:bottom-[44%] w-[98.09px] dlg:w-[130px] xl:w-[187px]'>
+          <img src={person4} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute right-[28%] top-[10%] xl:right-[39%] xl:bottom-[77%] w-[56.65px] dlg:w-[75px] xl:w-[108px]'>
+          <img src={person5} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute right-[20%] bottom-[2%] xl:right-[32%] xl:bottom-[19%] w-[69.24px] dlg:w-[90px] xl:w-[132px]'>
+          <img src={person6} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute left-[20%] bottom-[8%] xl:left-[28%] xl:bottom-[42%] w-[98.09px] dlg:w-[130px] xl:w-[187px]'>
+          <img src={person7} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute right-[5%] top-[15%] xl:right-[26%] xl:bottom-[70%] w-[49.31px] dlg:w-[65px] xl:w-[94px]'>
+          <img src={person8} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute hidden xl:block xl:right-[8%] xl:bottom-[35%] xl:w-[94px]'>
+          <img src={person9} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute hidden xl:block xl:right-[1%] xl:bottom-[55%] xl:w-[94px]'>
+          <img src={person10} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute left-[50%] bottom-[30%] xl:left-[45%] xl:bottom-[42%] w-[49.31px] dlg:w-[65px] xl:w-[94px]'>
+          <img src={person11} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute hidden xl:block xl:left-[17%] xl:bottom-[30%] xl:w-[128px]'>
+          <img src={person12} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute left-[45%] -bottom-[10%] xl:left-[40%] xl:bottom-[10%] w-[80.78px] dlg:w-[100px] xl:w-[187px]'>
+          <img src={person13} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute right-[-5%] top-[34%] xl:right-[15%] xl:bottom-[50%] w-[53px] dlg:w-[75px] xl:w-[154px]'>
+          <img src={person14} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute left-[10%] top-[35%] xl:left-[15%] xl:top-[20%] w-[80.78px] dlg:w-[100px] xl:w-[154px]'>
+          <img src={person15} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute left-[40%] top-[25%] xl:left-[40%] xl:top-[15%] w-[65.05px] dlg:w-[85px] xl:w-[124px]'>
+          <img src={person16} draggable="false" className='w-full h-auto' />
+        </div>
+        <div className='absolute hidden xl:block xl:left-[5%] xl:bottom-[42%] xl:w-[128px]'>
+          <img src={person17} draggable="false" className='w-full h-auto' />
+        </div>
+
     </div>
     </div>
   )

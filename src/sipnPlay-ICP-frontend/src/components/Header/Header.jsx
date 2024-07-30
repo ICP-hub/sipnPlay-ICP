@@ -49,19 +49,19 @@ const Header = () => {
 
 
   return (
-    <nav className="relative z-50 text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-9 flex justify-between items-center ">
+    <nav className="relative  z-50 text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-9 flex justify-between items-center ">
 
       <div className="flex items-center">
-        <img src={logo} alt="Logo" className="h-[50px] w-[200px]" />
+        <img src={logo} alt="Logo" className="h-[50px] w-[200px]"  draggable="false" />
       </div>
 
       <div className="hidden md:flex space-x-8">
-        <a href="#home" className="underline decoration-pink-400 underline-offset-8">
+        <a href="#home" className="underline hidden dlg:block decoration-pink-400 underline-offset-8">
           <GradientText children="Home" />
         </a>
-        <a href="#our-team" className=""><GradientText children="Our Team" /></a>
-        <a href="#contact-us" className=""><GradientText children="Contact Us" /></a>
-        <a href="#lets-cook" className=""><GradientText children="Let's Cook" /></a>
+        <a href="#our-team" className="hidden dlg:block"><GradientText children="Our Team" /></a>
+        <a href="#contact-us" className="hidden dlg:block"><GradientText children="Contact Us" /></a>
+        <a href="#lets-cook" className="hidden dlg:block"><GradientText children="Let's Cook" /></a>
       </div>
       <div>
         <AnimationButton onClick={openModal} text="Join Waitlist" />
