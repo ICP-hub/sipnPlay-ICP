@@ -20,7 +20,7 @@ const Hero = () => {
 
       {/* Right Div */}
       <div className="lg:border-b-[0.5px] lg:h-screen h-[392px]  xl:h-[722px] relative">
-        <p className="font-monument absolute -left-4 xl:left-0 bottom-8 font-bold opacity-10 w-full text-[156px] xl:text-[200px] ">NFT</p>
+        <p className="font-monument absolute -left-2 xl:left-0 bottom-8 font-bold opacity-10 w-full text-[156px] xl:text-[200px] ">NFT</p>
         <p className='font-monument absolute left-0 bottom-0 opacity-10 font-bold text-[55px] xl:text-[100px]'>PASSPORT</p>
         
         <div
