@@ -49,7 +49,7 @@ const Header = () => {
 
 
   return (
-    <nav className="relative  z-50 text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-9 flex justify-between items-center ">
+    <nav className="relative  z-0 text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-9 flex justify-between items-center ">
 
       <div className="flex items-center">
         <img src={logo} alt="Logo" className="h-[50px] w-[200px]"  draggable="false" />
