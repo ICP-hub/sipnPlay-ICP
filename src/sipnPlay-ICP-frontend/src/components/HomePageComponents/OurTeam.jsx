@@ -23,7 +23,7 @@ const OurTeam = () => {
       <h2 className="text-[30px] md:text-5xl font-black font-inter text-center mb-10">Our Team</h2>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
 
-        <div className="rounded-lg flex lg:flex-col flex-row-reverse items-center gap-7 lg:gap-0 mx-auto shadow-md p-6 ">
+        <div className="rounded-lg flex lg:flex-col flex-row-reverse ss3:w-full items-center gap-7 lg:gap-0 mx-auto shadow-md p-6 ">
           
           <div className=' bg-slate-100 relative h-[256px] lg:h-96 border-[#696969] w-[256px] lg:w-64 bg-opacity-10 border rounded'>
           <img draggable="false" src={Member1} alt="Team Member 1" className="h-full object-cover   rounded-t-lg"/>
@@ -36,18 +36,18 @@ const OurTeam = () => {
         </div>
 
      
-        <div className="bg-black mx-auto rounded-lg  flex lg:flex-col flex-row items-center gap-7 lg:gap-0 shadow-md p-6">
-        <div className=' bg-slate-100 h-[256px] lg:h-96 w-[256px] lg:w-64 bg-opacity-10 border border-[#696969] rounded'>
+        <div className="bg-black  mx-auto rounded-lg  flex lg:flex-col flex-row items-center gap-7 ss3:w-full lg:gap-0 shadow-md p-6">
+        <div className=' bg-slate-100 relative  h-[256px] lg:h-96 w-[256px] lg:w-64 bg-opacity-10 border border-[#696969] rounded'>
           <img draggable="false" src={Member2} alt="Team Member 2" className=" h-full object-cover rounded-t-lg" />
           </div>
-          <div className="mt-4 mx-auto text-center">
+          <div className="mt-4  w-[43%] xxs1:w-auto text-center">
             <h3 className="text-[20px] lg:text-[31px] font-normal pr-10 font-monckeberg">KatochXcrypto</h3>
             <p className="text-white text-[14px] lg:text-[22px] pr-10 font-bold font-adam">Community Crusander</p>
           </div>
         </div>
 
         
-        <div className="bg-black flex lg:flex-col flex-row-reverse items-center gap-7 lg:gap-0 mx-auto rounded-lg shadow-md p-6">
+        <div className="bg-black flex lg:flex-col flex-row-reverse items-center gap-7 ss3:w-full lg:gap-0 mx-auto rounded-lg shadow-md p-6">
        
         <div className=' bg-slate-100 relative border-[#696969] h-[256px] lg:h-96 w-[256px] lg:w-64 bg-opacity-10 border  rounded'>
         <div className='hidden lg:block bg-black w-[2em] h-[2em] absolute -right-4 top-[45%] rotate-45 border-l-[0.01em] border-b-[0.01em] border-[#696969]'></div>
