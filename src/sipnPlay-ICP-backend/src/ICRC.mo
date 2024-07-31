@@ -1,5 +1,5 @@
 // This is a generated Motoko binding.
-// Please use `import service "ic:canister_id"` instead to call canisters on the IC if possible.
+// Please use import service "ic:canister_id" instead to call canisters on the IC if possible.
 
 module {
     public type Account = { owner : Principal; subaccount : ?Blob };
@@ -236,4 +236,4 @@ module {
         transfer : shared TransferArgs -> async Result_5;
         transfer_fee : shared query {} -> async TransferFee;
     };
-};    
+};

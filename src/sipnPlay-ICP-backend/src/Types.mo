@@ -1,6 +1,21 @@
 import Principal "mo:base/Principal";
 import Nat "mo:base/Nat";
+import Region "mo:base/Region";
 module {
+    public type Index = Nat64;
+
+    public type Elem = {
+        pos : Nat64;
+        size : Nat64;
+    };
+
+    public type state = {
+        bytes : Region.Region;
+        var bytes_count : Nat64;
+        elems : Region.Region;
+        var elems_count : Nat64;
+    };
+
     public type UserData = {
         id : Principal;
         name : Text;

@@ -5,11 +5,95 @@ import Result "mo:base/Result";
 import UserTypes "./Types";
 import ICRC "./ICRC";
 import Nat "mo:base/Nat";
+import Region "mo:base/Region";
+import Iter "mo:base/Iter";
+import Blob "mo:base/Blob";
+import Nat64 "mo:base/Nat64";
 
 actor {
+
     var userDataRecord = TrieMap.TrieMap<Principal, UserTypes.UserData>(Principal.equal, Principal.hash);
-    var messageDataRecord = TrieMap.TrieMap<Principal, UserTypes.MessageData>(Principal.equal, Principal.hash);
-    var waitlistDataRecord = TrieMap.TrieMap<Principal, UserTypes.WaitlistData>(Principal.equal, Principal.hash);
+    private stable var stableUsers : [(Principal, UserTypes.UserData)] = [];
+
+    var messageDataRecord = TrieMap.TrieMap<Principal, UserTypes.Index>(Principal.equal, Principal.hash);
+    private stable var stableMessages : [(Principal, UserTypes.Index)] = []; 
+    stable var messageDataRecord_state = {
+        bytes = Region.new();
+        var bytes_count : Nat64 = 0;
+        elems = Region.new ();
+        var elems_count : Nat64 = 0;
+    };
+
+
+    var waitlistDataRecord = TrieMap.TrieMap<Principal, UserTypes.Index>(Principal.equal, Principal.hash);
+    private stable var stableWaitlist : [(Principal, UserTypes.Index)] = [];
+    stable var waitlistDataRecord_state = {
+        bytes = Region.new();
+        var bytes_count : Nat64 = 0;
+        elems = Region.new ();
+        var elems_count : Nat64 = 0;
+    };
+
+    // Preupgrade function to store the data in stable memory
+    system func preupgrade(){
+        stableMessages := Iter.toArray(messageDataRecord.entries());
+        stableWaitlist := Iter.toArray(waitlistDataRecord.entries());
+    };
+
+    system func postupgrade(){
+       messageDataRecord := TrieMap.fromEntries(stableMessages.vals(),Principal.equal,Principal.hash);
+        
+        waitlistDataRecord := TrieMap.fromEntries(stableWaitlist.vals(),Principal.equal,Principal.hash);
+    };
+
+    //Functions********************************
+
+    // *****************************Stable Functions***************************** 
+
+    func regionEnsureSizeBytes(r : Region, new_byte_count : Nat64) {
+        let pages = Region.size(r);
+        if (new_byte_count > pages << 16) {
+        let new_pages = ((new_byte_count + ((1 << 16) - 1)) / (1 << 16)) - pages;
+        assert Region.grow(r, new_pages) == pages
+        }
+    };
+
+    let elem_size = 16 : Nat64;
+
+    func stable_get(index : UserTypes.Index , state : UserTypes.state) : async Blob {
+        assert index < state.elems_count;
+        let pos = Region.loadNat64(state.elems, index * elem_size);
+        let size = Region.loadNat64(state.elems, index * elem_size + 8);
+        let elem = { pos ; size };
+        Region.loadBlob(state.bytes, elem.pos, Nat64.toNat(elem.size))
+    };
+
+    func stable_add(blob : Blob , state : UserTypes.state) : async UserTypes.Index {
+        let elem_i = state.elems_count;
+        state.elems_count += 1;
+
+        let elem_pos = state.bytes_count;
+        state.bytes_count += Nat64.fromNat(blob.size());
+
+        regionEnsureSizeBytes(state.bytes, state.bytes_count);
+        Region.storeBlob(state.bytes, elem_pos, blob);
+
+        regionEnsureSizeBytes(state.elems, state.elems_count * elem_size);
+        Region.storeNat64(state.elems, elem_i * elem_size + 0, elem_pos);
+        Region.storeNat64(state.elems, elem_i * elem_size + 8, Nat64.fromNat(blob.size  ()));
+        elem_i
+  }; 
+
+    func update_stable(index : UserTypes.Index , blob : Blob , state : UserTypes.state) : async UserTypes.Index {
+    assert index < state.elems_count;
+    let pos = Region.loadNat64(state.elems, index * elem_size);
+    let size = Region.loadNat64(state.elems, index * elem_size + 8);
+    let elem = { pos ; size };
+    Region.storeBlob(state.bytes, elem.pos, blob);
+    Region.storeNat64(state.elems, index * elem_size + 8, Nat64.fromNat(blob.size()));
+    index
+    };
+
 
     let icpLedger = "ryjl3-tyaaa-aaaaa-aaaba-cai";
     let payment_address = Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai");
@@ -124,7 +208,10 @@ actor {
             email = email;
             message = message;
         };
-        messageDataRecord.put(caller, newMessage);
+        let message_blob = to_candid(newMessage);
+        let index = await stable_add(message_blob, messageDataRecord_state);
+
+        messageDataRecord.put(caller, index);
         return #ok("Message sent successfully!");
     };
 
@@ -138,7 +225,11 @@ actor {
             email = email;
             icpAddress = icpAddress;
         };
-        waitlistDataRecord.put(caller, newWaitlistEntry);
+
+        let waitlist_blob = to_candid(newWaitlistEntry);
+        let index = await stable_add(waitlist_blob, waitlistDataRecord_state);
+
+        waitlistDataRecord.put(caller, index);
         return #ok("Joined the waitlist successfully!");
     };
 };

@@ -9,7 +9,7 @@ import ArcadeCommunity from '../components/HomePageComponents/ArcadeCommunity';
 
 function Home() {
   return (
-    <div className="p-4">
+    <div>
       <Hero />
       <TrustedBy />
       <Intro />
