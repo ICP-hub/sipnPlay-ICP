@@ -23,7 +23,11 @@ const Hero = () => {
         <img className='w-[431px] lg:w-[100%] mx-auto mt-14  ' draggable="false" src={nft} />
         <p className="font-monument absolute ss2:text-[100px] xxs1:w-[100%] sm1:-left-2 xl:left-0 bottom-8 font-bold opacity-10 w-full xxs1:text-[156px] xl:text-[200px] ">NFT</p>
         <p className='font-monument absolute left-0 bottom-0  opacity-10 font-bold text-[40px] xxs1:text-[55px] xl:text-[100px]'>PASSPORT</p>
-        
+
+        <div className="flex items-center absolute rotate-90 right-[-100px] bottom-[15%] dlg:right-[-180px] dlg:bottom-[15%]">
+  <p className="font-semibold mr-2 ">SCROLL</p>
+  <div className="flex-1  h-[2px] w-[100px] border  bg-white"></div>
+</div>
         <div
           className="absolute hidden xl:block -top-[124px] opacity-85 -right-[500px] rounded-full h-[120%] blur-lg w-[1587px] "
           style={{
