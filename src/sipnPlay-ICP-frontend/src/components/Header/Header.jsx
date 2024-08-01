@@ -33,7 +33,7 @@ const Header = () => {
     if (isAuthenticated) {
       getStatus();
     } else { 
-      toast.error("You are logged out");
+      // toast.error("You are logged out");
     }
   }, [isAuthenticated]);
 
@@ -49,7 +49,7 @@ const Header = () => {
 
 
   return (
-    <nav className="relative   text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-9 flex justify-between items-center ">
+    <nav className="relative z-20 text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-9 flex justify-between items-center ">
 
       <div className="flex items-center">
         <img src={logo} alt="Logo" className="h-[50px] w-[200px]"  draggable="false" />
