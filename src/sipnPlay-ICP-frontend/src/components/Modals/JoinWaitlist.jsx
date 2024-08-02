@@ -35,7 +35,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
     };
 
     return (
-        <div>
+        <div className='z-30'>
             <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={closeModal}

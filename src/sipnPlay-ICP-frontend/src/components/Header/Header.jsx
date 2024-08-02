@@ -15,6 +15,7 @@ const Header = () => {
   }
   
   const { login, logout, isAuthenticated, backendActor } = useAuth();
+  const [activeSection, setActiveSection] = useState('home');
   const [userDetails, setUserDetails] = useState(null);
   const [modal1IsOpen, setModalIsOpen] = useState(false);
 
@@ -47,6 +48,9 @@ const Header = () => {
     }
   };
 
+  const handleSectionClick = (section) => {
+    setActiveSection(section);
+  };
 
   return (
     <nav className="relative z-20 text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-9 flex justify-between items-center ">
@@ -56,12 +60,34 @@ const Header = () => {
       </div>
 
       <div className="hidden md:flex space-x-8">
-        <a href="#home" className="underline hidden dlg:block decoration-pink-400 underline-offset-8">
+        <a
+          href="#home"
+          onClick={() => handleSectionClick('home')}
+          className={`underline ${activeSection === 'home' ? 'decoration-pink-400 underline-offset-8' : 'decoration-transparent'}`}
+        >
           <GradientText children="Home" />
         </a>
-        <a href="#our-team" className="hidden dlg:block"><GradientText children="Our Team" /></a>
-        <a href="#contact-us" className="hidden dlg:block"><GradientText children="Contact Us" /></a>
-        <a href="#lets-cook" className="hidden dlg:block"><GradientText children="Let's Cook" /></a>
+        <a
+          href="#our-team"
+          onClick={() => handleSectionClick('our-team')}
+          className={`underline ${activeSection === 'our-team' ? 'decoration-pink-400 underline-offset-8' : 'decoration-transparent'}`}
+        >
+          <GradientText children="Our Team" />
+        </a>
+        <a
+          href="#contact-us"
+          onClick={() => handleSectionClick('contact-us')}
+          className={`underline ${activeSection === 'contact-us' ? 'decoration-pink-400 underline-offset-8' : 'decoration-transparent'}`}
+        >
+          <GradientText children="Contact Us" />
+        </a>
+        <a
+          href="#lets-cook"
+          onClick={() => handleSectionClick('lets-cook')}
+          className={`underline ${activeSection === 'lets-cook' ? 'decoration-pink-400 underline-offset-8' : 'decoration-transparent'}`}
+        >
+          <GradientText children="Let's Cook" />
+        </a>
       </div>
       <div>
         <AnimationButton onClick={openModal} text="Join Waitlist" />

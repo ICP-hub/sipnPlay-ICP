@@ -19,13 +19,13 @@ const BlackJack = ()=> {
         }
       }
   }
-  useEffect(() => {
-   if(isAuthenticated === false){
-    navigate("/");
-   }else{
-    checkPoints();
-   }
-}, []);
+//   useEffect(() => {
+//    if(isAuthenticated === false){
+//     navigate("/");
+//    }else{
+//     checkPoints();
+//    }
+// }, []);
 
   useEffect(() => {
       const handlePostMessage = async(event) => {

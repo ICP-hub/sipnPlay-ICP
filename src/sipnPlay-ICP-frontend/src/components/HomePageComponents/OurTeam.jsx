@@ -42,7 +42,7 @@ const OurTeam = () => {
           </div>
           <div className="mt-4  w-[43%] xxs1:w-auto text-center">
             <h3 className="text-[20px] lg:text-[31px] font-normal pr-10 font-monckeberg">KatochXcrypto</h3>
-            <p className="text-white text-[14px] lg:text-[22px] pr-10 font-bold font-adam">Community Crusander</p>
+            <p className="text-white text-[14px] lg:text-[22px] pr-10 font-bold font-adam">Community Crusader</p>
           </div>
         </div>
 
@@ -55,7 +55,7 @@ const OurTeam = () => {
           </div>
           <div className="mt-4 mx-auto text-center">
             <h3 className="text-[20px] lg:text-[31px] font-normal pr-10 font-monckeberg">Vinny K</h3>
-            <p className="text-white text-[14px] lg:text-[22px] pr-10 font-bold font-adam">Blockchin Architect</p>
+            <p className="text-white text-[14px] lg:text-[22px] pr-10 font-bold font-adam">Blockchain Architect</p>
           </div>
         </div>
       </div>
