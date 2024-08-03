@@ -6,6 +6,7 @@ import { AuthProvider } from "./utils/useAuthClient"
 import Register from './Pages/Register';
 import Payment from './Pages/Payment';
 import PrivateLayout from './Layout/PrivateLayout';
+import AdminPanel from './Pages/Admin';
 function AllRoutes() {
   return (
     <AuthProvider >
@@ -36,6 +37,12 @@ function AllRoutes() {
           path="/payment"
           element={
             <Payment />
+          }
+        />
+          <Route
+          path="/admin"
+          element={
+            <AdminPanel />
           }
         />
 

@@ -9,8 +9,25 @@ const SendMessage = () => {
     const [message, setMessage] = useState('');
     const { backendActor } = useAuth();
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+   
     const handleSubmit = async(e) => {
         e.preventDefault();
+
+        if (!name.trim() || !email.trim() || !message.trim()) {
+            toast.error('Please fill all required fields.');
+            return;
+        }
+    
+        if (!validateEmail(email)) {
+            toast.error('Please enter a valid email address.');
+            return;
+        }
+    
         const response = await backendActor.sendMessage(name,email,message);
         if(response.ok){
             toast.success(response.ok)
@@ -38,7 +55,6 @@ const SendMessage = () => {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        required
                     />
                 </div>
                 <div className="mb-4">
@@ -51,7 +67,6 @@ const SendMessage = () => {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        required
                     />
                 </div>
 
@@ -65,7 +80,6 @@ const SendMessage = () => {
                         rows="4"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        required
                     ></textarea>
                 </div>
 

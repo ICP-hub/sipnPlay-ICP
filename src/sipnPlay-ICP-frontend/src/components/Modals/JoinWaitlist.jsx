@@ -16,12 +16,33 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
         setIsOpen(false);
     }
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [icpAddress, setIcpAddress] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!name || !email || !icpAddress) {
+            toast.error('Please fill all required fields.');
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            toast.error('Please enter a valid email address.');
+            return;
+        }
+
+        if (icpAddress.trim() === '') {
+            toast.error('Please enter a valid ICP address.');
+            return;
+        }
+
         const response = await backendActor.joinWaitlist(name, email, icpAddress);
         if (response.ok) {
             toast.success(response.ok);
@@ -35,13 +56,13 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
     };
 
     return (
-        <div className='z-30'>
+        <div>
             <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={closeModal}
                 contentLabel="Example Modal"
                 className="fixed  inset-0 flex items-center justify-center bg-transparent"
-                overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50"
+                overlayClassName="fixed z-[100] inset-0 bg-gray-800 bg-opacity-50"
             >
                 <div
                     style={{
@@ -59,7 +80,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                         <img className=' w-[150px] h-[50px] md:w-[100px] lg:w-[131px]' draggable="false" src={logo} />
                         <img className='w-[200px] transform -scale-x-100 md:transform-none md:w-[200px] lg:w-[313px]  md:mt-0 md:absolute top-0 right-0 md:top-auto md:right-auto md:-bottom-9 md:-left-9 ' draggable="false" src={alien} />
                     </div>
-                    
+
                     <div className='w-full md:w-auto mt-8 md:mt-0'>
                         <button
                             onClick={closeModal}
@@ -78,7 +99,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    required
+                                    // required
                                 />
                             </div>
                             <div className="md:mb-4  ">
@@ -91,7 +112,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    required
+                                    // required
                                 />
                             </div>
                             <div className="md:mb-6 ">
@@ -104,22 +125,22 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                                     id="icpAddress"
                                     value={icpAddress}
                                     onChange={(e) => setIcpAddress(e.target.value)}
-                                    required
+                                    // required
                                 />
                             </div>
                             <div className='flex mb-4 justify-center md:justify-end'>
                                 <AnimationButton text='Submit' />
                             </div>
                         </form>
-                        
+
                         <div className='flex flex-col md:flex-row md:justify-end mt-12 mb-7 text-white gap-3 items-center md:items-end'>
                             <p className='font-adam font-[300] text-white text-[20px] text-center md:text-left'>Follow us on</p>
                             <div className='flex gap-3 mt-2 md:mt-0'>
                                 <Link to="https://discord.com/invite/6PmNCezvG4" target="__blank"><BsDiscord size={33} /></Link>
                                 <Link to="https://t.me/+BpcBOPokAFtmYWE1" target="__blank"><BsTelegram size={33} /></Link>
                                 <Link to="https://x.com/SipnPlayGames" target="__blank"><BsTwitterX size={33} /></Link>
-                           
-                        </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>

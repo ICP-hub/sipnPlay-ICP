@@ -19,8 +19,8 @@ actor {
     var userDataRecord = TrieMap.TrieMap<Principal, Types.UserData>(Principal.equal, Principal.hash);
     private stable var stableUsers : [(Principal, Types.UserData)] = [];
 
-    var messageDataRecord = TrieMap.TrieMap<Principal, Types.Index>(Principal.equal, Principal.hash);
-    private stable var stableMessages : [(Principal, Types.Index)] = []; 
+    var messageDataRecord = TrieMap.TrieMap<Text, Types.Index>(Text.equal, Text.hash);
+    private stable var stableMessages : [(Text, Types.Index)] = []; 
     stable var messageDataRecord_state = {
         bytes = Region.new();
         var bytes_count : Nat64 = 0;
@@ -29,8 +29,8 @@ actor {
     };
 
 
-    var waitlistDataRecord = TrieMap.TrieMap<Principal, Types.Index>(Principal.equal, Principal.hash);
-    private stable var stableWaitlist : [(Principal, Types.Index)] = [];
+    var waitlistDataRecord = TrieMap.TrieMap<Text, Types.Index>(Text.equal, Text.hash);
+    private stable var stableWaitlist : [(Text, Types.Index)] = [];
     stable var waitlistDataRecord_state = {
         bytes = Region.new();
         var bytes_count : Nat64 = 0;
@@ -45,9 +45,9 @@ actor {
     };
 
     system func postupgrade(){
-       messageDataRecord := TrieMap.fromEntries(stableMessages.vals(),Principal.equal,Principal.hash);
+       messageDataRecord := TrieMap.fromEntries(stableMessages.vals(),Text.equal,Text.hash);
         
-        waitlistDataRecord := TrieMap.fromEntries(stableWaitlist.vals(),Principal.equal,Principal.hash);
+        waitlistDataRecord := TrieMap.fromEntries(stableWaitlist.vals(),Text.equal,Text.hash);
     };
 
     //Functions********************************
@@ -202,7 +202,7 @@ actor {
 
     };
 
-    public shared ({ caller }) func sendMessage(name : Text, email : Text, message : Text) : async Result.Result<Text, Text> {
+    public shared func sendMessage(name : Text, email : Text, message : Text) : async Result.Result<Text, Text> {
         if (Text.size(name) == 0 or Text.size(email) == 0 or Text.size(message) == 0) {
             return #err("All fields must be filled");
         };
@@ -215,12 +215,12 @@ actor {
         let message_blob = to_candid(newMessage);
         let index = await stable_add(message_blob, messageDataRecord_state);
 
-        messageDataRecord.put(caller, index);
+        messageDataRecord.put(email, index);
         return #ok("Message sent successfully!");
     };
 
     public shared func getMessages(chunkSize : Nat , PageNo : Nat) : async{data : [Types.MessageData]; current_page : Nat; total_pages : Nat}   {
-        let index_pages =  Utils.paginate<(Principal , Types.Index)>(Iter.toArray(messageDataRecord.entries()), chunkSize);
+        let index_pages =  Utils.paginate<(Text , Types.Index)>(Iter.toArray(messageDataRecord.entries()), chunkSize);
          if (index_pages.size() < PageNo) {
             throw Error.reject("Page not found");
         };
@@ -261,12 +261,12 @@ actor {
         let waitlist_blob = to_candid(newWaitlistEntry);
         let index = await stable_add(waitlist_blob, waitlistDataRecord_state);
 
-        waitlistDataRecord.put(caller, index);
+        waitlistDataRecord.put(email, index);
         return #ok("Joined the waitlist successfully!");
     };
 
     public shared func getWaitlist(chunkSize : Nat , PageNo : Nat) : async{data : [Types.WaitlistData]; current_page : Nat; total_pages : Nat}   {
-        let index_pages =  Utils.paginate<(Principal , Types.Index)>(Iter.toArray(waitlistDataRecord.entries()), chunkSize);
+        let index_pages =  Utils.paginate<(Text , Types.Index)>(Iter.toArray(waitlistDataRecord.entries()), chunkSize);
          if (index_pages.size() < PageNo) {
             throw Error.reject("Page not found");
         };
