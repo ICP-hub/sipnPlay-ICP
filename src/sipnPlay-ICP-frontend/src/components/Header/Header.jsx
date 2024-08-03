@@ -59,7 +59,7 @@ const Header = () => {
         <img src={logo} alt="Logo" className="h-[50px] w-[200px]"  draggable="false" />
       </div>
 
-      <div className="hidden md:flex space-x-8">
+      <div className="hidden px-2   md:flex space-x-8">
         <a
           href="#home"
           onClick={() => handleSectionClick('home')}

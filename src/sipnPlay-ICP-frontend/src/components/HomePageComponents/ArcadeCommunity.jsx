@@ -37,13 +37,13 @@ const ArcadeCommunity = () => {
         <div className='absolute left-[20%] top-[10%] xl:left-[30%] xl:top-[10%] w-[50.88px] dlg:w-[70px] xl:w-[97px]'>
           <img src={person3} draggable="false" className='w-full h-auto' />
         </div>
-        <div className='absolute right-[10%] bottom-[35%] xl:right-[30%] xl:bottom-[44%] w-[98.09px] dlg:w-[130px] xl:w-[187px]'>
+        <div className='absolute right-[10%] bottom-[35%] ss4:w-[81px] xl:right-[30%] xl:bottom-[44%] w-[98.09px] dlg:w-[130px] xl:w-[187px]'>
           <img src={person4} draggable="false" className='w-full h-auto' />
         </div>
         <div className='absolute right-[28%] top-[10%] xl:right-[39%] xl:bottom-[77%] w-[56.65px] dlg:w-[75px] xl:w-[108px]'>
           <img src={person5} draggable="false" className='w-full h-auto' />
         </div>
-        <div className='absolute right-[20%] bottom-[2%] xl:right-[32%] xl:bottom-[19%] w-[69.24px] dlg:w-[90px] xl:w-[132px]'>
+        <div className='absolute right-[20%] bottom-[2%] xl:right-[32%] xl:bottom-[19%] w-[50px] xxs1:w-[69.24px]    dlg:w-[90px] xl:w-[132px]'>
           <img src={person6} draggable="false" className='w-full h-auto' />
         </div>
         <div className='absolute left-[20%] bottom-[8%] xl:left-[28%] xl:bottom-[42%] w-[98.09px] dlg:w-[130px] xl:w-[187px]'>
@@ -64,7 +64,7 @@ const ArcadeCommunity = () => {
         <div className='absolute hidden xl:block xl:left-[17%] xl:bottom-[30%] xl:w-[128px]'>
           <img src={person12} draggable="false" className='w-full h-auto' />
         </div>
-        <div className='absolute left-[45%] -bottom-[10%] xl:left-[40%] xl:bottom-[10%] w-[80.78px] dlg:w-[100px] xl:w-[187px]'>
+        <div className='absolute left-[45%] -bottom-[10%] xl:left-[40%] xl:bottom-[10%] ss4:w-[65px] xxs:w-[80.78px] dlg:w-[100px] xl:w-[187px]'>
           <img src={person13} draggable="false" className='w-full h-auto' />
         </div>
         <div className='absolute right-[-5%] top-[34%] xl:right-[15%] xl:bottom-[50%] w-[53px] dlg:w-[75px] xl:w-[154px]'>
