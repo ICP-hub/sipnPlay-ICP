@@ -247,7 +247,7 @@ actor {
         return { data = List.toArray(message_list); current_page = PageNo + 1; total_pages = index_pages.size(); };
     };
 
-    public shared ({ caller }) func joinWaitlist(name : Text, email : Text, icpAddress : Text) : async Result.Result<Text, Text> {
+    public shared func joinWaitlist(name : Text, email : Text, icpAddress : Text) : async Result.Result<Text, Text> {
         if (Text.size(name) == 0 or Text.size(email) == 0) {
             return #err("Name and email must be filled");
         };
