@@ -8,6 +8,7 @@ const AdminPanel = () => {
   const [messages, setMessages] = useState([]);
   const [waitlistPage, setWaitlistPage] = useState(0);
   const [waitlistPageSize, setWaitlistPageSize] = useState(0);
+  const [messagelistPageSize, setMessagelistPageSize] = useState(0);
   const [loading, setLoading] = useState(false);
   const [messagesPage, setMessagesPage] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -18,7 +19,6 @@ const AdminPanel = () => {
     try {
       setLoading(true);
       const response = await backendActor.getWaitlist(chunkSize, page);
-      console.log(response);
       if (response.err) {
         setLoading(false);
         return;
@@ -41,6 +41,7 @@ const AdminPanel = () => {
         return;
       }
       setMessages(response.data);
+      setMessagelistPageSize(response.total_pages);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching messages data:', error);
@@ -69,7 +70,8 @@ const AdminPanel = () => {
 
   useEffect(() => {
     const approvedPrincipals = [
-      "6xm33-dd2dg-pd6fa-iiojc-ptsbh-elqne-o4zqv-ipjho-5y4am-mfi53-hqe"
+      "6xm33-dd2dg-pd6fa-iiojc-ptsbh-elqne-o4zqv-ipjho-5y4am-mfi53-hqe",
+      "r6cnl-jzddp-n4rcj-e7hkn-ojjfu-pyejv-ekydi-wpstx-34h2g-3hiwh-pqe"
     ];
     if (isAuthenticated) {
       if (approvedPrincipals.includes(principal)) {
@@ -111,6 +113,24 @@ const AdminPanel = () => {
       return;
     }
     setWaitlistPage(prev => prev + 1)
+  }
+
+  const handlePrevMessage = () => {
+    console.log("Previous Messgae", messagesPage);
+    
+    if (messagesPage === 0) {
+      toast.error("No previous pages");
+      return;
+    }
+    setMessagesPage(prev => prev - 1);
+  }
+
+  const handleNextMessage = () => {
+    if (messagesPage === Number(messagelistPageSize) - 1) {
+      toast.error("No more pages");
+      return;
+    }
+    setMessagesPage(prev => prev + 1)
   }
 
   if (!isAuthenticated) {
@@ -197,6 +217,7 @@ const AdminPanel = () => {
                   >
                     Prev
                   </button>
+                  <p className='text-black font-inter text-[18px]'>{waitlistPage +1}</p>
                   <button
                     onClick={handleNextWaitlist}
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg"
@@ -232,14 +253,14 @@ const AdminPanel = () => {
                 </table>
                 <div className="flex justify-between mt-4">
                   <button
-                    onClick={() => setMessagesPage(prev => Math.max(prev - 1, 0))}
-                    disabled={messagesPage === 0}
+                    onClick={handlePrevMessage}
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg"
                   >
                     Prev
                   </button>
+                  <p className='text-black font-inter text-[18px]'>{messagesPage +1}</p>
                   <button
-                    onClick={() => setMessagesPage(prev => prev + 1)}
+                    onClick={handleNextMessage}
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg"
                   >
                     Next
