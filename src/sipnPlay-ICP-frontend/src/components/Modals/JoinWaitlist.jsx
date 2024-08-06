@@ -11,7 +11,9 @@ import { useAuth } from "../../utils/useAuthClient";
 import toast from 'react-hot-toast';
 
 const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
-    const { backendActor } = useAuth();
+    const { backendActor,principal } = useAuth();
+    console.log(backendActor,principal);
+    
     function closeModal() {
         setIsOpen(false);
     }

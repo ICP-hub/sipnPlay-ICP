@@ -2,7 +2,7 @@ import { AuthClient } from "@dfinity/auth-client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
-import { createActor } from "../../../declarations/sipnPlay-ICP-backend/index";
+import { createActor, sipnPlay_ICP_backend } from "../../../declarations/sipnPlay-ICP-backend/index";
 import { createLedgerActor } from "../../../declarations/ledger/index";
 import { PlugLogin, StoicLogin, NFIDLogin, IdentityLogin } from "ic-auth";
 

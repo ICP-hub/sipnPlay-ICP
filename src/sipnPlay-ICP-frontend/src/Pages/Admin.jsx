@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../utils/useAuthClient";
 import toast from 'react-hot-toast';
+import ConnectWallet from "../components/Modals/ConnectWallets";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState('waitlist');
@@ -14,6 +15,11 @@ const AdminPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { backendActor, login, logout, principal, isAuthenticated, reloadLogin } = useAuth();
   const chunkSize = 10;
+
+  const [modalIsOpen, setIsOpen] = useState(false);
+  function openModal() {
+      setIsOpen(true);
+  }
 
   const fetchWaitlist = async (page) => {
     try {
@@ -71,7 +77,8 @@ const AdminPanel = () => {
   useEffect(() => {
     const approvedPrincipals = [
       "6xm33-dd2dg-pd6fa-iiojc-ptsbh-elqne-o4zqv-ipjho-5y4am-mfi53-hqe",
-      "r6cnl-jzddp-n4rcj-e7hkn-ojjfu-pyejv-ekydi-wpstx-34h2g-3hiwh-pqe"
+      "r6cnl-jzddp-n4rcj-e7hkn-ojjfu-pyejv-ekydi-wpstx-34h2g-3hiwh-pqe",
+      "hle4j-ceoqz-bnsym-4tzlr-yqdbo-d7vng-ez6hr-wtgc2-rjnxz-xwomp-qqe"
     ];
     if (isAuthenticated) {
       if (approvedPrincipals.includes(principal)) {
@@ -137,11 +144,12 @@ const AdminPanel = () => {
     return (
       <div className="p-6">
         <button
-          onClick={handleLogin}
+          onClick={()=>setIsOpen(true)}
           className="px-4 py-2 bg-blue-500 text-white rounded-lg"
         >
           Login
         </button>
+        <ConnectWallet  modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
       </div>
     );
   }
