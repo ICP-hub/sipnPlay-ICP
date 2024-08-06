@@ -3,6 +3,7 @@ import logo from '../../assets/images/logo.png';
 import AnimationButton from '../../common/AnimationButton';
 import GradientText from '../../common/GradientText';
 import JoinWaitlist from '../Modals/JoinWaitlist';
+import ConnectWallets from '../Modals/ConnectWallets';
 import { useAuth } from "../../utils/useAuthClient";
 import toast from "react-hot-toast";
 import Modal from 'react-modal'; 
@@ -90,8 +91,8 @@ const Header = () => {
         </a>
       </div>
       <div>
-        <AnimationButton onClick={openModal} text="Join Waitlist" />
-        <JoinWaitlist modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
+        <AnimationButton onClick={openModal} text="Connect Wallet" />
+        <ConnectWallets modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
       </div>
       
       {/* {!isAuthenticated ? (
