@@ -7,7 +7,6 @@ import ConnectWallets from '../Modals/ConnectWallets';
 import { useAuth } from "../../utils/useAuthClient";
 import toast from "react-hot-toast";
 
-import { Link } from 'react-router-dom';
 
 const Header = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -47,7 +46,7 @@ const Header = () => {
     <nav className="relative z-20 text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-9 flex justify-between items-center ">
 
       <div className="flex items-center">
-        <img src={logo} alt="Logo" className="h-[50px] w-[200px]"  draggable="false" />
+        <img src={logo} alt="Logo" className="md:h-[50px] w-[132px] md:w-[167px] lg:w-[200px]"  draggable="false" />
       </div>
 
       <div className="hidden px-2   md:flex space-x-8">

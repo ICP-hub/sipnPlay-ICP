@@ -27,9 +27,10 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
         className="fixed  inset-0 flex items-center justify-center bg-transparent"
         overlayClassName="fixed z-[100] inset-0 bg-gray-800 bg-opacity-50"
       >
-        <div className='bg-black p-[15px] md:p-[20px] relative w-[29%]  md:h-[578px] border border-[#696969] rounded-xl'>
-          <p className='text-center text-white font-monckeberg text-2xl md:text-2xl lg:text-3xl lg1:text-4xl'>Wallets </p>
-          <img className='absolute left-3 top-4 w-[150px] h-[50px] md:w-[100px] lg:w-[100px] lg:h-[30px] ' draggable="false" src={logo} />
+        <div className='bg-black p-[15px] md:p-[20px] relative w-[80%] md:w-[440px] border border-[#696969] rounded-xl'>
+        <img className='md:absolute mx-auto left-3 top-4 lg:w-[101px] w-[91px] ' draggable="false" src={logo} />
+          <p className='text-center text-white font-monckeberg mt-4 md:mt-0 text-2xl md:text-2xl lg:text-3xl lg1:text-4xl'>Wallets </p>
+          
 
           <div className='w-full md:w-auto mt-8 md:mt-0'>
             <button
@@ -38,7 +39,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
             >
               <RxCross1 />
             </button>
-            <div className="w-[320px] flex flex-col border-t border-gray-400 pt-5  top-[18%] right-[13%] justify-center   absolute ">
+            <div className="w-[90%] mx-auto mt-5 flex flex-col border-t border-gray-400 pt-5 justify-center ">
               <div className="mb-4">
                 <button onClick={()=>login("ii")} className="w-full bg-[#303030] text-white py-2 rounded-[10px] flex items-center">
                   <div className="flex items-center justify-center  ml-2 py-3 px-2 bg-[#3D3F47] rounded">
@@ -77,7 +78,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                   id="terms"
                   className="mr-2 mb-10 "
                 />
-                <label htmlFor="terms" className="text-white">By connecting a wallet, you agree to [company name] Terms of Service and consent to its Privacy Policy.<span className=' text-blue-600'> Learn more</span></label>
+                <label htmlFor="terms" className="text-[12px] md:text-[18px] text-white">By connecting a wallet, you agree to [company name] Terms of Service and consent to its Privacy Policy.<span className=' text-blue-600'> Learn more</span></label>
               </div>
               <div className='flex mb-4  justify-center'>
                 <AnimationButton text='Connect Wallet' />

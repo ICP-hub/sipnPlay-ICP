@@ -33,6 +33,7 @@ export const useAuthClient = () => {
     }
   }, [authClient]);
 
+  const whitelist= [process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND];
 
   const login = async (provider) => {
     return new Promise(async (resolve, reject) => {
@@ -47,7 +48,7 @@ export const useAuthClient = () => {
             provider: "N/A",
           };
           if (provider === "plug") {
-            userObject = await PlugLogin(whitelist);
+            userObject = await PlugLogin();
           } else if (provider === "stoic") {
             userObject = await StoicLogin();
           } else if (provider === "nfid") {

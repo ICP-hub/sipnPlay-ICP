@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from "../utils/useAuthClient";
 import toast from 'react-hot-toast';
 import ConnectWallet from "../components/Modals/ConnectWallets";
+import * as XLSX from 'xlsx';
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState('waitlist');
@@ -17,9 +18,6 @@ const AdminPanel = () => {
   const chunkSize = 10;
 
   const [modalIsOpen, setIsOpen] = useState(false);
-  function openModal() {
-      setIsOpen(true);
-  }
 
   const fetchWaitlist = async (page) => {
     try {
@@ -55,15 +53,6 @@ const AdminPanel = () => {
     }
   };
 
-  const handleLogin = async () => {
-    try {
-      await login("nfid");
-
-    } catch (error) {
-      toast.error('Login failed');
-    }
-  };
-
   const handleLogout = async () => {
     try {
       await logout();
@@ -78,7 +67,8 @@ const AdminPanel = () => {
     const approvedPrincipals = [
       "6xm33-dd2dg-pd6fa-iiojc-ptsbh-elqne-o4zqv-ipjho-5y4am-mfi53-hqe",
       "r6cnl-jzddp-n4rcj-e7hkn-ojjfu-pyejv-ekydi-wpstx-34h2g-3hiwh-pqe",
-      "hle4j-ceoqz-bnsym-4tzlr-yqdbo-d7vng-ez6hr-wtgc2-rjnxz-xwomp-qqe"
+      "hle4j-ceoqz-bnsym-4tzlr-yqdbo-d7vng-ez6hr-wtgc2-rjnxz-xwomp-qqe",
+      "oaegv-sluud-uzs7h-if5kr-jrcgt-prcth-xtr5d-5so2p-ldrm3-t73qb-mae"
     ];
     if (isAuthenticated) {
       if (approvedPrincipals.includes(principal)) {
@@ -123,8 +113,6 @@ const AdminPanel = () => {
   }
 
   const handlePrevMessage = () => {
-    console.log("Previous Messgae", messagesPage);
-    
     if (messagesPage === 0) {
       toast.error("No previous pages");
       return;
@@ -140,16 +128,21 @@ const AdminPanel = () => {
     setMessagesPage(prev => prev + 1)
   }
 
+  const handleDownload = () => {
+    const data = activeSection === 'waitlist' ? waitlist : messages;
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, activeSection);
+    XLSX.writeFile(workbook, `${activeSection}.xlsx`);
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="p-6">
-        <button
-          onClick={()=>setIsOpen(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-        >
+        <button onClick={() => setIsOpen(true)} className="px-4 py-2 bg-blue-500 text-white rounded-lg">
           Login
         </button>
-        <ConnectWallet  modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
+        <ConnectWallet modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
       </div>
     );
   }
@@ -168,33 +161,43 @@ const AdminPanel = () => {
     )
   }
 
- 
   return (
     <div className="p-6">
-      <button
-        onClick={handleLogout}
-        className="px-4 py-2 bg-red-500 text-white rounded-lg mb-4"
-      >
-        Logout
-      </button>
+      <div className="flex justify-between">
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-red-500 text-white rounded-lg mb-4"
+        >
+          Logout
+        </button>
+        <button
+          onClick={handleDownload}
+          className="px-4 py-2 bg-green-500 text-white rounded-lg"
+        >
+          Download Page's Data
+        </button>
+      </div>
 
       <div className="flex justify-center mb-4">
-        <button
-          onClick={() => setActiveSection('waitlist')}
-          className={`px-4 py-2 rounded-l-lg ${activeSection === 'waitlist' ? 'bg-blue-500 text-black' : 'bg-gray-200 text-gray-700'}`}
-        >
-          Waitlist
-        </button>
-        <button
-          onClick={() => setActiveSection('messages')}
-          className={`px-4 py-2 rounded-r-lg ${activeSection === 'messages' ? 'bg-blue-500 text-black' : 'bg-gray-200 text-gray-700'}`}
-        >
-          Messages
-        </button>
+        <div className="flex">
+          <button
+            onClick={() => setActiveSection('waitlist')}
+            className={`px-4 py-2 rounded-l-lg ${activeSection === 'waitlist' ? 'bg-blue-500 text-black' : 'bg-gray-200 text-gray-700'}`}
+          >
+            Waitlist
+          </button>
+          <button
+            onClick={() => setActiveSection('messages')}
+            className={`px-4 py-2 rounded-r-lg ${activeSection === 'messages' ? 'bg-blue-500 text-black' : 'bg-gray-200 text-gray-700'}`}
+          >
+            Messages
+          </button>
+        </div>
+
       </div>
       {loading ? <div className='text-white text-[18px] mt-[34px] text-center font-adam'>
         Loading ....
-      </div>:
+      </div> :
         <div>
           {activeSection === 'waitlist' && (
             <div>
@@ -209,8 +212,8 @@ const AdminPanel = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white text-black divide-y divide-gray-200">
-                    {waitlist.map((item) => (
-                      <tr key={item.icpAddress}>
+                    {waitlist.map((item, index) => (
+                      <tr key={`waitlist${index}`}>
                         <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.icpAddress}</td>
@@ -225,7 +228,6 @@ const AdminPanel = () => {
                   >
                     Prev
                   </button>
-                  <p className='text-black font-inter text-[18px]'>{waitlistPage +1}</p>
                   <button
                     onClick={handleNextWaitlist}
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg"
@@ -236,7 +238,6 @@ const AdminPanel = () => {
               </div>
             </div>
           )}
-
           {activeSection === 'messages' && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Messages</h2>
@@ -251,7 +252,7 @@ const AdminPanel = () => {
                   </thead>
                   <tbody className="bg-white text-black divide-y divide-gray-200">
                     {messages.map((item, index) => (
-                      <tr key={index}>
+                      <tr key={`message${index}`}>
                         <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.message}</td>
@@ -266,7 +267,6 @@ const AdminPanel = () => {
                   >
                     Prev
                   </button>
-                  <p className='text-black font-inter text-[18px]'>{messagesPage +1}</p>
                   <button
                     onClick={handleNextMessage}
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg"

@@ -3,7 +3,7 @@ import React from 'react';
 import nft from "../../assets/images/NFT.gif"
 const Hero = () => {
   return (
-    <section id="home" className="grid grid-cols-1 lg:grid-cols-2 mb-[9%]   px-[8%]">
+    <section id="home" className="grid grid-cols-1 lg:grid-cols-2 my-[140px] md:my-[160px] lg:my-6  px-[8%]">
       {/* Left Div */}
       <div className="  lg:h-screen lg:border-t-[0.5px] lg:border-r-[0.5px] lg:border-white  xl:h-[722px] flex-1 flex-col items-center   justify-center bg-black text-white">
         <div className='flex ml-[10%] pt-[45px] relative xl:pt-[98px] font-monckeberg lg:justify-start md:ml-[-65px] lg:ml-[-50px]   lg:pt-[151px] '>
