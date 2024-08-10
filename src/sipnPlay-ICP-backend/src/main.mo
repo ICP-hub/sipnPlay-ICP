@@ -20,59 +20,58 @@ actor {
     private stable var stableUsers : [(Principal, Types.UserData)] = [];
 
     var messageDataRecord = TrieMap.TrieMap<Text, Types.Index>(Text.equal, Text.hash);
-    private stable var stableMessages : [(Text, Types.Index)] = []; 
+    private stable var stableMessages : [(Text, Types.Index)] = [];
     stable var messageDataRecord_state = {
         bytes = Region.new();
         var bytes_count : Nat64 = 0;
-        elems = Region.new ();
+        elems = Region.new();
         var elems_count : Nat64 = 0;
     };
-
 
     var waitlistDataRecord = TrieMap.TrieMap<Text, Types.Index>(Text.equal, Text.hash);
     private stable var stableWaitlist : [(Text, Types.Index)] = [];
     stable var waitlistDataRecord_state = {
         bytes = Region.new();
         var bytes_count : Nat64 = 0;
-        elems = Region.new ();
+        elems = Region.new();
         var elems_count : Nat64 = 0;
     };
 
     // Preupgrade function to store the data in stable memory
-    system func preupgrade(){
+    system func preupgrade() {
         stableMessages := Iter.toArray(messageDataRecord.entries());
         stableWaitlist := Iter.toArray(waitlistDataRecord.entries());
     };
 
-    system func postupgrade(){
-       messageDataRecord := TrieMap.fromEntries(stableMessages.vals(),Text.equal,Text.hash);
-        
-        waitlistDataRecord := TrieMap.fromEntries(stableWaitlist.vals(),Text.equal,Text.hash);
+    system func postupgrade() {
+        messageDataRecord := TrieMap.fromEntries(stableMessages.vals(), Text.equal, Text.hash);
+
+        waitlistDataRecord := TrieMap.fromEntries(stableWaitlist.vals(), Text.equal, Text.hash);
     };
 
     //Functions********************************
 
-    // *****************************Stable Functions***************************** 
+    // *****************************Stable Functions*****************************
 
     func regionEnsureSizeBytes(r : Region, new_byte_count : Nat64) {
         let pages = Region.size(r);
         if (new_byte_count > pages << 16) {
-        let new_pages = ((new_byte_count + ((1 << 16) - 1)) / (1 << 16)) - pages;
-        assert Region.grow(r, new_pages) == pages
-        }
+            let new_pages = ((new_byte_count + ((1 << 16) - 1)) / (1 << 16)) - pages;
+            assert Region.grow(r, new_pages) == pages;
+        };
     };
 
     let elem_size = 16 : Nat64;
 
-    func stable_get(index : Types.Index , state : Types.state) : async Blob {
+    func stable_get(index : Types.Index, state : Types.state) : async Blob {
         assert index < state.elems_count;
         let pos = Region.loadNat64(state.elems, index * elem_size);
         let size = Region.loadNat64(state.elems, index * elem_size + 8);
-        let elem = { pos ; size };
-        Region.loadBlob(state.bytes, elem.pos, Nat64.toNat(elem.size))
+        let elem = { pos; size };
+        Region.loadBlob(state.bytes, elem.pos, Nat64.toNat(elem.size));
     };
 
-    func stable_add(blob : Blob , state : Types.state) : async Types.Index {
+    func stable_add(blob : Blob, state : Types.state) : async Types.Index {
         let elem_i = state.elems_count;
         state.elems_count += 1;
 
@@ -84,20 +83,19 @@ actor {
 
         regionEnsureSizeBytes(state.elems, state.elems_count * elem_size);
         Region.storeNat64(state.elems, elem_i * elem_size + 0, elem_pos);
-        Region.storeNat64(state.elems, elem_i * elem_size + 8, Nat64.fromNat(blob.size  ()));
-        elem_i
-  }; 
-
-    func update_stable(index : Types.Index , blob : Blob , state : Types.state) : async Types.Index {
-    assert index < state.elems_count;
-    let pos = Region.loadNat64(state.elems, index * elem_size);
-    let size = Region.loadNat64(state.elems, index * elem_size + 8);
-    let elem = { pos ; size };
-    Region.storeBlob(state.bytes, elem.pos, blob);
-    Region.storeNat64(state.elems, index * elem_size + 8, Nat64.fromNat(blob.size()));
-    index
+        Region.storeNat64(state.elems, elem_i * elem_size + 8, Nat64.fromNat(blob.size()));
+        elem_i;
     };
 
+    func update_stable(index : Types.Index, blob : Blob, state : Types.state) : async Types.Index {
+        assert index < state.elems_count;
+        let pos = Region.loadNat64(state.elems, index * elem_size);
+        let size = Region.loadNat64(state.elems, index * elem_size + 8);
+        let elem = { pos; size };
+        Region.storeBlob(state.bytes, elem.pos, blob);
+        Region.storeNat64(state.elems, index * elem_size + 8, Nat64.fromNat(blob.size()));
+        index;
+    };
 
     let CustomLedger = "bw4dl-smaaa-aaaaa-qaacq-cai";
     let payment_address = Principal.fromText("b77ix-eeaaa-aaaaa-qaada-cai");
@@ -172,10 +170,13 @@ actor {
         });
     };
 
-    public shared ({caller}) func get_balance() :async Nat{
-         let ledger = actor (CustomLedger) : ICRC.Token;
-         let balance = await ledger.icrc1_balance_of({owner=caller; subaccount=null});
-         return balance;
+    public shared ({ caller }) func get_balance() : async Nat {
+        let ledger = actor (CustomLedger) : ICRC.Token;
+        let balance = await ledger.icrc1_balance_of({
+            owner = caller;
+            subaccount = null;
+        });
+        return balance;
     };
 
     public shared ({ caller }) func place_order(amount : Nat) : async Result.Result<Text, Text> {
@@ -212,90 +213,105 @@ actor {
         if (Text.size(name) == 0 or Text.size(email) == 0 or Text.size(message) == 0) {
             return #err("All fields must be filled");
         };
-        
+
         let newMessage : Types.MessageData = {
             name = name;
             email = email;
             message = message;
         };
-        let message_blob = to_candid(newMessage);
+        let message_blob = to_candid (newMessage);
         let index = await stable_add(message_blob, messageDataRecord_state);
 
         messageDataRecord.put(email, index);
         return #ok("Message sent successfully!");
     };
 
-    public shared func getMessages(chunkSize : Nat , PageNo : Nat) : async{data : [Types.MessageData]; current_page : Nat; total_pages : Nat}   {
-        let index_pages =  Utils.paginate<(Text , Types.Index)>(Iter.toArray(messageDataRecord.entries()), chunkSize);
-         if (index_pages.size() < PageNo) {
-            throw Error.reject("Page not found");
+    public shared func getMessages(chunkSize : Nat, PageNo : Nat) : async Result.Result<{ data : [Types.MessageData]; current_page : Nat; total_pages : Nat }, Text> {
+        let index_pages = Utils.paginate<(Text, Types.Index)>(Iter.toArray(messageDataRecord.entries()), chunkSize);
+
+        if (index_pages.size() < PageNo) {
+            return #err("Page not found");
         };
+
         if (index_pages.size() == 0) {
-            throw Error.reject("No messages found");
+            return #err("No messages found");
         };
 
         var pages_data = index_pages[PageNo];
         var message_list = List.nil<Types.MessageData>();
 
-        for ((k,v) in pages_data.vals()) {
-            
+        for ((k, v) in pages_data.vals()) {
             let message_blob = await stable_get(v, messageDataRecord_state);
-            let user : ?Types.MessageData = from_candid(message_blob);
-            switch(user){
+            let user : ?Types.MessageData = from_candid (message_blob);
+
+            switch (user) {
                 case null {
-                    throw Error.reject("no blob found in stable memory for the caller");
+                    return #err("No blob found in stable memory for the caller");
                 };
-                case(?val){
+                case (?val) {
                     message_list := List.push(val, message_list);
                 };
             };
         };
-        return { data = List.toArray(message_list); current_page = PageNo + 1; total_pages = index_pages.size(); };
+
+        return #ok({
+            data = List.toArray(message_list);
+            current_page = PageNo + 1;
+            total_pages = index_pages.size();
+        });
     };
 
     public shared func joinWaitlist(name : Text, email : Text, icpAddress : Text) : async Result.Result<Text, Text> {
         if (Text.size(name) == 0 or Text.size(email) == 0) {
             return #err("Name and email must be filled");
         };
-        
+
         let newWaitlistEntry : Types.WaitlistData = {
             name = name;
             email = email;
             icpAddress = icpAddress;
         };
 
-        let waitlist_blob = to_candid(newWaitlistEntry);
+        let waitlist_blob = to_candid (newWaitlistEntry);
         let index = await stable_add(waitlist_blob, waitlistDataRecord_state);
 
         waitlistDataRecord.put(email, index);
         return #ok("Joined the waitlist successfully!");
     };
 
-    public shared func getWaitlist(chunkSize : Nat , PageNo : Nat) : async{data : [Types.WaitlistData]; current_page : Nat; total_pages : Nat}   {
-        let index_pages =  Utils.paginate<(Text , Types.Index)>(Iter.toArray(waitlistDataRecord.entries()), chunkSize);
-         if (index_pages.size() < PageNo) {
-            throw Error.reject("Page not found");
+    public shared func getWaitlist(chunkSize : Nat, PageNo : Nat) : async Result.Result<{ data : [Types.WaitlistData]; current_page : Nat; total_pages : Nat }, Text> {
+        let index_pages = Utils.paginate<(Text, Types.Index)>(Iter.toArray(waitlistDataRecord.entries()), chunkSize);
+
+        if (index_pages.size() < PageNo) {
+            return #err("Page not found");
         };
+
         if (index_pages.size() == 0) {
-            throw Error.reject("No members found");
+            return #err("No members found");
         };
 
         var pages_data = index_pages[PageNo];
         var waitlist_list = List.nil<Types.WaitlistData>();
 
-        for ((k,v) in pages_data.vals()) {
-            
+        for ((k, v) in pages_data.vals()) {
             let waitlist_blob = await stable_get(v, waitlistDataRecord_state);
-            let user : ?Types.WaitlistData = from_candid(waitlist_blob);
-            switch(user){
+            let user : ?Types.WaitlistData = from_candid (waitlist_blob);
+
+            switch (user) {
                 case null {
-                    throw Error.reject("no blob found in stable memory for the caller");
+                    return #err("No blob found in stable memory for the caller");
                 };
-                case(?val){
+                case (?val) {
                     waitlist_list := List.push(val, waitlist_list);
                 };
             };
         };
-        return { data = List.toArray(waitlist_list); current_page = PageNo + 1; total_pages = index_pages.size(); };
+
+        return #ok({
+            data = List.toArray(waitlist_list);
+            current_page = PageNo + 1;
+            total_pages = index_pages.size();
+        });
     };
+
 };

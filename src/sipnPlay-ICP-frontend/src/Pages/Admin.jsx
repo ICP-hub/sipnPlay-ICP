@@ -25,11 +25,15 @@ const AdminPanel = () => {
       const response = await backendActor.getWaitlist(chunkSize, page);
       if (response.err) {
         setLoading(false);
+        setWaitlist([]);
         return;
       }
-      setWaitlist(response.data);
-      setWaitlistPageSize(response.total_pages);
-      setLoading(false);
+      else if (response.ok) {
+        console.log(response.ok)
+        setWaitlist(response.ok.data);
+        setWaitlistPageSize(response.ok.total_pages);
+        setLoading(false);
+      }
     } catch (error) {
       console.error('Error fetching waitlist data:', error);
       toast.error('Error fetching waitlist data');
@@ -40,13 +44,17 @@ const AdminPanel = () => {
     try {
       setLoading(true);
       const response = await backendActor.getMessages(chunkSize, page);
-      if (response.error) {
+      if (response.err) {
+        toast.error(response.err);
+        setMessages([]);
         setLoading(false);
         return;
       }
-      setMessages(response.data);
-      setMessagelistPageSize(response.total_pages);
-      setLoading(false);
+      else if (response.ok) {
+        setMessages(response.ok.data);
+        setMessagelistPageSize(response.ok.total_pages);
+        setLoading(false);
+      }
     } catch (error) {
       console.error('Error fetching messages data:', error);
       toast.error('Error fetching messages data');
@@ -65,10 +73,15 @@ const AdminPanel = () => {
 
   useEffect(() => {
     const approvedPrincipals = [
-      "6xm33-dd2dg-pd6fa-iiojc-ptsbh-elqne-o4zqv-ipjho-5y4am-mfi53-hqe",
-      "r6cnl-jzddp-n4rcj-e7hkn-ojjfu-pyejv-ekydi-wpstx-34h2g-3hiwh-pqe",
-      "hle4j-ceoqz-bnsym-4tzlr-yqdbo-d7vng-ez6hr-wtgc2-rjnxz-xwomp-qqe",
-      "oaegv-sluud-uzs7h-if5kr-jrcgt-prcth-xtr5d-5so2p-ldrm3-t73qb-mae",
+      // CLIENTS
+      "oxj2h-r6fbj-hqtcn-fv7ye-yneeb-ca3se-c6s42-imvp7-juu33-ovnix-mae", //Paras (Client)
+      "42l52-e6bwv-2353f-idnxh-5f42y-catp6-j2yxn-msivr-ljpu2-ifqsy-dqe", //Ankur (Client)
+
+      // Developers
+      "cgqj3-pk6l5-xnxdb-ehlkh-4p5o3-kwonc-gp5yh-iprtz-xbn4w-kl4op-vqe", // Somiya Behera
+      "6xm33-dd2dg-pd6fa-iiojc-ptsbh-elqne-o4zqv-ipjho-5y4am-mfi53-hqe", //Tushar Jain
+
+      
       "yyjkq-j3ybi-yhe2a-ujlbc-wqxof-ttj65-et3zg-2jsxg-wpa7s-t5lbv-rqe", //Sharan Sir
     ];
     if (isAuthenticated) {
@@ -213,7 +226,7 @@ const AdminPanel = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white text-black divide-y divide-gray-200">
-                    {waitlist.map((item, index) => (
+                    {waitlist && waitlist.length > 0 && waitlist.map((item, index) => (
                       <tr key={`waitlist${index}`}>
                         <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
@@ -252,7 +265,7 @@ const AdminPanel = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white text-black divide-y divide-gray-200">
-                    {messages.map((item, index) => (
+                    {messages && messages.length > 0 && messages.map((item, index) => (
                       <tr key={`message${index}`}>
                         <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
