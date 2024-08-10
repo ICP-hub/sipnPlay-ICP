@@ -68,7 +68,8 @@ const AdminPanel = () => {
       "6xm33-dd2dg-pd6fa-iiojc-ptsbh-elqne-o4zqv-ipjho-5y4am-mfi53-hqe",
       "r6cnl-jzddp-n4rcj-e7hkn-ojjfu-pyejv-ekydi-wpstx-34h2g-3hiwh-pqe",
       "hle4j-ceoqz-bnsym-4tzlr-yqdbo-d7vng-ez6hr-wtgc2-rjnxz-xwomp-qqe",
-      "oaegv-sluud-uzs7h-if5kr-jrcgt-prcth-xtr5d-5so2p-ldrm3-t73qb-mae"
+      "oaegv-sluud-uzs7h-if5kr-jrcgt-prcth-xtr5d-5so2p-ldrm3-t73qb-mae",
+      "yyjkq-j3ybi-yhe2a-ujlbc-wqxof-ttj65-et3zg-2jsxg-wpa7s-t5lbv-rqe", //Sharan Sir
     ];
     if (isAuthenticated) {
       if (approvedPrincipals.includes(principal)) {

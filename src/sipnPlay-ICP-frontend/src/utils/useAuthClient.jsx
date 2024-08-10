@@ -45,7 +45,7 @@ export const useAuthClient = () => {
           let userObject = {
             principal: "Not Connected.",
             agent: undefined,
-            provider: "N/A",
+            provider: "",
           };
           if (provider === "plug") {
             userObject = await PlugLogin();
@@ -101,8 +101,8 @@ export const useAuthClient = () => {
 
       const agent = new HttpAgent({ identity });
 
-      const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agent });
-      const ledgerActor1 = createLedgerActor("ryjl3-tyaaa-aaaaa-aaaba-cai", { agent });
+      const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agentOptions:{identity, verifyQuerySignatures:false} });
+      const ledgerActor1 = createLedgerActor("bw4dl-smaaa-aaaaa-qaacq-cai", { agent });
       setLedgerActor(ledgerActor1)
       setBackendActor(backendActor);
 

@@ -99,8 +99,8 @@ actor {
     };
 
 
-    let icpLedger = "ryjl3-tyaaa-aaaaa-aaaba-cai";
-    let payment_address = Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai");
+    let CustomLedger = "bw4dl-smaaa-aaaaa-qaacq-cai";
+    let payment_address = Principal.fromText("b77ix-eeaaa-aaaaa-qaada-cai");
 
     public shared query ({ caller }) func getUser() : async Result.Result<Types.UserData, Text> {
         switch (userDataRecord.get(caller)) {
@@ -172,13 +172,19 @@ actor {
         });
     };
 
+    public shared ({caller}) func get_balance() :async Nat{
+         let ledger = actor (CustomLedger) : ICRC.Token;
+         let balance = await ledger.icrc1_balance_of({owner=caller; subaccount=null});
+         return balance;
+    };
+
     public shared ({ caller }) func place_order(amount : Nat) : async Result.Result<Text, Text> {
         switch (userDataRecord.get(caller)) {
             case (null) {
                 return #err("User not found");
             };
             case (?user) {
-                let response : ICRC.Result_2 = await icrc2_transferFrom(icpLedger, caller, payment_address, amount);
+                let response : ICRC.Result_2 = await icrc2_transferFrom(CustomLedger, caller, payment_address, amount);
                 switch (response) {
                     case (#Ok(value)) {
                         let newPoints = user.points + (amount * 100);

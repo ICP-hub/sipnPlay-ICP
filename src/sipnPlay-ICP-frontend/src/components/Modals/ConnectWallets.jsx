@@ -72,17 +72,6 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                   <span className="ml-3">Plug</span>
                 </button>
               </div>
-              <div className="flex items-center border-t border-gray-400 my-2 py-2">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  className="mr-2 mb-10 "
-                />
-                <label htmlFor="terms" className="text-[12px] md:text-[18px] text-white">By connecting a wallet, you agree to [company name] Terms of Service and consent to its Privacy Policy.<span className=' text-blue-600'> Learn more</span></label>
-              </div>
-              <div className='flex mb-4  justify-center'>
-                <AnimationButton text='Connect Wallet' />
-              </div>
             </div>
 
           </div>
