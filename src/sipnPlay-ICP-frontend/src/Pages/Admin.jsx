@@ -56,8 +56,8 @@ const AdminPanel = () => {
       console.log(response)
       if (response.err) {
         toast.error(response.err);
-        setLoading(false);
         setWaitlist([]);
+        setLoading(false);
         return;
       }
       else if (response.ok) {
