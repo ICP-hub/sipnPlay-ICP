@@ -1,6 +1,7 @@
 import Principal "mo:base/Principal";
 import Nat "mo:base/Nat";
 import Region "mo:base/Region";
+import Time "mo:base/Time";
 module {
     public type Index = Nat64;
 
@@ -30,12 +31,14 @@ module {
     };
 
     public type MessageData = {
+        date : Int;
         name : Text;
         email : Text;
         message : Text;
     };
 
     public type WaitlistData = {
+        date: Int;
         name : Text;
         email : Text;
         icpAddress : Text;

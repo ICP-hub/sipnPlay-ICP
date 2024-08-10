@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import { Route, Routes } from "react-router-dom";
 import Home from "./Pages/Home";
 import BlackJack from "./Pages/BlackJack";
-import { AuthProvider } from "./utils/useAuthClient"
-import Register from './Pages/Register';
+import { AuthProvider } from "./utils/useAuthClient";
 import Payment from './Pages/Payment';
 import PrivateLayout from './Layout/PrivateLayout';
 import AdminPanel from './Pages/Admin';
@@ -39,7 +38,7 @@ function AllRoutes() {
             <Payment />
           }
         />
-          <Route
+        <Route
           path="/admin"
           element={
             <AdminPanel />

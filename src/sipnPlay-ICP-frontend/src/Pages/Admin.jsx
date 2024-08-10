@@ -19,17 +19,48 @@ const AdminPanel = () => {
 
   const [modalIsOpen, setIsOpen] = useState(false);
 
+  function convertNanosecondsToDateTime(nanoseconds) {
+    // Convert nanoseconds to milliseconds
+    const milliseconds = Number(nanoseconds) / 1_000_000;
+
+    // Create a new Date object with the milliseconds
+    const date = new Date(milliseconds);
+
+    const IST_OFFSET_MS = 5 * 60 * 60 * 1000 + 30 * 60 * 1000; // 5 hours 30 minutes in milliseconds
+    const istDate = new Date(date.getTime() + IST_OFFSET_MS);
+
+
+    // Extract date and time components
+    const month = String(istDate.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(istDate.getUTCDate()).padStart(2, '0');
+    const year = String(istDate.getUTCFullYear()).slice(-2); // Get last two digits of the year
+    let hour = istDate.getUTCHours();
+    const minute = String(istDate.getUTCMinutes()).padStart(2, '0');
+    const isPM = hour >= 12;
+
+    // Convert hour to 12-hour format
+    hour = hour % 12;
+    hour = hour ? hour : 12; // the hour '0' should be '12'
+
+    // Format AM/PM
+    const period = isPM ? 'PM' : 'AM';
+
+    // Format the date and time string
+    return `${day}/${month}/${year} ${hour}:${minute}${period}`;
+  }
+
   const fetchWaitlist = async (page) => {
     try {
       setLoading(true);
       const response = await backendActor.getWaitlist(chunkSize, page);
+      console.log(response)
       if (response.err) {
+        toast.error(response.err);
         setLoading(false);
         setWaitlist([]);
         return;
       }
       else if (response.ok) {
-        console.log(response.ok)
         setWaitlist(response.ok.data);
         setWaitlistPageSize(response.ok.total_pages);
         setLoading(false);
@@ -52,6 +83,7 @@ const AdminPanel = () => {
       }
       else if (response.ok) {
         setMessages(response.ok.data);
+        console.log(response.ok)
         setMessagelistPageSize(response.ok.total_pages);
         setLoading(false);
       }
@@ -81,7 +113,7 @@ const AdminPanel = () => {
       "cgqj3-pk6l5-xnxdb-ehlkh-4p5o3-kwonc-gp5yh-iprtz-xbn4w-kl4op-vqe", // Somiya Behera
       "6xm33-dd2dg-pd6fa-iiojc-ptsbh-elqne-o4zqv-ipjho-5y4am-mfi53-hqe", //Tushar Jain
 
-      
+
       "yyjkq-j3ybi-yhe2a-ujlbc-wqxof-ttj65-et3zg-2jsxg-wpa7s-t5lbv-rqe", //Sharan Sir
     ];
     if (isAuthenticated) {
@@ -220,6 +252,7 @@ const AdminPanel = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-100">
                     <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Principal ID</th>
@@ -228,6 +261,7 @@ const AdminPanel = () => {
                   <tbody className="bg-white text-black divide-y divide-gray-200">
                     {waitlist && waitlist.length > 0 && waitlist.map((item, index) => (
                       <tr key={`waitlist${index}`}>
+                        <td className="px-6 py-4 whitespace-nowrap">{convertNanosecondsToDateTime(item.date)}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.icpAddress}</td>
@@ -259,6 +293,7 @@ const AdminPanel = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-100">
                     <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
@@ -267,6 +302,7 @@ const AdminPanel = () => {
                   <tbody className="bg-white text-black divide-y divide-gray-200">
                     {messages && messages.length > 0 && messages.map((item, index) => (
                       <tr key={`message${index}`}>
+                        <td className="px-6 py-4 whitespace-nowrap">{convertNanosecondsToDateTime(item.date)}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.message}</td>
