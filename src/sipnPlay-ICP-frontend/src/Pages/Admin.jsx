@@ -4,6 +4,36 @@ import toast from 'react-hot-toast';
 import ConnectWallet from "../components/Modals/ConnectWallets";
 import * as XLSX from 'xlsx';
 
+function convertNanosecondsToDateTime(nanoseconds) {
+  // Convert nanoseconds to milliseconds
+  const milliseconds = Number(nanoseconds) / 1_000_000;
+
+  // Create a new Date object with the milliseconds
+  const date = new Date(milliseconds);
+
+  const IST_OFFSET_MS = 5 * 60 * 60 * 1000 + 30 * 60 * 1000; // 5 hours 30 minutes in milliseconds
+  const istDate = new Date(date.getTime() + IST_OFFSET_MS);
+
+
+  // Extract date and time components
+  const month = String(istDate.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const day = String(istDate.getUTCDate()).padStart(2, '0');
+  const year = String(istDate.getUTCFullYear()).slice(-2); // Get last two digits of the year
+  let hour = istDate.getUTCHours();
+  const minute = String(istDate.getUTCMinutes()).padStart(2, '0');
+  const isPM = hour >= 12;
+
+  // Convert hour to 12-hour format
+  hour = hour % 12;
+  hour = hour ? hour : 12; // the hour '0' should be '12'
+
+  // Format AM/PM
+  const period = isPM ? 'PM' : 'AM';
+
+  // Format the date and time string
+  return `${day}/${month}/${year} ${hour}:${minute}${period}`;
+}
+
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState('waitlist');
   const [waitlist, setWaitlist] = useState([]);
@@ -18,36 +48,6 @@ const AdminPanel = () => {
   const chunkSize = 10;
 
   const [modalIsOpen, setIsOpen] = useState(false);
-
-  function convertNanosecondsToDateTime(nanoseconds) {
-    // Convert nanoseconds to milliseconds
-    const milliseconds = Number(nanoseconds) / 1_000_000;
-
-    // Create a new Date object with the milliseconds
-    const date = new Date(milliseconds);
-
-    const IST_OFFSET_MS = 5 * 60 * 60 * 1000 + 30 * 60 * 1000; // 5 hours 30 minutes in milliseconds
-    const istDate = new Date(date.getTime() + IST_OFFSET_MS);
-
-
-    // Extract date and time components
-    const month = String(istDate.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-based
-    const day = String(istDate.getUTCDate()).padStart(2, '0');
-    const year = String(istDate.getUTCFullYear()).slice(-2); // Get last two digits of the year
-    let hour = istDate.getUTCHours();
-    const minute = String(istDate.getUTCMinutes()).padStart(2, '0');
-    const isPM = hour >= 12;
-
-    // Convert hour to 12-hour format
-    hour = hour % 12;
-    hour = hour ? hour : 12; // the hour '0' should be '12'
-
-    // Format AM/PM
-    const period = isPM ? 'PM' : 'AM';
-
-    // Format the date and time string
-    return `${day}/${month}/${year} ${hour}:${minute}${period}`;
-  }
 
   const fetchWaitlist = async (page) => {
     try {
@@ -115,6 +115,7 @@ const AdminPanel = () => {
 
 
       "yyjkq-j3ybi-yhe2a-ujlbc-wqxof-ttj65-et3zg-2jsxg-wpa7s-t5lbv-rqe", //Sharan Sir
+      "ajgvz-x3hvi-wvqt2-2r2eb-3hfqx-hxupi-2rnlt-iiott-w6kk2-625vc-uae"
     ];
     if (isAuthenticated) {
       if (approvedPrincipals.includes(principal)) {
@@ -127,10 +128,15 @@ const AdminPanel = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchWaitlist(waitlistPage);
       fetchMessages(messagesPage);
     }
-  }, [isAuthenticated, waitlistPage, messagesPage]);
+  }, [isAuthenticated, messagesPage]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchWaitlist(waitlistPage);
+    }
+  }, [isAuthenticated, waitlistPage]);
 
   useEffect(() => {
     if (isAuthenticated && isLoggedIn) {
@@ -248,9 +254,9 @@ const AdminPanel = () => {
           {activeSection === 'waitlist' && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Waitlist</h2>
-              <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-100">
+              <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200 rounded-t-lg">
+                  <thead className="bg-gray-100 rounded-t-lg">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
@@ -264,7 +270,7 @@ const AdminPanel = () => {
                         <td className="px-6 py-4 whitespace-nowrap">{convertNanosecondsToDateTime(item.date)}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">{item.icpAddress}</td>
+                        <td className="px-6 py-4 ">{item.icpAddress}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -272,13 +278,13 @@ const AdminPanel = () => {
                 <div className="flex justify-between mt-4">
                   <button
                     onClick={handlePrevWaitlist}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    className="px-4 py-2 m-3 bg-blue-500 text-white rounded-lg"
                   >
                     Prev
                   </button>
                   <button
                     onClick={handleNextWaitlist}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    className="px-4 py-2 m-3 bg-blue-500 text-white rounded-lg"
                   >
                     Next
                   </button>
@@ -289,9 +295,10 @@ const AdminPanel = () => {
           {activeSection === 'messages' && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Messages</h2>
-              <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-100">
+              <div className="bg-white shadow-md rounded-lg overflow-hidden">
+
+                <table className="divide-y divide-gray-200 rounded-t-lg">
+                  <thead className="bg-gray-100 rounded-t-lg">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
@@ -305,21 +312,22 @@ const AdminPanel = () => {
                         <td className="px-6 py-4 whitespace-nowrap">{convertNanosecondsToDateTime(item.date)}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">{item.message}</td>
+                        <td className="px-6 py-4">{item.message}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+
                 <div className="flex justify-between mt-4">
                   <button
                     onClick={handlePrevMessage}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    className="px-4 py-2 m-3 bg-blue-500 text-white rounded-lg"
                   >
                     Prev
                   </button>
                   <button
                     onClick={handleNextMessage}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    className="px-4 py-2 m-3 bg-blue-500 text-white rounded-lg"
                   >
                     Next
                   </button>

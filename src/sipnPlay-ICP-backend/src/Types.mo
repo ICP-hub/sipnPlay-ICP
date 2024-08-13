@@ -19,15 +19,10 @@ module {
 
     public type UserData = {
         id : Principal;
-        name : Text;
         email : Text;
-        phoneNo : Nat;
-        points : Nat;
     };
     public type UserCreationInput = {
-        name : Text;
         email : Text;
-        phoneNo : Nat;
     };
 
     public type MessageData = {
@@ -38,7 +33,7 @@ module {
     };
 
     public type WaitlistData = {
-        date: Int;
+        date : Int;
         name : Text;
         email : Text;
         icpAddress : Text;

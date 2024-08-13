@@ -115,15 +115,12 @@ actor {
 		return Principal.toText(caller);
 	};
 
-	public shared ({ caller }) func createUser(userData : Types.UserCreationInput) : async Text {
+	public shared ({ caller }) func createUser(email : Text) : async Text {
 		switch (userDataRecord.get(caller)) {
 			case (null) {
 				let newUser : Types.UserData = {
 					id = caller;
-					name = userData.name;
-					email = userData.email;
-					phoneNo = userData.phoneNo;
-					points = 1000;
+					email = email;
 				};
 				userDataRecord.put(caller, newUser);
 				return "User created!";
@@ -140,13 +137,11 @@ actor {
 				return #err("User not found");
 			};
 			case (?user) {
-				if (user.points >= 200) {
+				if (true) {
 					let newUser : Types.UserData = {
 						id = caller;
-						name = user.name;
 						email = user.email;
-						phoneNo = user.phoneNo;
-						points = user.points - 200;
+
 					};
 					ignore userDataRecord.replace(caller, newUser);
 					return #ok(newUser);
@@ -188,13 +183,10 @@ actor {
 				let response : ICRC.Result_2 = await icrc2_transferFrom(CustomLedger, caller, payment_address, amount);
 				switch (response) {
 					case (#Ok(value)) {
-						let newPoints = user.points + (amount * 100);
+
 						let updatedUser : Types.UserData = {
 							id = user.id;
-							name = user.name;
 							email = user.email;
-							phoneNo = user.phoneNo;
-							points = newPoints;
 						};
 						userDataRecord.put(caller, updatedUser);
 						return #ok("Order placed successfully, points updated" # Nat.toText(value));
