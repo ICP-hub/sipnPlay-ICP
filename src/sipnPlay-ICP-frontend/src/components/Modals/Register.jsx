@@ -7,9 +7,8 @@ import { ImCross } from "react-icons/im";
 import { useAuth } from "../../utils/useAuthClient";
 import toast from 'react-hot-toast';
 
-const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
+const Register = ({setIsRegisterDone, modalIsOpen, setIsOpen }) => {
     const { backendActor, principal } = useAuth();
-    console.log(backendActor, principal);
 
     function closeModal() {
         setIsOpen(false);
@@ -34,10 +33,10 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
         }
 
         const response = await backendActor.createUser(email);
-        console.log(response);
         
         if (response !=="User already exists") {
             toast.success("Congrats!");
+            setIsRegisterDone(true);
             setEmail('');
             closeModal();
         } else {
@@ -97,4 +96,4 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
     );
 }
 
-export default JoinWaitlist;
+export default Register;

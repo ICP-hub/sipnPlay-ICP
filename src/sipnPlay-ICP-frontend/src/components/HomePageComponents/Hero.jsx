@@ -4,22 +4,23 @@ import nft from "../../assets/images/NFT.gif";
 import Register from "../Modals/Register";
 import { useAuth } from '../../utils/useAuthClient';
 import { Principal } from '@dfinity/principal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addUserData } from '../../utils/redux/userSlice';
 
 const Hero = () => {
   const dispatch = useDispatch();
+  
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const [modalIsOpen, setIsOpen] = useState(false);
-
+  const [isRegisterDone, setIsRegisterDone] = useState(false);
+  
   const getStatus = async () => {
     const response = await backendActor.getUser();
-    console.log(response);
     if (response.err === "New user") {
       return { isNewUser: true };
     } else {
       // let balance = await ledgerActor.icrc1_balance_of({ owner: Principal.fromText(principal), subaccount: [0] })
-      return { isNewUser: false, email: response.email, balance: 20 };
+      return { isNewUser: false, email: response.ok.email, balance: 0 };
     };
   }
 
@@ -32,7 +33,7 @@ const Hero = () => {
         }
         else {
           dispatch(addUserData({
-            id: principal,
+            id: principal.toString(),
             email: status.email,
             balance: status.balance,
           }));
@@ -40,13 +41,13 @@ const Hero = () => {
       }
     };
     checkStatus();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isRegisterDone]);
 
 
   return (
     <>
-      <Register modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
-      <section id="home" className="grid grid-cols-1 lg:grid-cols-2 my-[140px] md:my-[160px] lg:my-6  px-[8%]">
+      <Register setIsRegisterDone={setIsRegisterDone} modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
+      <section id="home" className="grid grid-cols-1 lg:grid-cols-2 mt-4  mb-[140px] md:mt-[87px] md:mb-[160px] lg:my-6  px-[8%]">
         {/* Left Div */}
         <div className="  lg:h-screen lg:border-t-[0.5px] lg:border-r-[0.5px] lg:border-white  xl:h-[722px] flex-1 flex-col items-center justify-center bg-black text-white">
           <div className='flex ml-[10%] pt-[45px] relative xl:pt-[98px] font-monckeberg lg:justify-start md:ml-[-65px] lg:ml-[-50px]   lg:pt-[151px] '>

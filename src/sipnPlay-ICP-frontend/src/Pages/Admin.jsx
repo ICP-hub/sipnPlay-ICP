@@ -53,7 +53,6 @@ const AdminPanel = () => {
     try {
       setLoading(true);
       const response = await backendActor.getWaitlist(chunkSize, page);
-      console.log(response)
       if (response.err) {
         toast.error(response.err);
         setWaitlist([]);
@@ -83,7 +82,6 @@ const AdminPanel = () => {
       }
       else if (response.ok) {
         setMessages(response.ok.data);
-        console.log(response.ok)
         setMessagelistPageSize(response.ok.total_pages);
         setLoading(false);
       }
@@ -111,7 +109,7 @@ const AdminPanel = () => {
 
       // Developers
       "cgqj3-pk6l5-xnxdb-ehlkh-4p5o3-kwonc-gp5yh-iprtz-xbn4w-kl4op-vqe", // Somiya Behera
-      "oaegv-sluud-uzs7h-if5kr-jrcgt-prcth-xtr5d-5so2p-ldrm3-t73qb-mae", //Tushar Jain
+      "6xm33-dd2dg-pd6fa-iiojc-ptsbh-elqne-o4zqv-ipjho-5y4am-mfi53-hqe", //Tushar Jain
 
 
       "yyjkq-j3ybi-yhe2a-ujlbc-wqxof-ttj65-et3zg-2jsxg-wpa7s-t5lbv-rqe", //Sharan Sir
@@ -126,17 +124,6 @@ const AdminPanel = () => {
     }
   }, [principal]);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchMessages(messagesPage);
-    }
-  }, [isAuthenticated, messagesPage]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchWaitlist(waitlistPage);
-    }
-  }, [isAuthenticated, waitlistPage]);
 
   useEffect(() => {
     if (isAuthenticated && isLoggedIn) {
@@ -146,7 +133,7 @@ const AdminPanel = () => {
         fetchMessages(messagesPage);
       }
     }
-  }, [activeSection, waitlistPage, messagesPage]);
+  }, [activeSection, waitlistPage, messagesPage, isLoggedIn]);
 
   const handlePrevWaitlist = () => {
     if (waitlistPage === 0) {
