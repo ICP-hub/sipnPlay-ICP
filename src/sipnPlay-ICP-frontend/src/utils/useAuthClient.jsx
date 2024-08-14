@@ -47,14 +47,38 @@ export const useAuthClient = () => {
             agent: undefined,
             provider: "",
           };
-          if (provider === "plug") {
-            userObject = await PlugLogin();
-          } else if (provider === "stoic") {
-            userObject = await StoicLogin();
-          } else if (provider === "nfid") {
-            userObject = await NFIDLogin();
-          } else if (provider === "ii") {
-            userObject = await IdentityLogin();
+          if (process.env.DFX_NETWORK === "ic") {
+            if (provider === "plug") {
+              userObject.provider = "https://mainnet.plugwallet.ooo";
+              userObject = await PlugLogin();
+            } else if (provider === "stoic") {
+              userObject.provider = "https://www.stoicwallet.com";
+              userObject = await StoicLogin();
+            } else if (provider === "nfid") {
+              userObject.provider = "https://wallet.nfid.one";
+              userObject = await NFIDLogin();
+            } else if (provider === "ii") {
+              userObject.provider = "https://identity.ic0.app/#authorize";
+              userObject = await IdentityLogin();
+            }
+          } else if (process.env.DFX_NETWORK === "local") {
+            if (provider === "plug") {
+              userObject.provider = "http://localhost:8080";
+              userObject = await PlugLogin();
+            } else if (provider === "stoic") {
+              userObject.provider = "http://localhost:8700"; 
+              userObject = await StoicLogin();
+            } else if (provider === "nfid") {
+              userObject.provider = "http://localhost:8500";
+              userObject = await NFIDLogin();
+            } else if (provider === "ii") {
+              userObject.provider = "http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:8000/#authorize";
+              userObject = await IdentityLogin();
+              console.log(userObject);
+              
+            }
+          }else{
+
           }
           const identity = await userObject.agent._identity;
           console.log(identity)
@@ -102,7 +126,7 @@ export const useAuthClient = () => {
       const agent = new HttpAgent({ identity });
 
       const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agentOptions:{identity, verifyQuerySignatures:false} });
-      const ledgerActor1 = createLedgerActor("bw4dl-smaaa-aaaaa-qaacq-cai", { agent });
+      const ledgerActor1 = createLedgerActor("br5f7-7uaaa-aaaaa-qaaca-cai", { agent });
       setLedgerActor(ledgerActor1)
       setBackendActor(backendActor);
 

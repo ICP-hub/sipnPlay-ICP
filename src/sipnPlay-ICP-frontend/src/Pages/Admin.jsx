@@ -111,7 +111,7 @@ const AdminPanel = () => {
 
       // Developers
       "cgqj3-pk6l5-xnxdb-ehlkh-4p5o3-kwonc-gp5yh-iprtz-xbn4w-kl4op-vqe", // Somiya Behera
-      "6xm33-dd2dg-pd6fa-iiojc-ptsbh-elqne-o4zqv-ipjho-5y4am-mfi53-hqe", //Tushar Jain
+      "oaegv-sluud-uzs7h-if5kr-jrcgt-prcth-xtr5d-5so2p-ldrm3-t73qb-mae", //Tushar Jain
 
 
       "yyjkq-j3ybi-yhe2a-ujlbc-wqxof-ttj65-et3zg-2jsxg-wpa7s-t5lbv-rqe", //Sharan Sir

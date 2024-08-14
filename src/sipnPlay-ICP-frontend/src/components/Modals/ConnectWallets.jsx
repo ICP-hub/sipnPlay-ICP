@@ -4,13 +4,9 @@ import infinite from '../../assets/images/icons/infinity.png';
 import id from '../../assets/images/icons/id.png';
 import stoic from '../../assets/images/icons/stoic.png';
 import plug from '../../assets/images/icons/plug.png';
-
-import AnimationButton from '../../common/AnimationButton';
 import Modal from 'react-modal';
-
 import { RxCross1 } from "react-icons/rx";
 import { useAuth } from "../../utils/useAuthClient";
-import toast from 'react-hot-toast';
 
 const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
   const { login } = useAuth();
