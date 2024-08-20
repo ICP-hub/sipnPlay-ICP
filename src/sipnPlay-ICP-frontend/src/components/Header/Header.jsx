@@ -23,7 +23,6 @@ const Header = () => {
     if (getUser.err === "New user") {
       // navigate("/register");
     } else {
-      console.log(getUser.ok);
       setUserDetails(getUser.ok);
       toast.success("You are registered");
     }

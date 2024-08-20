@@ -1,7 +1,7 @@
 # `sipnPlay-ICP`
 
-Frontend Canister: https://tlnsj-qqaaa-aaaap-qhp2q-cai.icp0.io/
-Backend Canister: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=tmmu5-5iaaa-aaaap-qhp2a-cai
+- Frontend Canister: https://tlnsj-qqaaa-aaaap-qhp2q-cai.icp0.io/
+- Backend Canister: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=tmmu5-5iaaa-aaaap-qhp2a-cai
 
 To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
 

@@ -103,9 +103,10 @@ const AdminPanel = () => {
 
   useEffect(() => {
     const approvedPrincipals = [
-      // CLIENTS
+      // MAIN
       "oxj2h-r6fbj-hqtcn-fv7ye-yneeb-ca3se-c6s42-imvp7-juu33-ovnix-mae", //Paras (Client)
       "42l52-e6bwv-2353f-idnxh-5f42y-catp6-j2yxn-msivr-ljpu2-ifqsy-dqe", //Ankur (Client)
+      "h5plh-utklh-zb3a6-6l4ar-6yytf-p3755-6rjjz-7fwm3-vtnsa-iosdg-4ae", //Tushar
 
       // Developers
       "cgqj3-pk6l5-xnxdb-ehlkh-4p5o3-kwonc-gp5yh-iprtz-xbn4w-kl4op-vqe", // Somiya Behera
