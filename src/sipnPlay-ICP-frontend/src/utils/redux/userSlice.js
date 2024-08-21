@@ -17,15 +17,19 @@ const userSlice = createSlice({
       // Balance is not fetched here because it will be fetched separately.
     },
     updateUserData: (state, action) => {
-      if (action.payload.email) state.email = action.payload.email;
-      if (action.payload.id) state.id = action.payload.id;
-      if (action.payload.balance) state.balance = action.payload.balance;
+      return {
+        ...state,
+        email: action.payload.email ?? state.email,
+        id: action.payload.id ?? state.id,
+        balance: action.payload.balance ?? state.balance,
+      };
     },
     removeUserData: (state) => {
       state.id = null;
       state.email = '';
       state.balance = 0;
     },
+
   }
 });
 

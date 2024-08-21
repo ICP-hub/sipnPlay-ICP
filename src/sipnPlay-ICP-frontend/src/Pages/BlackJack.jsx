@@ -3,7 +3,7 @@ import { useAuth } from "../utils/useAuthClient";
 import { useNavigate } from 'react-router-dom';
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from 'react-redux';
-import { addUserData } from '../utils/redux/userSlice';
+import { addUserData, updateUserData } from '../utils/redux/userSlice';
 import { transferApprove } from '../utils/transApprove';
 
 const BlackJack = () => {
@@ -26,10 +26,10 @@ const BlackJack = () => {
         //   navigate("/");
         // }
         // let userBalance = await backendActor.get_balance();
-        let userBalance = 20;
+        let userBalance = 70;
         setBalance(userBalance)
-        dispatch(addUserData({
-          id: principal.toString(),
+        dispatch(updateUserData({
+          id: principal,
           email: res.ok.email,
           balance: balance,
         }))

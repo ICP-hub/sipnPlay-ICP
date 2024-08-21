@@ -21,9 +21,11 @@ const Hero = () => {
       return { isNewUser: true };
     } else {
       // let balance = await ledgerActor.icrc1_balance_of({ owner: Principal.fromText(principal), subaccount: [0] })
-      // let balance = await backendActor.get_balance();
-      let balance = 20;
-      return { isNewUser: false, email: response.ok.email, balance: balance };
+      let balance = await backendActor.get_balance();
+      console.log(balance);
+
+      // let balance = 80;
+      return { isNewUser: false, email: response.ok.email, balance: Number(balance) };
     };
   }
 

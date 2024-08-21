@@ -33,7 +33,7 @@ export const useAuthClient = () => {
     }
   }, [authClient]);
 
-  const whitelist= [process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND];
+  const whitelist = [process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND];
 
   const login = async (provider) => {
     return new Promise(async (resolve, reject) => {
@@ -66,7 +66,7 @@ export const useAuthClient = () => {
               userObject.provider = "http://localhost:8080";
               userObject = await PlugLogin();
             } else if (provider === "stoic") {
-              userObject.provider = "http://localhost:8700"; 
+              userObject.provider = "http://localhost:8700";
               userObject = await StoicLogin();
             } else if (provider === "nfid") {
               userObject.provider = "http://localhost:8500";
@@ -75,9 +75,9 @@ export const useAuthClient = () => {
               userObject.provider = "http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:8000/#authorize";
               userObject = await IdentityLogin();
               console.log(userObject);
-              
+
             }
-          }else{
+          } else {
 
           }
           const identity = await userObject.agent._identity;
@@ -125,7 +125,7 @@ export const useAuthClient = () => {
 
       const agent = new HttpAgent({ identity });
 
-      const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agentOptions:{identity, verifyQuerySignatures:false} });
+      const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agentOptions: { identity, verifyQuerySignatures: false } });
       const ledgerActor1 = createLedgerActor("br5f7-7uaaa-aaaaa-qaaca-cai", { agent });
       setLedgerActor(ledgerActor1)
       setBackendActor(backendActor);
