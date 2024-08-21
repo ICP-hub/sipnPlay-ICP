@@ -97,8 +97,8 @@ actor {
 		index;
 	};
 
-	let CustomLedger = "br5f7-7uaaa-aaaaa-qaaca-cai";
-	let payment_address = Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai");
+	let CustomLedger = "a3shf-5eaaa-aaaaa-qaafa-cai";
+	let payment_address = Principal.fromText("bw4dl-smaaa-aaaaa-qaacq-cai");
 
 	public shared query ({ caller }) func getUser() : async Result.Result<Types.UserData, Text> {
 		switch (userDataRecord.get(caller)) {
@@ -162,16 +162,10 @@ actor {
 				let response : ICRC.Result_2 = await icrc2_transferFrom(CustomLedger, caller, payment_address, amount);
 				switch (response) {
 					case (#Ok(value)) {
-
-						let updatedUser : Types.UserData = {
-							id = user.id;
-							email = user.email;
-						};
-						userDataRecord.put(caller, updatedUser);
 						return #ok("Order placed successfully, points updated" # Nat.toText(value));
 					};
 					case (#Err(e)) {
-						return #err("Payment error ");
+						return #err("Payment error");
 					};
 				};
 
@@ -185,15 +179,11 @@ actor {
 				return #err("User not found");
 			};
 			case (?user) {
-				let response : ICRC.Result_2 = await icrc2_transferFrom(CustomLedger, payment_address, caller, amount);
+				let ledger = actor (CustomLedger) : ICRC.Token;
+				let response : ICRC.Result_2 = await icrc2_transferFrom(CustomLedger, caller, payment_address, amount);
 				switch (response) {
 					case (#Ok(value)) {
 
-						let updatedUser : Types.UserData = {
-							id = user.id;
-							email = user.email;
-						};
-						userDataRecord.put(caller, updatedUser);
 						return #ok("Order placed successfully, points updated" # Nat.toText(value));
 					};
 					case (#Err(e)) {

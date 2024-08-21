@@ -7,8 +7,9 @@ import { addUserData, updateUserData } from '../utils/redux/userSlice';
 import { transferApprove } from '../utils/transApprove';
 
 const BlackJack = () => {
-  const { isAuthenticated, backendActor, principal } = useAuth();
-  const [score, setScore] = useState('');
+  const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
+  const [score, setScore] = useState(null);
+  const [bet, setBet] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -25,9 +26,8 @@ const BlackJack = () => {
         //   toast.error("You dont have enough points to play.");
         //   navigate("/");
         // }
-        // let userBalance = await backendActor.get_balance();
-        let userBalance = 70;
-        setBalance(userBalance)
+        let userBalance = await backendActor.get_balance();
+        setBalance(Number(userBalance))
         dispatch(updateUserData({
           id: principal,
           email: res.ok.email,
@@ -50,21 +50,36 @@ const BlackJack = () => {
   }, []);
 
   useEffect(() => {
-    const handlePostMessage = async (event) => {
+    const handleScore = async (event) => {
       if (event.data.type === 'save_score') {
         setScore(event.data.score);
         console.log("Score received:", event.data.score);
         if (score > balance) {
-          await transferApprove(score - balance, ledgerActor, backendActor, principal, 'add');
+          // await transferApprove(backendActor, ledgerActor, score - balance);
         }
-        console.log(resp);
+      }
+    };
+    window.addEventListener('message', handleScore);
+
+    return () => {
+      window.removeEventListener('message', handleScore);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleBet = async (event) => {
+      if (event.data.type === 'bet_placed') {
+        setBet(event.data.bet);
+        console.log("Bet received:", event.data.bet);
+        await transferApprove(backendActor, ledgerActor, bet);
+        toast.success("Bet placed successfully");
       }
     };
 
-    window.addEventListener('message', handlePostMessage);
+    window.addEventListener('message', handleBet);
 
     return () => {
-      window.removeEventListener('message', handlePostMessage);
+      window.removeEventListener('message', handleBet);
     };
   }, []);
 

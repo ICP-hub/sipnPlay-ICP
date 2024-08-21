@@ -61,7 +61,7 @@
             });
 
             $(oMain).on("bet_placed", function (evt, iTotBet) {
-                console.log(iTotBet);
+                window.parent.postMessage({ type: 'bet_placed', bet: iTotBet }, '*');
             });
 
             $(oMain).on("start_session", function (evt) {
