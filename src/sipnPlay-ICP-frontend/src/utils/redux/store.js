@@ -14,7 +14,7 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, userReducer);
 
 
-export const store = configureStore({
+export var store = configureStore({
   reducer: {
     user: persistedReducer,
   },
@@ -32,3 +32,5 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+
+window.store = store;

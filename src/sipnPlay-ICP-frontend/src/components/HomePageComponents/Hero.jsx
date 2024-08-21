@@ -9,18 +9,21 @@ import { addUserData } from '../../utils/redux/userSlice';
 
 const Hero = () => {
   const dispatch = useDispatch();
-  
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const [modalIsOpen, setIsOpen] = useState(false);
   const [isRegisterDone, setIsRegisterDone] = useState(false);
-  
+  const userData = useSelector(state => state.user)
+  console.log(userData)
+
   const getStatus = async () => {
     const response = await backendActor.getUser();
     if (response.err === "New user") {
       return { isNewUser: true };
     } else {
       // let balance = await ledgerActor.icrc1_balance_of({ owner: Principal.fromText(principal), subaccount: [0] })
-      return { isNewUser: false, email: response.ok.email, balance: 0 };
+      // let balance = await backendActor.get_balance();
+      let balance = 20;
+      return { isNewUser: false, email: response.ok.email, balance: balance };
     };
   }
 

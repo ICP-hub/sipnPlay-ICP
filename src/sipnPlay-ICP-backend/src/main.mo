@@ -131,27 +131,6 @@ actor {
 		};
 	};
 
-	public shared ({ caller }) func deductPoints() : async Result.Result<Types.UserData, Text> {
-		switch (userDataRecord.get(caller)) {
-			case (null) {
-				return #err("User not found");
-			};
-			case (?user) {
-				if (true) {
-					let newUser : Types.UserData = {
-						id = caller;
-						email = user.email;
-
-					};
-					ignore userDataRecord.replace(caller, newUser);
-					return #ok(newUser);
-				} else {
-					return #err("Not enough points to deduct");
-				};
-			};
-		};
-	};
-
 	func icrc2_transferFrom(ledgerId : Text, transferfrom : Principal, transferto : Principal, amount : Nat) : async ICRC.Result_2 {
 		let ledger = actor (ledgerId) : ICRC.Token;
 		await ledger.icrc2_transfer_from({
@@ -174,7 +153,7 @@ actor {
 		return balance;
 	};
 
-	public shared ({ caller }) func place_order(amount : Nat) : async Result.Result<Text, Text> {
+	public shared ({ caller }) func deductMoney(amount : Nat) : async Result.Result<Text, Text> {
 		switch (userDataRecord.get(caller)) {
 			case (null) {
 				return #err("User not found");
@@ -198,7 +177,32 @@ actor {
 
 			};
 		};
+	};
 
+	public shared ({ caller }) func addMoney(amount : Nat) : async Result.Result<Text, Text> {
+		switch (userDataRecord.get(caller)) {
+			case (null) {
+				return #err("User not found");
+			};
+			case (?user) {
+				let response : ICRC.Result_2 = await icrc2_transferFrom(CustomLedger, payment_address, caller, amount);
+				switch (response) {
+					case (#Ok(value)) {
+
+						let updatedUser : Types.UserData = {
+							id = user.id;
+							email = user.email;
+						};
+						userDataRecord.put(caller, updatedUser);
+						return #ok("Order placed successfully, points updated" # Nat.toText(value));
+					};
+					case (#Err(e)) {
+						return #err("Payment error ");
+					};
+				};
+
+			};
+		};
 	};
 
 	public shared func sendMessage(name : Text, email : Text, message : Text) : async Result.Result<Text, Text> {

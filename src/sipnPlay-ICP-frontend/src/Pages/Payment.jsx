@@ -1,99 +1,25 @@
-import React, { useState } from 'react'
-import { Principal } from '@dfinity/principal';
+import React, { useState } from 'react';
 import { useAuth } from "../utils/useAuthClient";
-import {principalToAccountIdentifier } from '@dfinity/ledger-icp'
+import { transferApprove } from "../utils/transApprove";
 
 const Payment = () => {
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState('');
 
+  const { principal, ledgerActor, backendActor } = useAuth();
 
-  const {principal, ledgerActor, backendActor } = useAuth();
-
-  const formatTokenMetaData = (arr) => {
-    const resultObject = {};
-    arr.forEach((item) => {
-      const key = item[0];
-      const value = item[1][Object.keys(item[1])[0]]; 
-      resultObject[key] = value;
-    });
-    return resultObject;
-  };
-
-  const getBalance=async()=>{
-    let bal = await ledgerActor.icrc1_balance_of({ owner: Principal.fromText(principal) , subaccount: [] })
-    console.log("balance : ",parseInt(bal))
-    return parseInt(bal)
-  }
-
-  const afterPaymentFlow = async(amnt)=>{
-    const res = await backendActor.place_order(amnt);
-    console.log(res);
-  } 
-  
-  const transferApprove = async (sendAmount) => {
-      setLoading(true);
-      let metaData = null;
-      await ledgerActor.icrc1_metadata().then((res)=>{
-        console.log("icrc1_metadata res : ",res);
-        
-        metaData = formatTokenMetaData(res);
-        
-      }).catch((err)=>{console.log(err)})
-
-      console.log('metaData[decimals]', metaData);
-      let amnt = parseInt(
-        Number(sendAmount) * Math.pow(10, parseInt(metaData?.['icrc1:decimals'])),
-      );
-
-      console.log('amount', amnt, principal);
-      console.log(
-        'canid principal',
-        Principal.fromHex(
-          principalToAccountIdentifier(Principal.fromText(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND)),
-        ),
-      );
-      if ((await getBalance()) >= amnt) {
-        let transaction = {
-          amount: Number(amnt) + Number([metaData?.['icrc1:fee']]),
-          from_subaccount: [],
-          spender: {
-            owner: Principal.fromText(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND),
-            subaccount: [],
-          },
-          fee: [metaData?.['icrc1:fee']],
-          memo: [],
-          created_at_time: [],
-          expected_allowance: [],
-          expires_at: [],
-        };
-        console.log(ledgerActor?.icrc2_approve);
-        await ledgerActor
-          ?.icrc2_approve(transaction)
-          .then(async res => {
-            if (res?.Err) {
-              setLoading(false);
-              console.log(res);
-              return;
-            } else {
-              afterPaymentFlow(amnt);
-              console.log(res);
-            }
-          })
-          .catch(err => {
-            console.log(err);
-            setLoading(false);
-          });
-      } else {
-        console.log('balance is less : ', amnt, sendAmount);
-        setLoading(false);
-      }
-    };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     console.log(`Processing payment of ${amount} ICP`);
-    transferApprove(amount);
+
+    try {
+      await transferApprove(amount, ledgerActor, backendActor, principal);
+    } catch (error) {
+      console.error('Payment processing error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -125,7 +51,7 @@ const Payment = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Payment
+export default Payment;
