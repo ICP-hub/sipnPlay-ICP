@@ -1,8 +1,14 @@
 import { Principal } from '@dfinity/principal';
 
-const afterPaymentFlow = async(backendActor, amnt)=>{
-  const res = await backendActor.deductMoney(amnt);
-  console.log(res);
+const afterPaymentFlow = async(backendActor, amount)=>{
+  try {
+    const res = await backendActor.deductMoney(amount);
+    console.log(res);
+    return res; 
+  } catch (error) {
+    console.error("Error in afterPaymentFlow:", error);
+    throw error; 
+  }
 } 
 
 const formatTokenMetaData = (arr) => {
@@ -22,18 +28,17 @@ const getBalance=async(backendActor)=>{
 }
 
 export const transferApprove = async (backendActor, ledgerActor, sendAmount) => {
-    let metaData = null;
-    await ledgerActor.icrc1_metadata().then((res)=>{
-      metaData = formatTokenMetaData(res);
-      
-    }).catch((err)=>{console.log(err)})
+  let metaData = null;
+  try {
+    const metadataResponse = await ledgerActor.icrc1_metadata();
+    metaData = formatTokenMetaData(metadataResponse);
 
-    let amnt = parseInt(
+    const amnt = parseInt(
       Number(sendAmount) * Math.pow(10, parseInt(metaData?.['icrc1:decimals'])),
     );
 
     if ((await getBalance(backendActor)) >= amnt) {
-      let transaction = {
+      const transaction = {
         amount: Number(amnt) + Number([metaData?.['icrc1:fee']]),
         from_subaccount: [],
         spender: {
@@ -46,22 +51,21 @@ export const transferApprove = async (backendActor, ledgerActor, sendAmount) => 
         expected_allowance: [],
         expires_at: [],
       };
-      console.log(ledgerActor?.icrc2_approve);
-      await ledgerActor
-        ?.icrc2_approve(transaction)
-        .then(async res => {
-          if (res?.Err) {
-            console.log(res);
-            return;
-          } else {
-            afterPaymentFlow(backendActor, amnt);
-            console.log("Approve Result ",res);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+
+      const approvalResponse = await ledgerActor.icrc2_approve(transaction);
+
+      if (approvalResponse?.Err) {
+        console.log(approvalResponse);
+        return approvalResponse; 
+      } else {
+        return await afterPaymentFlow(backendActor, amnt);
+      }
     } else {
       console.log('balance is less : ', amnt, sendAmount);
+      return { error: 'Insufficient balance' }; 
     }
-  };
+  } catch (error) {
+    console.error("Error in transferApprove:", error);
+    throw error; 
+  }
+};

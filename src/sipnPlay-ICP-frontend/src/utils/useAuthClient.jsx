@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { HttpAgent, Actor } from "@dfinity/agent";
 import { createActor, idlFactory } from "../../../declarations/sipnPlay-ICP-backend/index";
 import { createLedgerActor} from "../../../declarations/ledger/index"
-// Create a React context for authentication state
+
 const AuthContext = createContext();
 
 const defaultOptions = {
@@ -45,7 +45,6 @@ export const useAuthClient = (options = defaultOptions) => {
   const [ledgerActor, setLedgerActor] = useState(null);
 
   useEffect(() => {
-    // On component mount, create an authentication client
     AuthClient.create(options.createOptions).then((client) => {
       setAuthClient(client);
     });
@@ -56,10 +55,6 @@ export const useAuthClient = (options = defaultOptions) => {
     }
   }, [authClient]);
 
-  // Helper function to convert binary data to a hex string
-  const toHexString = (byteArray) => {
-    return Array.from(byteArray, (byte) => ("0" + (byte & 0xff).toString(16)).slice(-2)).join("");
-  };
 
   const login = async (provider) => {
     return new Promise(async (resolve, reject) => {
@@ -96,7 +91,6 @@ export const useAuthClient = (options = defaultOptions) => {
     }
   };
 
-  // Function to handle logout
   const logout = async () => {
     try {
       await authClient.logout();
@@ -120,16 +114,10 @@ export const useAuthClient = (options = defaultOptions) => {
       const principal1 = identity.getPrincipal();
       setPrincipal(principal1.toString());
       console.log(principal);
-      
-
-    //   const accountId = AccountIdentifier.fromPrincipal({ principal });
-    //   setAccountId(toHexString(accountId.bytes));
-    //   setAccountIdString(toHexString(accountId.bytes));
-
       const agent = new HttpAgent({ identity });
 
       const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agent });
-      const ledgerActor1 = createLedgerActor("a3shf-5eaaa-aaaaa-qaafa-cai", { agent });
+      const ledgerActor1 = createLedgerActor("bw4dl-smaaa-aaaaa-qaacq-cai", { agent });
       setLedgerActor(ledgerActor1)
       setBackendActor(backendActor);
     } catch (error) {
@@ -137,22 +125,7 @@ export const useAuthClient = (options = defaultOptions) => {
     }
   };
 
-  // Function to create an actor for interacting with the ledger
-  // const createLedgerActor = (canisterId) => {
-  //   const agent = new HttpAgent({ 
-
-  //    });
-
-  //   if (process.env.DFX_NETWORK !== 'production') {
-  //     agent.fetchRootKey().catch(err => {
-  //       console.warn('Unable to fetch root key. Check to ensure that your local replica is running');
-  //       console.error(err);
-  //     });
-  //   }
-  //   return Actor.createActor(idlFactory, { agent, canisterId });
-  // };
-
-  // Function to refresh login without user interaction
+ 
   const reloadLogin = async () => {
     try {
       if (authClient.isAuthenticated() && !(await authClient.getIdentity().getPrincipal().isAnonymous())) {

@@ -97,8 +97,8 @@ actor {
 		index;
 	};
 
-	let CustomLedger = "a3shf-5eaaa-aaaaa-qaafa-cai";
-	let payment_address = Principal.fromText("bw4dl-smaaa-aaaaa-qaacq-cai");
+	let CustomLedger = "bw4dl-smaaa-aaaaa-qaacq-cai";
+	let payment_address = Principal.fromText("by6od-j4aaa-aaaaa-qaadq-cai");
 
 	public shared query ({ caller }) func getUser() : async Result.Result<Types.UserData, Text> {
 		switch (userDataRecord.get(caller)) {

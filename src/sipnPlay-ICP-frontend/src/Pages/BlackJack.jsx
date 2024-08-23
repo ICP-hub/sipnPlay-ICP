@@ -3,16 +3,17 @@ import { useAuth } from "../utils/useAuthClient";
 import { useNavigate } from 'react-router-dom';
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from 'react-redux';
-import { addUserData, updateUserData } from '../utils/redux/userSlice';
+import { addUserData, updateBalance } from '../utils/redux/userSlice';
 import { transferApprove } from '../utils/transApprove';
 
 const BlackJack = () => {
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const [score, setScore] = useState(null);
-  const [bet, setBet] = useState(null);
+  const dispatch= useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const userData = useSelector(state=>state.user);
+  
   const [balance, setBalance] = useState(null);
 
   const getDetails = async () => {
@@ -22,17 +23,7 @@ const BlackJack = () => {
       if (res.err === "New user") {
         navigate("/");
       } else {
-        // if (res.ok.points < 200) {
-        //   toast.error("You dont have enough points to play.");
-        //   navigate("/");
-        // }
-        let userBalance = await backendActor.get_balance();
-        setBalance(Number(userBalance))
-        dispatch(updateUserData({
-          id: principal,
-          email: res.ok.email,
-          balance: balance,
-        }))
+
       }
     } catch {
       console.log("user balance error");
@@ -42,8 +33,13 @@ const BlackJack = () => {
   }
 
   useEffect(() => {
+    if(!userData.id || !userData.email || !userData.balance){
+      toast.error("You are not logged in! ")
+      navigate("/");
+    }
     if (!isAuthenticated) {
       navigate("/");
+      toast.error("Login to start playing");
     } else {
       getDetails();
     }
@@ -69,10 +65,16 @@ const BlackJack = () => {
   useEffect(() => {
     const handleBet = async (event) => {
       if (event.data.type === 'bet_placed') {
-        setBet(event.data.bet);
-        console.log("Bet received:", event.data.bet);
-        await transferApprove(backendActor, ledgerActor, bet);
-        toast.success("Bet placed successfully");
+        const res = await transferApprove(backendActor, ledgerActor, event.data.bet);
+        console.log(res);
+        if(res.err){
+          toast.error("Payment Failed");
+          navigate("/");
+        }
+        else {
+          toast.success("Bet placed successfully");
+          dispatch(updateBalance({ balance: userData.balance-event.data.bet }));
+        }
       }
     };
 
@@ -86,8 +88,7 @@ const BlackJack = () => {
 
   return (
     <>
-      {true ? <iframe title="Blackjack Game" src="blackjack/index.html" style={{ width: '100%', height: '100vh', border: 'none' }} />
-        : <div className='flex justify-center items-center h-screen'>YOUR DATA IS LOADING ....</div>}
+       <iframe title="Blackjack Game" src="blackjack/index.html" style={{ width: '100%', height: '100vh', border: 'none' }} />
     </>
   )
 }
