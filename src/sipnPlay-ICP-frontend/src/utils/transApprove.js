@@ -55,7 +55,6 @@ export const transferApprove = async (backendActor, ledgerActor, sendAmount) => 
       const approvalResponse = await ledgerActor.icrc2_approve(transaction);
 
       if (approvalResponse?.Err) {
-        console.log(approvalResponse);
         return approvalResponse; 
       } else {
         return await afterPaymentFlow(backendActor, amnt);

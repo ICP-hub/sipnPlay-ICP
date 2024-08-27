@@ -11,6 +11,7 @@ import Iter "mo:base/Iter";
 import Blob "mo:base/Blob";
 import List "mo:base/List";
 import Nat64 "mo:base/Nat64";
+import Error "mo:base/Error";
 import Utils "./Utils";
 
 actor {
@@ -180,14 +181,20 @@ actor {
 			};
 			case (?user) {
 				let ledger = actor (CustomLedger) : ICRC.Token;
-				let response : ICRC.Result_2 = await icrc2_transferFrom(CustomLedger, caller, payment_address, amount);
+				let response : ICRC.Result = await ledger.icrc1_transfer({
+					to = { owner = caller; subaccount = null };
+					fee : ?Nat = null;
+					memo : ?Blob = null;
+					from_subaccount : ?Blob = null;
+					created_at_time : ?Nat64 = null;
+					amount = amount;
+				});
 				switch (response) {
 					case (#Ok(value)) {
-
-						return #ok("Order placed successfully, points updated" # Nat.toText(value));
+						return #ok("Points Added successfully" # Nat.toText(value));
 					};
 					case (#Err(e)) {
-						return #err("Payment error ");
+						throw Error.reject(debug_show (e));
 					};
 				};
 
