@@ -12,6 +12,7 @@ const BlackJack = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
+  const [currBalance, setCurrBalance] = useState(0);
 
   const getDetails = async () => {
     setIsLoading(true);
@@ -36,7 +37,7 @@ const BlackJack = () => {
             Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
         );
         console.log("balance recieved", amnt);
-
+        setCurrBalance(amnt);
         dispatch(updateBalance({ balance: amnt }));
       }
     } catch {
@@ -63,6 +64,7 @@ const BlackJack = () => {
     }
     if (userData.balance === 0) {
       toast.error("Balance not enough");
+      navigate("/");
     }
     if (!isAuthenticated) {
       navigate("/");
@@ -75,8 +77,7 @@ const BlackJack = () => {
   useEffect(() => {
     const handleScore = async (event) => {
       if (event.data.type === "save_score") {
-        console.log("Score received:", event.data.score);
-        if (event.data.score > userData.balance) {
+        if (event.data.score > currBalance) {
           let metaData = null;
 
           await ledgerActor
@@ -89,19 +90,14 @@ const BlackJack = () => {
             });
 
           console.log("score", event.data.score);
-          console.log("balance", userData.balance);
+          console.log("curr balance", currBalance);
 
           const tokensWon =
-            2 *
-            (event.data.score - userData.balance) *
+            (event.data.score - currBalance) *
             Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
           console.log("Tokens won ", tokensWon);
           const response = await backendActor.addMoney(parseInt(tokensWon));
-          dispatch(
-            updateBalance({
-              balance: event.data.score,
-            })
-          );
+          setCurrBalance(event.data.score);
           console.log(response);
         }
       }
@@ -126,9 +122,7 @@ const BlackJack = () => {
           toast.error("Payment Failed");
           navigate("/");
         } else {
-          dispatch(
-            updateBalance({ balance: userData.balance - event.data.bet })
-          );
+          setCurrBalance(currBalance - event.data.bet);
           toast.success("Bet placed successfully");
         }
       }
