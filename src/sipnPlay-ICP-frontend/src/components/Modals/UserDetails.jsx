@@ -28,7 +28,7 @@ const UserDetails = ({ modalIsOpen, setIsOpen }) => {
       </div>
       {modalIsOpen && (
         <div className=" inset-0 absolute z-20 flex items-center justify-center bg-transparent">
-          <div className="absolute top-24 right-24 w-72 bg-[#191919] bg-opacity-90 p-8 rounded-3xl flex flex-col justify-center items-center gap-4">
+          <div className="absolute right-8 top-24 p-4 md:top-20 md:p-6 md:right-16 lg:top-24 lg:right-24 lg:h-80 lg:w-72 bg-[#191919] bg-opacity-90 lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4">
             {/* Wrapper for positioning the button */}
             <div className="flex justify-end mb-4">
               <button
