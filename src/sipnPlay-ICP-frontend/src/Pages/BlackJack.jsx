@@ -35,14 +35,14 @@ const BlackJack = () => {
         let amnt = parseFloat(
           Number(balance) *
             Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
-        );
-        console.log("balance recieved", amnt);
-        setCurrBalance(amnt);
-        dispatch(updateBalance({ balance: amnt }));
-      }
-    } catch {
-      console.log("getDetails Error");
-    } finally {
+          );
+          console.log("balance recieved", amnt);
+          setCurrBalance(amnt);
+          dispatch(updateBalance({ balance: amnt }));
+        }
+      } catch {
+        console.log("getDetails Error");
+      } finally {
       setIsLoading(false);
     }
   };
