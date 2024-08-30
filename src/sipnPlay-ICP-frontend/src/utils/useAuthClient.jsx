@@ -125,7 +125,7 @@ export const useAuthClient = (options = defaultOptions) => {
         process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND,
         { agent }
       );
-      const ledgerActor1 = createLedgerActor("by6od-j4aaa-aaaaa-qaadq-cai", {
+      const ledgerActor1 = createLedgerActor("ent7t-2yaaa-aaaap-qhtcq-cai", {
         agent,
       });
       setLedgerActor(ledgerActor1);

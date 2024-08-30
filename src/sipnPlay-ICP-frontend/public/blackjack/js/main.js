@@ -165,14 +165,14 @@ function CMain(a) {
     }; this.tryToLoadSound = function (n, r) {
         setTimeout(function () {
             s_aSounds[n.ingamename] =
-            new Howl({
-                src: [n.path + n.filename + ".mp3"], autoplay: !1, preload: !0, loop: n.loop, volume: n.volume, onload: s_oMain.soundLoaded, onloaderror: function (E, z) { for (var v = 0; v < s_aSoundsInfo.length; v++)if (0 < s_aSounds[s_aSoundsInfo[v].ingamename]._sounds.length && E === s_aSounds[s_aSoundsInfo[v].ingamename]._sounds[0]._id) { s_oMain.tryToLoadSound(s_aSoundsInfo[v], !0); break } else document.querySelector("#block_game").style.display = "none" }, onplayerror: function (E) {
-                    for (var z = 0; z < s_aSoundsInfo.length; z++)if (E === s_aSounds[s_aSoundsInfo[z].ingamename]._sounds[0]._id) {
-                        s_aSounds[s_aSoundsInfo[z].ingamename].once("unlock",
-                            function () { s_aSounds[s_aSoundsInfo[z].ingamename].play() }); break
+                new Howl({
+                    src: [n.path + n.filename + ".mp3"], autoplay: !1, preload: !0, loop: n.loop, volume: n.volume, onload: s_oMain.soundLoaded, onloaderror: function (E, z) { for (var v = 0; v < s_aSoundsInfo.length; v++)if (0 < s_aSounds[s_aSoundsInfo[v].ingamename]._sounds.length && E === s_aSounds[s_aSoundsInfo[v].ingamename]._sounds[0]._id) { s_oMain.tryToLoadSound(s_aSoundsInfo[v], !0); break } else document.querySelector("#block_game").style.display = "none" }, onplayerror: function (E) {
+                        for (var z = 0; z < s_aSoundsInfo.length; z++)if (E === s_aSounds[s_aSoundsInfo[z].ingamename]._sounds[0]._id) {
+                            s_aSounds[s_aSoundsInfo[z].ingamename].once("unlock",
+                                function () { s_aSounds[s_aSoundsInfo[z].ingamename].play() }); break
+                        }
                     }
-                }
-            })
+                })
         }, r ? 200 : 0)
     }; this._loadImages = function () {
         s_oSpriteLibrary.init(this._onImagesLoaded, this._onAllImagesLoaded, this); s_oSpriteLibrary.addSprite("but_menu_bg", "./sprites/but_menu_bg.png"); s_oSpriteLibrary.addSprite("but_game_bg", "./sprites/but_game_bg.png"); s_oSpriteLibrary.addSprite("but_game_small_bg", "./sprites/but_game_small_bg.png"); s_oSpriteLibrary.addSprite("but_game_very_small_bg", "./sprites/but_game_very_small_bg.png"); s_oSpriteLibrary.addSprite("but_exit",
@@ -193,7 +193,7 @@ var s_bMobile, s_bAudioActive = !0, s_iCntTime = 0, s_iTimeElaps = 0, s_iPrevTim
 function CTextButton(a, e, b, c, g, f, h, p) {
     var n, r, E, z, v, x, t, K, A, u, l, H; this._init = function (F, y, B, G, C, m, w) { n = !1; r = 1; v = []; x = []; H = createBitmap(B); E = B.width; z = B.height; u = new createjs.Container; u.x = F; u.y = y; u.regX = B.width / 2; u.regY = B.height / 2; s_bMobile || (u.cursor = "pointer"); u.addChild(H, l); p.addChild(u); l = new CTLText(u, 10, 6, B.width - 20, B.height - 10, w, "center", m, C, 1, 0, 0, G, !0, !0, !1, !1); this._initListener() }; this.unload = function () { u.off("mousedown", t); u.off("pressup", K); p.removeChild(u) }; this.setVisible = function (F) {
         u.visible =
-        F
+            F
     }; this.setAlign = function (F) { l.textAlign = F }; this.setTextX = function (F) { l.x = F }; this.setScale = function (F) { r = u.scaleX = u.scaleY = F }; this.enable = function () { n = !1; u.filters = []; u.cache(0, 0, E, z) }; this.disable = function () { n = !0; var F = (new createjs.ColorMatrix).adjustSaturation(-100); u.filters = [new createjs.ColorMatrixFilter(F)]; u.cache(0, 0, E, z) }; this._initListener = function () { t = u.on("mousedown", this.buttonDown); K = u.on("pressup", this.buttonRelease) }; this.addEventListener = function (F, y, B) { v[F] = y; x[F] = B }; this.addEventListenerWithParams =
         function (F, y, B, G) { v[F] = y; x[F] = B; A = G }; this.buttonRelease = function () { n || (playSound("press_but", 1, !1), u.scaleX = r, u.scaleY = r, v[ON_MOUSE_UP] && v[ON_MOUSE_UP].call(x[ON_MOUSE_UP], A)) }; this.buttonDown = function () { n || (u.scaleX = .9 * r, u.scaleY = .9 * r, v[ON_MOUSE_DOWN] && v[ON_MOUSE_DOWN].call(x[ON_MOUSE_DOWN])) }; this.setPosition = function (F, y) { u.x = F; u.y = y }; this.tweenPosition = function (F, y, B, G, C, m, w) { createjs.Tween.get(u).wait(G).to({ x: F, y: y }, B, C).call(function () { void 0 !== m && m.call(w) }) }; this.changeText = function (F) { l.refreshText(F) };
     this.setX = function (F) { u.x = F }; this.setY = function (F) { u.y = F }; this.getButtonImage = function () { return u }; this.getX = function () { return u.x }; this.getY = function () { return u.y }; this.getSprite = function () { return u }; this.getScale = function () { return u.scaleX }; this._init(a, e, b, c, g, f, h)
@@ -280,7 +280,7 @@ function CGame(a) {
     }; this.onFicheSelected = function (k, q) { this.ficheSelected(q, k) }; this._onSetPlayerActions = function (k, q, J, O, D) { L.enable(k, q, J, O, D); d.refreshCardValue() }; this._onSitDown = function () { this.changeState(STATE_GAME_WAITING_FOR_BET); L.enableBetFiches() }; this.onDeal = function () {
         d.getCredit() + d.getCurBet() < E ? this._gameOver() : E > d.getCurBet() ? (X.show(TEXT_ERROR_MIN_BET), s_oInterface.enableBetFiches(), s_oInterface.enable(!0, !1, !1, !1, !1)) : (this.changeState(STATE_GAME_DEALING), $(s_oMain).trigger("bet_placed",
             d.getCurBet()))
-    }; this.onHit = function () { var k = new CVector2(I.getX(), I.getY()), q = new CVector2(d.getAttachCardOffset().getX(), d.getAttachCardOffset().getY()); this.attachCardToDeal(k, q, !1, d.newCardDealed()); this.changeState(STATE_GAME_HITTING) }; this.onStand = function () { d.stand() }; this.onDouble = function () { var k = d.getCurBet(); var q = k + k; d.doubleAction(q); d.changeBet(q); d.decreaseCredit(k); R += k; R < 2 * q && (f = !1); d.bet(q); L.refreshCredit(d.getCredit()); this.onHit(); g = !0; $(s_oMain).trigger("bet_placed", k) }; this.onSplit =
+    }; this.onHit = function () { var k = new CVector2(I.getX(), I.getY()), q = new CVector2(d.getAttachCardOffset().getX(), d.getAttachCardOffset().getY()); this.attachCardToDeal(k, q, !1, d.newCardDealed()); this.changeState(STATE_GAME_HITTING) }; this.onStand = function () { d.stand() }; this.onDouble = function () { }; this.onSplit =
         function () { R < 4 * d.getCurBet() && (f = !1); d.split(); this.changeState(STATE_GAME_SPLIT) }; this._onSplitCardEndAnim = function () { var k = d.getCurBet(), q = k; k += q; d.bet(k, !0); c = !0; L.enable(!1, !0, !0, !1, !1); d.setSplitHand(); d.refreshCardValue(); d.changeBet(k - q); d.decreaseCredit(q); R += q; L.refreshCredit(d.getCredit()); $(s_oMain).trigger("bet_placed", q) }; this.clearBets = function () { var k = d.getStartingBet(); 0 < k && (d.clearBet(), d.increaseCredit(k), R -= k, L.refreshCredit(d.getCredit())) }; this.rebet = function () {
             this.clearBets();
             var k = d.rebet(); 0 < k ? (L.enable(!0, !1, !1, !1, !1), R += k, L.refreshCredit(d.getCredit()), n = BET_TIME) : L.disableRebet()
@@ -305,12 +305,12 @@ function CInterface(a) {
                         p[I].addEventListenerWithParams(ON_MOUSE_UP, this._onFicheClicked, this, [w[I], I]); y = new CInsurancePanel; this.disableButtons(); this.refreshButtonPos(s_iOffsetX, s_iOffsetY)
     }; this.unload = function () { n.unload(); n = null; !1 === DISABLE_SOUND_MOBILE && (A.unload(), A = null); G && screenfull.isEnabled && B.unload(); s_oInterface = null }; this.refreshButtonPos = function (m, w) { n.setPosition(c - m, w + g); !1 !== DISABLE_SOUND_MOBILE && !1 !== s_bMobile || A.setPosition(f - m, w + h); G && screenfull.isEnabled && B.setPosition(e - m, b + w) }; this.reset = function () { this.disableButtons() };
     this.enableBetFiches = function () { for (var m = 0; m < NUM_FICHES; m++)p[m].enable(); r.enable(); E.enable() }; this.disableBetFiches = function () { for (var m = 0; m < NUM_FICHES; m++)p[m].disable(); r.disable(); E.disable() }; this.disableRebet = function () { E.disable() }; this.disableButtons = function () { z.disable(); v.disable(); x.disable(); t.disable(); K.disable() }; this.enable = function (m, w, I, Q, S) { m ? z.enable() : z.disable(); w ? v.enable() : v.disable(); I ? x.enable() : x.disable(); Q ? t.enable() : t.disable(); S ? K.enable() : K.disable() }; this.refreshCredit =
-        function (m) { u.refreshText(TEXT_CURRENCY + m.toFixed(2)) }; this.refreshDealerCardValue = function (m) { l.text = "" + m }; this.displayMsg = function (m, w) { H.refreshText(m); void 0 !== w && F.refreshText(w) }; this.showInsurancePanel = function () { y.show(TEXT_INSURANCE) }; this.clearDealerText = function () { l.text = "" }; this._onFicheClicked = function (m) { s_oGame.onFicheSelected(m[1], m[0]) }; this._onButClearRelease = function () { s_oGame.clearBets() }; this._onButRebetRelease = function () { s_oGame.rebet() }; this._onButDealRelease = function () {
+        function (m) { u.refreshText(TEXT_CURRENCY + m.toFixed(2)) }; this.refreshDealerCardValue = function (m) { l.text = "" + m }; this.displayMsg = function (m, w) { H.refreshText(m); void 0 !== w && F.refreshText(w) }; this.showInsurancePanel = function () { }; this.clearDealerText = function () { l.text = "" }; this._onFicheClicked = function (m) { s_oGame.onFicheSelected(m[1], m[0]) }; this._onButClearRelease = function () { s_oGame.clearBets() }; this._onButRebetRelease = function () { s_oGame.rebet() }; this._onButDealRelease = function () {
             this.disableBetFiches();
             this.disableButtons(); s_oGame.onDeal()
         }; this._onButHitRelease = function () { this.disableButtons(); s_oGame.onHit() }; this._onButStandRelease = function () { this.disableButtons(); s_oGame.onStand() }; this._onButDoubleRelease = function () { this.disableButtons(); s_oGame.onDouble() }; this._onButSplitRelease = function () { this.disableButtons(); s_oGame.onSplit() }; this._onExit = function () { s_oGame.onExit() }; this._onAudioToggle = function () { Howler.mute(s_bAudioActive); s_bAudioActive = !s_bAudioActive }; this.resetFullscreenBut = function () {
             G &&
-            screenfull.isEnabled && B.setActive(s_bFullscreen)
+                screenfull.isEnabled && B.setActive(s_bFullscreen)
         }; this._onFullscreenRelease = function () { s_bFullscreen ? C.call(window.document) : G.call(window.document.documentElement); sizeHandler() }; s_oInterface = this; this._init(a); return this
 } var s_oInterface = null;
 function CTweenController() { this.tweenValue = function (a, e, b) { return a + b * (e - a) }; this.easeLinear = function (a, e, b, c) { return b * a / c + e }; this.easeInCubic = function (a, e, b, c) { c = (a /= c) * a * a; return e + b * c }; this.easeBackInQuart = function (a, e, b, c) { c = (a /= c) * a; return e + b * (2 * c * c + 2 * c * a + -3 * c) }; this.easeInBack = function (a, e, b, c) { return b * (a /= c) * a * (2.70158 * a - 1.70158) + e }; this.easeOutCubic = function (a, e, b, c) { return b * ((a = a / c - 1) * a * a + 1) + e } }
@@ -322,7 +322,7 @@ function CSeat() {
         A = new CVector2; A.set(64, 163); n = new CVector2(A.getX(), A.getY()); u = new CVector2; u.set(172, 163); G = []; C = []
     }; this.unload = function () { s_oStage.removeChild(r) }; this.addEventListener = function (m, w, I) { G[m] = w; C[m] = I }; this.reset = function () { c = b = 0; e = a = !1; for (var m = 0; m < f.length; m++)f[m].getFichesController().reset(); f = []; m = new CHandController(A, y); f.push(m); for (m = 0; m < h.length; m++)h[m].unload(); h = []; p = []; y.addEventListener(FICHES_END_MOV, this._onFichesEndMove); B = null; this.clearText() }; this.clearText = function () {
         v.text =
-        ""; x.text = ""; E.text = ""; z.text = ""
+            ""; x.text = ""; E.text = ""; z.text = ""
     }; this.clearBet = function () { y.reset(); p = []; v.text = ""; f[b].changeBet(0) }; this.addCardToHand = function (m) { f[b].addCard(m); h.push(m); m.addEventListener(ON_CARD_TO_REMOVE, this._onRemoveCard) }; this.increaseHandValue = function (m) { f[b].increaseHandValue(m) }; this.refreshCardValue = function () { E.text = "" + this.getHandValue(0); 0 < this.getHandValue(1) && (z.text = "" + this.getHandValue(1)) }; this.setCredit = function (m) { g = m }; this.increaseCredit = function (m) { g += m }; this.changeBet = function (m) { f[b].changeBet(m) };
     this.checkHand = function () {
         var m = f[b].getValue(); if (21 === m) this.checkPlayerLastHand(PASS_TURN); else if (21 < m) 0 < f[b].getAces() ? (f[b].removeAce(), 21 === f[b].getValue() ? this.checkPlayerLastHand(PASS_TURN) : a ? this.checkPlayerLastHand(PASS_TURN) : G[RESTORE_ACTION] && G[RESTORE_ACTION].call(C[RESTORE_ACTION], !1, !0, !0, !1, !1), this.refreshCardValue()) : 1 < f.length || e ? this.checkPlayerLastHand(PASS_TURN) : this.checkPlayerLastHand(PLAYER_LOSE); else if (a) this.checkPlayerLastHand(PASS_TURN); else {
@@ -404,7 +404,7 @@ function CCard(a, e, b) {
         }; this.cardShown = function () { v[ON_CARD_SHOWN] && v[ON_CARD_SHOWN].call(x[ON_CARD_SHOWN]) }; this.cardHidden = function () { g = !0 }; this.getValue = function () { return p }; this.getFotogram = function () { return h }; this._updateDealing = function () {
             r += s_iTimeElaps; if (r > TIME_CARD_DEALING) f = -1, r = 0, t.x = z.getX(), t.y = z.getY(), t.rotation = 360, v[ON_CARD_ANIMATION_ENDING] && v[ON_CARD_ANIMATION_ENDING].call(x[ON_CARD_ANIMATION_ENDING], this, c, n), !1 === (c && 2 === n) && this.showCard(); else {
                 this.visible =
-                !0; var A = easeInOutCubic(r, 0, 1, TIME_CARD_DEALING), u = new CVector2; u = tweenVectors(E, z, A, u); t.x = u.getX(); t.y = u.getY(); !1 === c && (t.rotation = 36E3 * A / 100)
+                    !0; var A = easeInOutCubic(r, 0, 1, TIME_CARD_DEALING), u = new CVector2; u = tweenVectors(E, z, A, u); t.x = u.getX(); t.y = u.getY(); !1 === c && (t.rotation = 36E3 * A / 100)
             }
         }; this._updateSplit = function () { r += s_iTimeElaps; if (r > TIME_CARD_DEALING) r = 0, v[SPLIT_CARD_END_ANIM] && v[SPLIT_CARD_END_ANIM].call(x[SPLIT_CARD_END_ANIM]), f = -1; else { var A = easeInOutCubic(r, 0, 1, TIME_CARD_DEALING), u = new CVector2; u = tweenVectors(E, z, A, u); t.x = u.getX(); t.y = u.getY() } }; this._updateRemoving = function () {
             r += s_iTimeElaps; if (r > TIME_CARD_REMOVE) r = 0, g = t.visible =

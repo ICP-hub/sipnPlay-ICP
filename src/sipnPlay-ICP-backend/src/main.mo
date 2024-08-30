@@ -42,12 +42,13 @@ actor {
 	system func preupgrade() {
 		stableMessages := Iter.toArray(messageDataRecord.entries());
 		stableWaitlist := Iter.toArray(waitlistDataRecord.entries());
+		stableUsers := Iter.toArray(userDataRecord.entries());
 	};
 
 	system func postupgrade() {
 		messageDataRecord := TrieMap.fromEntries(stableMessages.vals(), Text.equal, Text.hash);
-
 		waitlistDataRecord := TrieMap.fromEntries(stableWaitlist.vals(), Text.equal, Text.hash);
+		userDataRecord:= TrieMap.fromEntries(stableUsers.vals(), Principal.equal, Principal.hash);
 	};
 
 	//Functions********************************
@@ -98,7 +99,7 @@ actor {
 		index;
 	};
 
-	let CustomLedger = "by6od-j4aaa-aaaaa-qaadq-cai";
+	let CustomLedger = "ent7t-2yaaa-aaaap-qhtcq-cai";
 	let payment_address = Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai");
 
 

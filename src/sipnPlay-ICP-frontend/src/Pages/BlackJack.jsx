@@ -12,7 +12,6 @@ const BlackJack = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
-  const [currBalance, setCurrBalance] = useState(0);
 
   const getDetails = async () => {
     setIsLoading(true);
@@ -34,15 +33,14 @@ const BlackJack = () => {
 
         let amnt = parseFloat(
           Number(balance) *
-            Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
-          );
-          console.log("balance recieved", amnt);
-          setCurrBalance(amnt);
-          dispatch(updateBalance({ balance: amnt }));
-        }
-      } catch {
-        console.log("getDetails Error");
-      } finally {
+          Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+        );
+        console.log("balance recieved", amnt);
+        dispatch(updateBalance({ balance: amnt }));
+      }
+    } catch {
+      console.log("getDetails Error");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -62,11 +60,11 @@ const BlackJack = () => {
       toast.error("You are not logged in! ");
       navigate("/");
     }
-    if (userData.balance === 0) {
-      toast.error("Balance not enough");
-      navigate("/");
-    }
-    if (!isAuthenticated) {
+    // else if (userData.balance === 0) {
+    //   toast.error("Balance not enough");
+    //   navigate("/");
+    // }
+    else if (!isAuthenticated) {
       navigate("/");
       toast.error("You are not logged in! ");
     } else {
@@ -77,7 +75,7 @@ const BlackJack = () => {
   useEffect(() => {
     const handleScore = async (event) => {
       if (event.data.type === "save_score") {
-        if (event.data.score > currBalance) {
+        if (event.data.score > userData.balance) {
           let metaData = null;
 
           await ledgerActor
@@ -90,14 +88,14 @@ const BlackJack = () => {
             });
 
           console.log("score", event.data.score);
-          console.log("curr balance", currBalance);
+          console.log("curr balance", userData.balance);
 
           const tokensWon =
-            (event.data.score - currBalance) *
+            (event.data.score - userData.balance) *
             Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
           console.log("Tokens won ", tokensWon);
           const response = await backendActor.addMoney(parseInt(tokensWon));
-          setCurrBalance(event.data.score);
+          dispatch(updateBalance({ balance: event.data.score }));
           console.log(response);
         }
       }
@@ -122,7 +120,7 @@ const BlackJack = () => {
           toast.error("Payment Failed");
           navigate("/");
         } else {
-          setCurrBalance(currBalance - event.data.bet);
+          dispatch(updateBalance({ balance: (userData.balance - event.data.bet) }));
           toast.success("Bet placed successfully");
         }
       }
