@@ -13,30 +13,37 @@ const BlackJack = () => {
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
 
+  const getBalance = async () => {
+    let balance = await backendActor.get_balance();
+    let metaData = null;
+    await ledgerActor
+      .icrc1_metadata()
+      .then((res) => {
+        metaData = formatTokenMetaData(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    let amnt = parseFloat(
+      Number(balance) *
+      Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+    );
+    dispatch(updateBalance({ balance: amnt }));
+    return amnt;
+  }
+
   const getDetails = async () => {
     setIsLoading(true);
     try {
       const res = await backendActor.getUser();
       if (res.err === "New user") {
         navigate("/");
+        toast.error("Please provide your email");
       } else {
-        let balance = await backendActor.get_balance();
-        let metaData = null;
-        await ledgerActor
-          .icrc1_metadata()
-          .then((res) => {
-            metaData = formatTokenMetaData(res);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-
-        let amnt = parseFloat(
-          Number(balance) *
-          Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
-        );
+        const amnt = await getBalance();
         console.log("balance recieved", amnt);
-        dispatch(updateBalance({ balance: amnt }));
+
       }
     } catch {
       console.log("getDetails Error");
@@ -60,10 +67,6 @@ const BlackJack = () => {
       toast.error("You are not logged in! ");
       navigate("/");
     }
-    // else if (userData.balance === 0) {
-    //   toast.error("Balance not enough");
-    //   navigate("/");
-    // }
     else if (!isAuthenticated) {
       navigate("/");
       toast.error("You are not logged in! ");
@@ -75,6 +78,9 @@ const BlackJack = () => {
   useEffect(() => {
     const handleScore = async (event) => {
       if (event.data.type === "save_score") {
+        console.log("Balance", userData.balance);
+        console.log("score", event.data.score)
+
         if (event.data.score > userData.balance) {
           let metaData = null;
 
@@ -87,9 +93,6 @@ const BlackJack = () => {
               console.log(err);
             });
 
-          console.log("score", event.data.score);
-          console.log("curr balance", userData.balance);
-
           const tokensWon =
             (event.data.score - userData.balance) *
             Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
@@ -97,6 +100,9 @@ const BlackJack = () => {
           const response = await backendActor.addMoney(parseInt(tokensWon));
           dispatch(updateBalance({ balance: event.data.score }));
           console.log(response);
+          if (response.ok) {
+            toast.success("Points added successfully");
+          }
         }
       }
     };
@@ -120,8 +126,8 @@ const BlackJack = () => {
           toast.error("Payment Failed");
           navigate("/");
         } else {
-          dispatch(updateBalance({ balance: (userData.balance - event.data.bet) }));
-          toast.success("Bet placed successfully");
+          const amnt = await getBalance();
+          toast.success(`Bet placed successfully for $${amnt}`);
         }
       }
     };
@@ -133,14 +139,22 @@ const BlackJack = () => {
     };
   }, []);
 
+  useEffect(() => {
+    console.log("UPDATED BALANCE", userData.balance); // Should reflect the updated balance
+  }, [userData.balance]);
+
+
   return (
-    <>
-      <iframe
-        title="Blackjack Game"
-        src="blackjack/index.html"
-        style={{ width: "100%", height: "100vh", border: "none" }}
-      />
-    </>
+    <div>{
+      isLoading ? <div>
+        Game is loading
+      </div> :
+        <iframe
+          title="Blackjack Game"
+          src="blackjack/index.html"
+          style={{ width: "100%", height: "100vh", border: "none" }}
+        />}
+    </div>
   );
 };
 export default BlackJack;

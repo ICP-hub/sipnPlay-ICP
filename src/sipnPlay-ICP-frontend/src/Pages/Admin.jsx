@@ -37,6 +37,7 @@ function convertNanosecondsToDateTime(nanoseconds) {
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState('waitlist');
   const [waitlist, setWaitlist] = useState([]);
+  const [addAmount, setAddAmount] = useState(0);
   const [messages, setMessages] = useState([]);
   const [waitlistPage, setWaitlistPage] = useState(0);
   const [waitlistPageSize, setWaitlistPageSize] = useState(0);
@@ -48,6 +49,13 @@ const AdminPanel = () => {
   const chunkSize = 10;
 
   const [modalIsOpen, setIsOpen] = useState(false);
+
+  const addMoney = async (e) => {
+    e.preventDefault();
+    const response = await backendActor.addMoney(parseInt(addAmount));
+    console.log(response);
+    toast.success("Money added");    
+  }
 
   const fetchWaitlist = async (page) => {
     try {
@@ -110,7 +118,7 @@ const AdminPanel = () => {
 
       // Developers
       "cgqj3-pk6l5-xnxdb-ehlkh-4p5o3-kwonc-gp5yh-iprtz-xbn4w-kl4op-vqe", // Somiya Behera
-      "6xm33-dd2dg-pd6fa-iiojc-ptsbh-elqne-o4zqv-ipjho-5y4am-mfi53-hqe", //Tushar Jain
+      "qpi67-2c7z4-3efq2-jnzvv-xdoik-xb72q-4y6ms-mjfwt-7aogy-4it4b-uqe", //Tushar Jain
 
 
       "yyjkq-j3ybi-yhe2a-ujlbc-wqxof-ttj65-et3zg-2jsxg-wpa7s-t5lbv-rqe", //Sharan Sir
@@ -176,6 +184,7 @@ const AdminPanel = () => {
     XLSX.writeFile(workbook, `${activeSection}.xlsx`);
   };
 
+
   if (!isAuthenticated) {
     return (
       <div className="p-6">
@@ -210,6 +219,12 @@ const AdminPanel = () => {
         >
           Logout
         </button>
+        <form onSubmit={addMoney}>
+          <input type='number' value={addAmount} onChange={(e) => setAddAmount(e.target.value)} className='rounded-lg px-3 text-black  h-11' />
+          <button className='bg-blue-500 rounded-lg px-[19px] ml-3'>
+            Submit
+          </button>
+        </form>
         <button
           onClick={handleDownload}
           className="px-4 py-2 bg-green-500 text-white rounded-lg"

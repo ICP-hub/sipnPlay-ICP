@@ -74,7 +74,7 @@ const Hero = () => {
   return (
     <>
       <Register
-        setIsRegisterDone={isRegisterDone}
+        setIsRegisterDone={setIsRegisterDone}
         modalIsOpen={modalIsOpen}
         setIsOpen={setIsOpen}
       />

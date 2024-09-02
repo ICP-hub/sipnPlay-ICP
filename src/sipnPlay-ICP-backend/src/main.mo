@@ -17,8 +17,23 @@ import Utils "./Utils";
 actor {
 	// public type Index = Nat64;
 
-	var userDataRecord = TrieMap.TrieMap<Principal, Types.UserData>(Principal.equal, Principal.hash);
-	private stable var stableUsers : [(Principal, Types.UserData)] = [];
+	var userDataRecord = TrieMap.TrieMap<Principal, Types.Index>(Principal.equal, Principal.hash);
+	private stable var stableUsers : [(Principal, Types.Index)] = [];
+	stable var userDatarecord_state = {
+		bytes = Region.new();
+		var bytes_count : Nat64 = 0;
+		elems = Region.new();
+		var elems_count : Nat64 = 0;
+	};
+
+	var blackjackBetRecord = TrieMap.TrieMap<Principal, Types.Index>(Principal.equal, Principal.hash);
+	private stable var stableblackjackBet : [(Principal, Types.Index)] = [];
+	stable var blackjackBet_state = {
+		bytes = Region.new();
+		var bytes_count : Nat64 = 0;
+		elems = Region.new();
+		var elems_count : Nat64 = 0;
+	};
 
 	var messageDataRecord = TrieMap.TrieMap<Text, Types.Index>(Text.equal, Text.hash);
 	private stable var stableMessages : [(Text, Types.Index)] = [];
@@ -50,6 +65,7 @@ actor {
 		waitlistDataRecord := TrieMap.fromEntries(stableWaitlist.vals(), Text.equal, Text.hash);
 		userDataRecord:= TrieMap.fromEntries(stableUsers.vals(), Principal.equal, Principal.hash);
 	};
+	
 
 	//Functions********************************
 
@@ -102,14 +118,23 @@ actor {
 	let CustomLedger = "ent7t-2yaaa-aaaap-qhtcq-cai";
 	let payment_address = Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai");
 
-
-	public shared query ({ caller }) func getUser() : async Result.Result<Types.UserData, Text> {
+	public shared ({ caller }) func getUser() : async Result.Result<Types.UserData, Text> {
 		switch (userDataRecord.get(caller)) {
 			case (null) {
 				return #err("New user");
 			};
-			case (?user) {
-				return #ok(user);
+			case (?index) {
+				let user_blob = await stable_get(index,userDatarecord_state);
+				let user_data : ?Types.UserData = from_candid(user_blob);
+				
+				switch(user_data){
+					case null {
+						throw (Error.reject("Blob not found not the specific index"))
+					};
+					case (?user){
+						return #ok(user);
+					};
+				};
 			};
 		};
 	};
@@ -125,7 +150,10 @@ actor {
 					id = caller;
 					email = email;
 				};
-				userDataRecord.put(caller, newUser);
+
+				let user_blob  = to_candid(newUser);
+				let index = await stable_add(user_blob,userDatarecord_state);
+				userDataRecord.put(caller, index);
 				return "User created!";
 			};
 			case (?user) {
