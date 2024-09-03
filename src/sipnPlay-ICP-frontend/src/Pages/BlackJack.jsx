@@ -5,11 +5,13 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { updateBalance } from "../utils/redux/userSlice";
 import { transferApprove } from "../utils/transApprove";
+import LoadingWindow from "../components/Loaders/LoadingWindow";
 
 const BlackJack = () => {
   const { isAuthenticated, backendActor, ledgerActor } = useAuth();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [isPopUpLoading, setIsPopUpLoading] = useState(false);
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
 
@@ -78,12 +80,12 @@ const BlackJack = () => {
   useEffect(() => {
     const handleScore = async (event) => {
       if (event.data.type === "save_score") {
-        console.log("Balance", userData.balance);
+        const amnt = await getBalance();
+        console.log("Balance", amnt);
         console.log("score", event.data.score)
 
-        if (event.data.score > userData.balance) {
+        if (event.data.score > amnt) {
           let metaData = null;
-
           await ledgerActor
             .icrc1_metadata()
             .then((res) => {
@@ -93,9 +95,7 @@ const BlackJack = () => {
               console.log(err);
             });
 
-          const tokensWon =
-            (event.data.score - userData.balance) *
-            Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
+          const tokensWon = (event.data.score - amnt) * Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
           console.log("Tokens won ", tokensWon);
           const response = await backendActor.addMoney(parseInt(tokensWon));
           dispatch(updateBalance({ balance: event.data.score }));
@@ -116,18 +116,25 @@ const BlackJack = () => {
   useEffect(() => {
     const handleBet = async (event) => {
       if (event.data.type === "bet_placed") {
-        const res = await transferApprove(
-          backendActor,
-          ledgerActor,
-          event.data.bet
-        );
-        console.log(res);
-        if (res.err) {
-          toast.error("Payment Failed");
-          navigate("/");
-        } else {
-          const amnt = await getBalance();
-          toast.success(`Bet placed successfully for $${amnt}`);
+        try {
+          setIsPopUpLoading(true);
+          const res = await transferApprove(
+            backendActor,
+            ledgerActor,
+            event.data.bet
+          );
+          console.log(res);
+          if (res.err) {
+            toast.error("Payment Failed");
+            navigate("/");
+          } else {
+            const amnt = await getBalance();
+            toast.success(`Updated balance: $${amnt}`);
+          }
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setIsPopUpLoading(false);
         }
       }
     };
@@ -140,20 +147,24 @@ const BlackJack = () => {
   }, []);
 
   useEffect(() => {
-    console.log("UPDATED BALANCE", userData.balance); // Should reflect the updated balance
+    console.log("UPDATED BALANCE", userData.balance);
   }, [userData.balance]);
 
 
   return (
-    <div>{
-      isLoading ? <div>
-        Game is loading
-      </div> :
-        <iframe
-          title="Blackjack Game"
-          src="blackjack/index.html"
-          style={{ width: "100%", height: "100vh", border: "none" }}
-        />}
+    <div>
+      {isLoading ? (
+        <LoadingWindow />
+      ) : (
+        <div>
+          {/* {isPopUpLoading} */}
+          <iframe
+            title="Blackjack Game"
+            src="blackjack/index.html"
+            style={{ width: "100%", height: "100vh", border: "none" }}
+          />
+        </div>
+      )}
     </div>
   );
 };
