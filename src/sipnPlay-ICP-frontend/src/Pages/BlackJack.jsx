@@ -155,10 +155,10 @@ const BlackJack = () => {
   return (
     <div>
       {isLoading ? (
-        <LoadingWindow />
+        <LoadingWindow gameName="blackjack" />
       ) : (
         <div>
-          {isPopUpLoading && <LoadingPopUp /> }
+          {isPopUpLoading && <LoadingPopUp gameName="blackjack"  /> }
           <iframe
             title="Blackjack Game"
             src="blackjack/index.html"
