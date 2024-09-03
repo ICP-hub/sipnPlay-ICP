@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateBalance } from "../utils/redux/userSlice";
 import { transferApprove } from "../utils/transApprove";
 import LoadingWindow from "../components/Loaders/LoadingWindow";
+import LoadingPopUp from "../components/Loaders/LoadingPopUp";
 
 const BlackJack = () => {
   const { isAuthenticated, backendActor, ledgerActor } = useAuth();
@@ -157,7 +158,7 @@ const BlackJack = () => {
         <LoadingWindow />
       ) : (
         <div>
-          {/* {isPopUpLoading} */}
+          {isPopUpLoading && <LoadingPopUp /> }
           <iframe
             title="Blackjack Game"
             src="blackjack/index.html"
