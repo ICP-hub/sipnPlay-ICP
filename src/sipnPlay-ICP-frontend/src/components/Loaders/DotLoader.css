@@ -1,7 +1,7 @@
 .dot,
 .colored-dot {
-  height: 25px;
-  width: 25px;
+  /* height: 25px;
+  width: 25px; */
   border-radius: 50%;
   display: block;
   box-sizing: border-box;

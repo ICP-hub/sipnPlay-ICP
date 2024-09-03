@@ -3,7 +3,7 @@ import logo from "../../assets/images/logo.png";
 import bgImage from "../../assets/images/waitlistBg.png";
 import blackJackLogo from "../../assets/images/blackjack.png";
 import EBoolLogo from "../../assets/images/8bool.png";
-import "./DotLoader.css";
+import DotLoader from "./DotLoader";
 
 const LoadingWindow = ({ gameName }) => {
   let gameImage = null;
@@ -33,13 +33,7 @@ const LoadingWindow = ({ gameName }) => {
       />
       <div className="flex flex-col justify-center items-center md:h-[480px]">
         <img className="block" draggable="false" src={gameImage} />
-        <div className="loader flex justify-center">
-          <div className="colored-dot"></div>
-          <div className="dot dot-1"></div>
-          <div className="dot dot-2"></div>
-          <div className="dot dot-3"></div>
-          <div className="dot dot-4"></div>
-        </div>
+        <DotLoader dotSize={25} />
       </div>
     </div>
   );

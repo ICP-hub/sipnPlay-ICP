@@ -30,11 +30,11 @@ const BlackJack = () => {
 
     let amnt = parseFloat(
       Number(balance) *
-      Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
     );
     dispatch(updateBalance({ balance: amnt }));
     return amnt;
-  }
+  };
 
   const getDetails = async () => {
     setIsLoading(true);
@@ -46,7 +46,6 @@ const BlackJack = () => {
       } else {
         const amnt = await getBalance();
         console.log("balance recieved", amnt);
-
       }
     } catch {
       console.log("getDetails Error");
@@ -69,8 +68,7 @@ const BlackJack = () => {
     if (!userData.id || !userData.email) {
       toast.error("You are not logged in! ");
       navigate("/");
-    }
-    else if (!isAuthenticated) {
+    } else if (!isAuthenticated) {
       navigate("/");
       toast.error("You are not logged in! ");
     } else {
@@ -78,32 +76,79 @@ const BlackJack = () => {
     }
   }, []);
 
+  // useEffect(() => {
+  //   const handleScore = async (event) => {
+  //     if (event.data.type === "save_score") {
+  //       const amnt = await getBalance();
+  //       console.log("Balance", amnt);
+  //       console.log("score", event.data.score);
+
+  //       if (event.data.score > amnt) {
+  //         let metaData = null;
+  //         await ledgerActor
+  //           .icrc1_metadata()
+  //           .then((res) => {
+  //             metaData = formatTokenMetaData(res);
+  //           })
+  //           .catch((err) => {
+  //             console.log(err);
+  //           });
+
+  //         const tokensWon =
+  //           (event.data.score - amnt) *
+  //           Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
+  //         console.log("Tokens won ", tokensWon);
+  //         const response = await backendActor.addMoney(parseInt(tokensWon));
+  //         dispatch(updateBalance({ balance: event.data.score }));
+  //         console.log(response);
+  //         if (response.ok) {
+  //           toast.success("Points added successfully");
+  //         }
+  //       }
+  //     }
+  //   };
+  //   window.addEventListener("message", handleScore);
+
+  //   return () => {
+  //     window.removeEventListener("message", handleScore);
+  //   };
+  // }, []);
+
   useEffect(() => {
     const handleScore = async (event) => {
       if (event.data.type === "save_score") {
-        const amnt = await getBalance();
-        console.log("Balance", amnt);
-        console.log("score", event.data.score)
+        setIsPopUpLoading(true); // Set setIsLoading to true before trying to get balance
+        try {
+          const amnt = await getBalance();
+          console.log("Balance", amnt);
+          console.log("score", event.data.score);
 
-        if (event.data.score > amnt) {
-          let metaData = null;
-          await ledgerActor
-            .icrc1_metadata()
-            .then((res) => {
-              metaData = formatTokenMetaData(res);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          if (event.data.score > amnt) {
+            let metaData = null;
+            await ledgerActor
+              .icrc1_metadata()
+              .then((res) => {
+                metaData = formatTokenMetaData(res);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
 
-          const tokensWon = (event.data.score - amnt) * Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
-          console.log("Tokens won ", tokensWon);
-          const response = await backendActor.addMoney(parseInt(tokensWon));
-          dispatch(updateBalance({ balance: event.data.score }));
-          console.log(response);
-          if (response.ok) {
-            toast.success("Points added successfully");
+            const tokensWon =
+              (event.data.score - amnt) *
+              Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
+            console.log("Tokens won ", tokensWon);
+            const response = await backendActor.addMoney(parseInt(tokensWon));
+            dispatch(updateBalance({ balance: event.data.score }));
+            console.log(response);
+            if (response.ok) {
+              toast.success("Points added successfully");
+            }
           }
+        } catch (error) {
+          console.error("Error handling score:", error);
+        } finally {
+          setIsPopUpLoading(false); // Set setIsLoading to false in finally block
         }
       }
     };
@@ -151,14 +196,19 @@ const BlackJack = () => {
     console.log("UPDATED BALANCE", userData.balance);
   }, [userData.balance]);
 
-
   return (
     <div>
       {isLoading ? (
         <LoadingWindow gameName="blackjack" />
       ) : (
         <div>
-          {isPopUpLoading && <LoadingPopUp gameName="blackjack"  /> }
+          {true && (
+            <LoadingPopUp
+              gameName="blackjack"
+              isPopUpLoading={isPopUpLoading}
+              setIsPopUpLoading={setIsPopUpLoading}
+            />
+          )}
           <iframe
             title="Blackjack Game"
             src="blackjack/index.html"
