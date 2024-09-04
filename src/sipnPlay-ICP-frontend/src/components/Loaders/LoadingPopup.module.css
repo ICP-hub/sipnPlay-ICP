@@ -1,41 +1,44 @@
 .dot,
-.colored-dot {
-  /* height: 25px;
-  width: 25px; */
+.coloredDot {
+  height: 5px;
+  width: 5px;
   border-radius: 50%;
   display: block;
   box-sizing: border-box;
-  margin: 0 10px 0 0;
+  margin: 0 2px 0 0;
   z-index: 100;
 }
 
-.colored-dot {
-  margin: 0 5px 5px 0;
-}
-
 .dot {
-  background-color: #fff;
+  background-color: #ccc;
 }
 
-.colored-dot {
+.dot1 {
+  animation: dot-jump 2s linear infinite 0.4s;
+}
+
+.dot2 {
+  animation: dot-jump 2s linear infinite 0.8s;
+}
+
+.dot3 {
+  animation: dot-jump 2s linear infinite 1.2s;
+}
+
+.dot4 {
+  animation: dot-jump 2s linear infinite 1.6s;
+}
+
+.coloredDot {
   background-color: #ee3ec9;
   animation: dot-animation 2s linear infinite 0.5s;
 }
 
-.dot-1 {
-  animation: dot-jump 2s linear infinite 0.4s;
-}
-
-.dot-2 {
-  animation: dot-jump 2s linear infinite 0.8s;
-}
-
-.dot-3 {
-  animation: dot-jump 2s linear infinite 1.2s;
-}
-
-.dot-4 {
-  animation: dot-jump 2s linear infinite 1.6s;
+.dots-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 @keyframes dot-jump {
@@ -43,7 +46,7 @@
     transform: translateY(0px);
   }
   20% {
-    transform: translateY(-50px);
+    transform: translateY(-10px);
   }
   40% {
     transform: translateY(0px);
@@ -64,33 +67,33 @@
     transform: translateX(0px);
   }
   10% {
-    transform: translateX(30px);
+    transform: translateX(7px);
   }
   20% {
-    transform: translateX(30px);
+    transform: translateX(7px);
   }
   30% {
-    transform: translateX(65px);
+    transform: translateX(14px);
   }
   40% {
-    transform: translateX(65px);
+    transform: translateX(14px);
   }
   50% {
-    transform: translateX(100px);
+    transform: translateX(21px);
   }
   60% {
-    transform: translateX(100px);
+    transform: translateX(21px);
   }
   70% {
-    transform: translateX(135px);
+    transform: translateX(28px);
   }
   80% {
-    transform: translateX(135px);
+    transform: translateX(28px);
   }
   90% {
-    transform: translateX(170px);
+    transform: translateX(35px);
   }
   100% {
-    transform: translateX(170px);
+    transform: translateX(35px);
   }
 }

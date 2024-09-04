@@ -3,7 +3,8 @@ import logo from "../../assets/images/logo.png";
 import bgImage from "../../assets/images/waitlistBg.png";
 import blackJackLogo from "../../assets/images/blackjack.png";
 import EBoolLogo from "../../assets/images/8bool.png";
-import DotLoader from "./DotLoader";
+// import DotLoader from "./DotLoader";
+import styles from "./LoadingWindow.module.css";
 
 const LoadingWindow = ({ gameName }) => {
   let gameImage = null;
@@ -31,9 +32,16 @@ const LoadingWindow = ({ gameName }) => {
         draggable="false"
         src={logo}
       />
-      <div className="flex flex-col justify-center items-center md:h-[480px]">
+      <div className="flex flex-col justify-center items-center md:h-[480px] mb-16">
         <img className="block" draggable="false" src={gameImage} />
-        <DotLoader dotSize={25} />
+      </div>
+      {/* Loader */}
+      <div className="loader flex justify-center">
+        <div className={`${styles.coloredDot}`}></div>
+        <div className={`${styles.dot} ${styles.dot1}`}></div>
+        <div className={`${styles.dot} ${styles.dot2}`}></div>
+        <div className={`${styles.dot} ${styles.dot3}`}></div>
+        <div className={`${styles.dot} ${styles.dot4}`}></div>
       </div>
     </div>
   );

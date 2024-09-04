@@ -202,7 +202,7 @@ const BlackJack = () => {
         <LoadingWindow gameName="blackjack" />
       ) : (
         <div>
-          {true && (
+          {isPopUpLoading && (
             <LoadingPopUp
               gameName="blackjack"
               isPopUpLoading={isPopUpLoading}
