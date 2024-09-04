@@ -13,6 +13,7 @@ const BlackJack = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isPopUpLoading, setIsPopUpLoading] = useState(false);
+  const [taskName, setTaskName] = useState("");
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
 
@@ -45,6 +46,10 @@ const BlackJack = () => {
         toast.error("Please provide your email");
       } else {
         const amnt = await getBalance();
+        if (amnt === 0) {
+          navigate("/");
+          toast.error("Please top up your account");
+        }
         console.log("balance recieved", amnt);
       }
     } catch {
@@ -117,9 +122,13 @@ const BlackJack = () => {
   useEffect(() => {
     const handleScore = async (event) => {
       if (event.data.type === "save_score") {
-        setIsPopUpLoading(true); // Set setIsLoading to true before trying to get balance
+        setTimeout(() => {
+          setIsPopUpLoading(true);
+        }, 1000);
         try {
+          setTaskName("Fetching Balance");
           const amnt = await getBalance();
+
           console.log("Balance", amnt);
           console.log("score", event.data.score);
 
@@ -138,6 +147,7 @@ const BlackJack = () => {
               (event.data.score - amnt) *
               Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
             console.log("Tokens won ", tokensWon);
+            setTaskName("Adding Points");
             const response = await backendActor.addMoney(parseInt(tokensWon));
             dispatch(updateBalance({ balance: event.data.score }));
             console.log(response);
@@ -148,7 +158,8 @@ const BlackJack = () => {
         } catch (error) {
           console.error("Error handling score:", error);
         } finally {
-          setIsPopUpLoading(false); // Set setIsLoading to false in finally block
+          setIsPopUpLoading(false);
+          setTaskName("");
         }
       }
     };
@@ -163,7 +174,10 @@ const BlackJack = () => {
     const handleBet = async (event) => {
       if (event.data.type === "bet_placed") {
         try {
-          setIsPopUpLoading(true);
+          setTimeout(() => {
+            setIsPopUpLoading(true);
+          }, 1000);
+          setTaskName("Updating Balance");
           const res = await transferApprove(
             backendActor,
             ledgerActor,
@@ -175,12 +189,13 @@ const BlackJack = () => {
             navigate("/");
           } else {
             const amnt = await getBalance();
-            toast.success(`Updated balance: $${amnt}`);
+            toast.success(`Updated balance: $${Math.round(amnt)}`);
           }
         } catch (err) {
           console.log(err);
         } finally {
           setIsPopUpLoading(false);
+          setTaskName("");
         }
       }
     };
@@ -207,6 +222,7 @@ const BlackJack = () => {
               gameName="blackjack"
               isPopUpLoading={isPopUpLoading}
               setIsPopUpLoading={setIsPopUpLoading}
+              taskName={taskName}
             />
           )}
           <iframe

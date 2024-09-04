@@ -7,7 +7,7 @@ import Modal from "react-modal";
 // import DotLoader from "./DotLoader";
 import styles from "./LoadingPopup.module.css";
 
-const LoadingPopUp = ({ gameName }) => {
+const LoadingPopUp = ({ gameName, taskName }) => {
   let gameImage = null;
   switch (gameName) {
     case "blackjack":
@@ -28,7 +28,7 @@ const LoadingPopUp = ({ gameName }) => {
       shouldCloseOnOverlayClick={true}
       shouldCloseOnEsc={false}
     >
-      <div className="bg-black w-[85%] py-[39px] bg-opacity-80 rounded-3xl">
+      <div className="bg-black w-[85%] py-[39px] bg-opacity-80 rounded-3xl min-h-[260px] md:min-h-[400px] lg:min-h-[700px]">
         <img
           src={gameImage}
           alt=""
@@ -40,7 +40,7 @@ const LoadingPopUp = ({ gameName }) => {
           className="w-[100px] md:w-[160px] mx-auto lg:w-[220px]"
         />
         <div className="flex justify-center items-center">
-          <p className="text-white font-semibold text-3xl">Loading</p>
+          <p className="text-white font-semibold text-3xl">{taskName}</p>
           {/* Loader */}
           <div className="loader flex justify-center mt-4">
             <div className={`${styles.coloredDot}`}></div>
