@@ -12,6 +12,9 @@ import Blob "mo:base/Blob";
 import List "mo:base/List";
 import Nat64 "mo:base/Nat64";
 import Error "mo:base/Error";
+import Int64 "mo:base/Int64";
+import Float "mo:base/Float";
+import Int "mo:base/Int";
 import Utils "./Utils";
 
 actor {
@@ -58,14 +61,15 @@ actor {
 		stableMessages := Iter.toArray(messageDataRecord.entries());
 		stableWaitlist := Iter.toArray(waitlistDataRecord.entries());
 		stableUsers := Iter.toArray(userDataRecord.entries());
+		stableblackjackBet := Iter.toArray(blackjackBetRecord.entries());
 	};
 
 	system func postupgrade() {
 		messageDataRecord := TrieMap.fromEntries(stableMessages.vals(), Text.equal, Text.hash);
 		waitlistDataRecord := TrieMap.fromEntries(stableWaitlist.vals(), Text.equal, Text.hash);
-		userDataRecord:= TrieMap.fromEntries(stableUsers.vals(), Principal.equal, Principal.hash);
+		userDataRecord := TrieMap.fromEntries(stableUsers.vals(), Principal.equal, Principal.hash);
+		blackjackBetRecord := TrieMap.fromEntries(stableblackjackBet.vals(), Principal.equal, Principal.hash);
 	};
-	
 
 	//Functions********************************
 
@@ -124,14 +128,14 @@ actor {
 				return #err("New user");
 			};
 			case (?index) {
-				let user_blob = await stable_get(index,userDatarecord_state);
-				let user_data : ?Types.UserData = from_candid(user_blob);
-				
-				switch(user_data){
+				let user_blob = await stable_get(index, userDatarecord_state);
+				let user_data : ?Types.UserData = from_candid (user_blob);
+
+				switch (user_data) {
 					case null {
-						throw (Error.reject("Blob not found not the specific index"))
+						throw (Error.reject("Blob not found not the specific index"));
 					};
-					case (?user){
+					case (?user) {
 						return #ok(user);
 					};
 				};
@@ -151,8 +155,8 @@ actor {
 					email = email;
 				};
 
-				let user_blob  = to_candid(newUser);
-				let index = await stable_add(user_blob,userDatarecord_state);
+				let user_blob = to_candid (newUser);
+				let index = await stable_add(user_blob, userDatarecord_state);
 				userDataRecord.put(caller, index);
 				return "User created!";
 			};
@@ -193,10 +197,14 @@ actor {
 				let response : ICRC.Result_2 = await icrc2_transferFrom(CustomLedger, caller, payment_address, amount);
 				switch (response) {
 					case (#Ok(value)) {
-						return #ok("Order placed successfully, points updated" # Nat.toText(value));
+						let transfer : Nat = amount;
+						let amount_blob = to_candid (transfer);
+						let index = await stable_add(amount_blob, blackjackBet_state);
+						blackjackBetRecord.put(caller, index);
+						return #ok("Points Added successfully" # Nat.toText(value));
 					};
 					case (#Err(e)) {
-						return #err("Payment error");
+						throw Error.reject(debug_show (e));
 					};
 				};
 
@@ -210,24 +218,51 @@ actor {
 				return #err("User not found");
 			};
 			case (?user) {
-				let ledger = actor (CustomLedger) : ICRC.Token;
-				let response : ICRC.Result = await ledger.icrc1_transfer({
-					to = { owner = caller; subaccount = null };
-					fee : ?Nat = null;
-					memo : ?Blob = null;
-					from_subaccount : ?Blob = null;
-					created_at_time : ?Nat64 = null;
-					amount = amount;
-				});
-				switch (response) {
-					case (#Ok(value)) {
-						return #ok("Points Added successfully" # Nat.toText(value));
+				switch (blackjackBetRecord.get(caller)) {
+					case (null) {
+						return #err("User not found in the bet record");
 					};
-					case (#Err(e)) {
-						throw Error.reject(debug_show (e));
-					};
-				};
+					case (?betIndex) {
+						let bet_blob = await stable_get(betIndex, blackjackBet_state);
+						let betAmount : ?Nat = from_candid (bet_blob);
+						switch (betAmount) {
+							case null {
+								throw (Error.reject("Non object found in the stable memory"));
+							};
+							case (?b) {
+								if (Float.fromInt64(Int64.fromNat64(Nat64.fromNat(amount))) > (2.5 * Float.fromInt64(Int64.fromNat64(Nat64.fromNat(b))))) {
+									return #err("won amount invalid /fraud ");
+								} else {
+									let ledger = actor (CustomLedger) : ICRC.Token;
+									let response : ICRC.Result = await ledger.icrc1_transfer({
+										to = {
+											owner = caller;
+											subaccount = null;
+										};
+										fee : ?Nat = null;
+										memo : ?Blob = null;
+										from_subaccount : ?Blob = null;
+										created_at_time : ?Nat64 = null;
+										amount = amount;
+									});
+									switch (response) {
+										case (#Ok(value)) {
+											let zeroReset:Int =0;
+											let zero_blob = to_candid(zeroReset);
+											let index = update_stable(betIndex, zero_blob, blackjackBet_state);
+											return #ok("Points Added successfully" # Nat.toText(value));
+										};
+										case (#Err(e)) {
+											throw Error.reject(debug_show (e));
+										};
+									};
+								};
+							};
 
+						};
+					};
+
+				};
 			};
 		};
 	};

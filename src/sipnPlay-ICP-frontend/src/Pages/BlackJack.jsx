@@ -119,56 +119,7 @@ const BlackJack = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const handleScore = async (event) => {
-      if (event.data.type === "save_score") {
-        setTimeout(() => {
-          setIsPopUpLoading(true);
-        }, 1000);
-        try {
-          setTaskName("Fetching Balance");
-          const amnt = await getBalance();
-
-          console.log("Balance", amnt);
-          console.log("score", event.data.score);
-
-          if (event.data.score > amnt) {
-            let metaData = null;
-            await ledgerActor
-              .icrc1_metadata()
-              .then((res) => {
-                metaData = formatTokenMetaData(res);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-
-            const tokensWon =
-              (event.data.score - amnt) *
-              Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
-            console.log("Tokens won ", tokensWon);
-            setTaskName("Adding Points");
-            const response = await backendActor.addMoney(parseInt(tokensWon));
-            dispatch(updateBalance({ balance: event.data.score }));
-            console.log(response);
-            if (response.ok) {
-              toast.success("Points added successfully");
-            }
-          }
-        } catch (error) {
-          console.error("Error handling score:", error);
-        } finally {
-          setIsPopUpLoading(false);
-          setTaskName("");
-        }
-      }
-    };
-    window.addEventListener("message", handleScore);
-
-    return () => {
-      window.removeEventListener("message", handleScore);
-    };
-  }, []);
+ 
 
   useEffect(() => {
     const handleBet = async (event) => {
