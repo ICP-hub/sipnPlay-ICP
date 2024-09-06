@@ -1,18 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import logo from "../../assets/images/logo.png";
 import GradientText from "../../common/GradientText";
 import JoinWaitlist from "../Modals/JoinWaitlist";
-import ConnectWallets from "../Modals/ConnectWallets";
-import { useAuth } from "../../utils/useAuthClient";
-import UserDetails from "../Modals/UserDetails";
-
 const Header = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
 
-  const { isAuthenticated } = useAuth();
   const [activeSection, setActiveSection] = useState("home");
   
-
   const handleSectionClick = (section) => {
     setActiveSection(section);
   };
@@ -32,54 +26,44 @@ const Header = () => {
         <a
           href="#home"
           onClick={() => handleSectionClick("home")}
-          className={`decoration-pink-400 underline-offset-8 ${
-            activeSection === "home" ? "underline" : "decoration-transparent"
-          }`}
+          className={`decoration-pink-400 underline-offset-8 ${activeSection === "home" ? "underline" : "decoration-transparent"
+            }`}
         >
           <GradientText children="Home" />
         </a>
         <a
           href="#our-team"
           onClick={() => handleSectionClick("our-team")}
-          className={`decoration-pink-400 underline-offset-8 ${
-            activeSection === "our-team"
+          className={`decoration-pink-400 underline-offset-8 ${activeSection === "our-team"
               ? "underline "
               : "decoration-transparent"
-          }`}
+            }`}
         >
           <GradientText children="Our Team" />
         </a>
         <a
           href="#contact-us"
           onClick={() => handleSectionClick("contact-us")}
-          className={`decoration-pink-400 underline-offset-8 ${
-            activeSection === "contact-us"
+          className={`decoration-pink-400 underline-offset-8 ${activeSection === "contact-us"
               ? "underline "
               : "decoration-transparent"
-          }`}
+            }`}
         >
           <GradientText children="Contact Us" />
         </a>
         <a
           href="#lets-cook"
           onClick={() => handleSectionClick("lets-cook")}
-          className={`decoration-pink-400 underline-offset-8 ${
-            activeSection === "lets-cook"
+          className={`decoration-pink-400 underline-offset-8 ${activeSection === "lets-cook"
               ? "underline "
               : "decoration-transparent"
-          }`}
+            }`}
         >
           <GradientText children="Let's Cook" />
         </a>
       </div>
       <div>
-        {isAuthenticated ? (
-          <div>
-            {<UserDetails modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />}
-          </div>
-        ) : (
-          <JoinWaitlist modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
-        )}
+        <JoinWaitlist modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
       </div>
     </nav>
   );

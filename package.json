@@ -8,13 +8,15 @@
     "build": "npm run build --workspaces --if-present",
     "prebuild": "npm run prebuild --workspaces --if-present",
     "pretest": "npm run prebuild --workspaces --if-present",
-    "start": "npm start --workspaces --if-present",
+    "play": "npm run start --workspace=playsipnPlay-ICP-frontend",
+    "start": "npm run start --workspace=sipnPlay-ICP-frontend",
     "test": "npm test --workspaces --if-present"
   },
   "type": "module",
   "workspaces": [
     "src/sipnPlay-ICP-frontend",
-    "src/sipnPlay-ICP-blackjack"
+    "src/sipnPlay-ICP-blackjack",
+    "src/playsipnPlay-ICP-frontend"
   ],
   "dependencies": {
     "@dfinity/auth-client": "^1.4.0",

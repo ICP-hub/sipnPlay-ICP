@@ -26,6 +26,16 @@
       ],
       "type": "assets",
       "workspace": "sipnPlay-ICP-frontend"
+    },
+    "playsipnPlay-ICP-frontend": {
+      "dependencies": [
+        "sipnPlay-ICP-backend"
+      ],
+      "source": [
+        "src/playsipnPlay-ICP-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "playsipnPlay-ICP-frontend"
     }
   },
   "defaults": {

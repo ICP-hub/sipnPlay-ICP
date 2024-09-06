@@ -1,88 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import nft from "../../assets/images/NFT.gif";
-import Register from "../Modals/Register";
-import { useAuth } from "../../utils/useAuthClient";
-import { useDispatch, useSelector } from "react-redux";
-import { addUserData } from "../../utils/redux/userSlice";
 
 const Hero = () => {
-  const dispatch = useDispatch();
-  const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [isRegisterDone, setIsRegisterDone] = useState(false);
-  const userData = useSelector((state) => state.user);
-
-  const formatTokenMetaData = (arr) => {
-    const resultObject = {};
-    arr.forEach((item) => {
-      const key = item[0];
-      const value = item[1][Object.keys(item[1])[0]];
-      resultObject[key] = value;
-    });
-    return resultObject;
-  };
-
-  const getStatus = async () => {
-    const response = await backendActor.getUser();
-    if (response.err === "New user") {
-      return { isNewUser: true };
-    } else {
-      let balance = await backendActor.get_balance();
-
-      let metaData = null;
-      await ledgerActor
-        .icrc1_metadata()
-        .then((res) => {
-          metaData = formatTokenMetaData(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      let amnt =
-        Number(balance) *
-        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]));
-
-      return {
-        isNewUser: false,
-        email: response.ok.email,
-        balance: parseFloat(amnt),
-      };
-    }
-  };
-
-  useEffect(() => {
-    const checkStatus = async () => {
-      if (isAuthenticated) {
-        const status = await getStatus();
-        if (status.isNewUser) {
-          setIsOpen(true);
-        } else {
-          dispatch(
-            addUserData({
-              id: principal.toString(),
-              email: status.email,
-              balance: status.balance,
-            })
-          );
-        }
-      }
-    };
-    checkStatus();
-  }, [isAuthenticated, isRegisterDone]);
 
   return (
     <>
-      <Register
-        setIsRegisterDone={setIsRegisterDone}
-        modalIsOpen={modalIsOpen}
-        setIsOpen={setIsOpen}
-      />
       <section
         id="home"
         className="grid grid-cols-1 lg:grid-cols-2 mt-4  mb-[140px] md:mt-[87px] md:mb-[160px] lg:my-6  px-[8%]"
       >
-        {/* Left Div */}
+        
         <div className="  lg:h-screen lg:border-t-[0.5px] lg:border-r-[0.5px] lg:border-white  xl:h-[722px] flex-1 flex-col items-center justify-center bg-black text-white">
           <div className="flex ml-[10%] pt-[45px] relative xl:pt-[98px] font-monckeberg lg:justify-start md:ml-[-65px] lg:ml-[-50px]   lg:pt-[151px] ">
             <p className="text-[42px] xl:text-8xl lg:text-6xl px-[9%] font-thin">
