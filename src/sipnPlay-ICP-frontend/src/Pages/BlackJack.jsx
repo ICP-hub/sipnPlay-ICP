@@ -31,7 +31,7 @@ const BlackJack = () => {
 
     let amnt = parseFloat(
       Number(balance) *
-        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+      Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
     );
     dispatch(updateBalance({ balance: amnt }));
     return amnt;
@@ -84,31 +84,47 @@ const BlackJack = () => {
   useEffect(() => {
     const handleScore = async (event) => {
       if (event.data.type === "save_score") {
-        const amnt = await getBalance();
-        console.log("Balance", amnt);
-        console.log("score", event.data.score);
+        try {
+          const amnt = await getBalance();
+          console.log("Balance", amnt);
+          console.log("score", event.data.score);
 
-        if (event.data.score > amnt) {
-          let metaData = null;
-          await ledgerActor
-            .icrc1_metadata()
-            .then((res) => {
-              metaData = formatTokenMetaData(res);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          if (event.data.score > Math.round(amnt * 10) / 10 ) {
+            setTaskName("Adding points");
+            let metaData = null;
+            await ledgerActor
+              .icrc1_metadata()
+              .then((res) => {
+                metaData = formatTokenMetaData(res);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
 
-          const tokensWon =
-            (event.data.score - amnt) *
-            Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
-          console.log("Tokens won ", tokensWon);
-          const response = await backendActor.addMoney(parseInt(tokensWon));
-          dispatch(updateBalance({ balance: event.data.score }));
-          console.log(response);
-          if (response.ok) {
-            toast.success("Points added successfully");
+            const tokensWon =
+              (event.data.score - amnt) *
+              Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
+            console.log("Tokens won ", tokensWon);
+            setIsPopUpLoading(true);
+            const response = await backendActor.addMoney(parseInt(tokensWon));
+            dispatch(updateBalance({ balance: event.data.score }));
+            console.log(response);
+            if (response.ok) {
+              toast.success("Points added successfully");
+            }
           }
+          else {
+            setTaskName("Halfway there... Hang tight!");
+            setIsPopUpLoading(true);
+            const response = await backendActor.gameLost();
+            console.log(response);
+          }
+        } catch (e) {
+          console.log(e);
+        }
+        finally {
+          setIsPopUpLoading(false);
+          setTaskName("");
         }
       }
     };
@@ -119,7 +135,7 @@ const BlackJack = () => {
     };
   }, []);
 
- 
+
 
   useEffect(() => {
     const handleBet = async (event) => {
@@ -171,8 +187,6 @@ const BlackJack = () => {
           {isPopUpLoading && (
             <LoadingPopUp
               gameName="blackjack"
-              isPopUpLoading={isPopUpLoading}
-              setIsPopUpLoading={setIsPopUpLoading}
               taskName={taskName}
             />
           )}

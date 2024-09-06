@@ -4,36 +4,14 @@ import GradientText from "../../common/GradientText";
 import JoinWaitlist from "../Modals/JoinWaitlist";
 import ConnectWallets from "../Modals/ConnectWallets";
 import { useAuth } from "../../utils/useAuthClient";
-import toast from "react-hot-toast";
 import UserDetails from "../Modals/UserDetails";
 
 const Header = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
-  function openModal() {
-    setIsOpen(true);
-  }
 
-  const { logout, isAuthenticated, backendActor } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [activeSection, setActiveSection] = useState("home");
-  const [userDetails, setUserDetails] = useState(null);
-
-  const getStatus = async () => {
-    const getUser = await backendActor.getUser();
-    if (getUser.err === "New user") {
-      // navigate("/register");
-    } else {
-      setUserDetails(getUser.ok);
-      toast.success("You are registered");
-    }
-  };
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      getStatus();
-    } else {
-      // toast.error("You are logged out");
-    }
-  }, [isAuthenticated]);
+  
 
   const handleSectionClick = (section) => {
     setActiveSection(section);

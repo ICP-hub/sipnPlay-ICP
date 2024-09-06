@@ -201,13 +201,34 @@ actor {
 						let amount_blob = to_candid (transfer);
 						let index = await stable_add(amount_blob, blackjackBet_state);
 						blackjackBetRecord.put(caller, index);
-						return #ok("Points Added successfully" # Nat.toText(value));
+						return #ok("Points deducted successfully" # Nat.toText(value));
 					};
 					case (#Err(e)) {
 						throw Error.reject(debug_show (e));
 					};
 				};
 
+			};
+		};
+	};
+
+	public shared ({ caller }) func gameLost() : async Result.Result<Text, Text> {
+		switch (userDataRecord.get(caller)) {
+			case (null) {
+				return #err("User not found");
+			};
+			case (?user) {
+				switch (blackjackBetRecord.get(caller)) {
+					case (null) {
+						return #err("User not found in the bet record");
+					};
+					case (?betIndex) {
+						let zeroReset : Int = 0;
+						let zero_blob = to_candid (zeroReset);
+						ignore update_stable(betIndex, zero_blob, blackjackBet_state);
+						return #ok("Bet Record updated successfully");
+					};
+				};
 			};
 		};
 	};
@@ -231,7 +252,7 @@ actor {
 							};
 							case (?b) {
 								if (Float.fromInt64(Int64.fromNat64(Nat64.fromNat(amount))) > (2.5 * Float.fromInt64(Int64.fromNat64(Nat64.fromNat(b))))) {
-									return #err("won amount invalid /fraud ");
+									return #err("fraud");
 								} else {
 									let ledger = actor (CustomLedger) : ICRC.Token;
 									let response : ICRC.Result = await ledger.icrc1_transfer({
@@ -247,9 +268,9 @@ actor {
 									});
 									switch (response) {
 										case (#Ok(value)) {
-											let zeroReset:Int =0;
-											let zero_blob = to_candid(zeroReset);
-											let index = update_stable(betIndex, zero_blob, blackjackBet_state);
+											let zeroReset : Int = 0;
+											let zero_blob = to_candid (zeroReset);
+											ignore update_stable(betIndex, zero_blob, blackjackBet_state);
 											return #ok("Points Added successfully" # Nat.toText(value));
 										};
 										case (#Err(e)) {

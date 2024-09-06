@@ -3,7 +3,6 @@ import AnimationButton from "../../common/AnimationButton";
 import { useSelector } from "react-redux";
 import { ImCross, ImMail4 } from "react-icons/im";
 import { useAuth } from "../../utils/useAuthClient";
-import { createPortal } from "react-dom";
 import HeaderButton from "../../common/HeaderButton";
 import bgImage from "../../assets/images/waitlistBg.png";
 
@@ -38,7 +37,6 @@ const UserDetails = ({ modalIsOpen, setIsOpen }) => {
       }
     }
 
-    //
     function handleKeyDown(e) {
       if (e.key === "Escape") {
         closeModal();
@@ -89,7 +87,7 @@ const UserDetails = ({ modalIsOpen, setIsOpen }) => {
               <div className="flex flex-col">
                 <span className="text-white font-semibold">Email:</span>
                 <span className="text-white font-light opacity-70">
-                  {userDetails.email}
+                  {userDetails?.email || " - "}
                 </span>
               </div>
             </div>
@@ -97,7 +95,7 @@ const UserDetails = ({ modalIsOpen, setIsOpen }) => {
               <div className="flex flex-col">
                 <span className="text-white font-semibold">TSIP:</span>
                 <p className="text-white font-light opacity-70">
-                  {Math.round(userDetails.balance)}
+                  {Math.round(userDetails?.balance || " - ")}
                 </p>
               </div>
             </div>
