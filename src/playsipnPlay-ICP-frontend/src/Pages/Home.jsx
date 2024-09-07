@@ -24,11 +24,13 @@ function Home() {
 
   const getStatus = async () => {
     const response = await backendActor.getUser();
+    
     if (response.err === "New user") {
       return { isNewUser: true };
     } else {
       let balance = await backendActor.get_balance();
-
+      console.log("hdbdbhd", balance);
+      
       let metaData = null;
       await ledgerActor
         .icrc1_metadata()

@@ -8,7 +8,7 @@ import GamesNav from "./GamesNav";
 
 const GamesList = () => {
   const [games, setGames] = useState([
-    { name: "BlackJack", img: blackjackLogo },
+    { name: "blackjack", img: blackjackLogo },
     { name: "8ballpool", img: EboolImg },
     { name: "burgerking", img: bkingImg },
     ,

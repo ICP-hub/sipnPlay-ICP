@@ -1,11 +1,8 @@
 import { AuthClient } from "@dfinity/auth-client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { HttpAgent, Actor } from "@dfinity/agent";
-import {
-  createActor,
-  idlFactory,
-} from "../../../declarations/sipnPlay-ICP-backend/index";
-import { createLedgerActor } from "../../../declarations/ledger/index";
+import { createActor, idlFactory } from "../../../declarations/sipnPlay-ICP-backend/index";
+import { createLedgerActor} from "../../../declarations/ledger/index"
 
 const AuthContext = createContext();
 
@@ -32,8 +29,8 @@ const defaultOptions = {
     identityProvider:
       process.env.DFX_NETWORK === "ic"
         ? `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
-        : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`,
-  },
+        : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
+  }
 };
 
 // Custom hook to manage authentication with Internet Identity
@@ -58,13 +55,11 @@ export const useAuthClient = (options = defaultOptions) => {
     }
   }, [authClient]);
 
+
   const login = async (provider) => {
     return new Promise(async (resolve, reject) => {
       try {
-        if (
-          authClient.isAuthenticated() &&
-          !(await authClient.getIdentity().getPrincipal().isAnonymous())
-        ) {
+        if (authClient.isAuthenticated() && !(await authClient.getIdentity().getPrincipal().isAnonymous())) {
           updateClient(authClient);
           resolve(authClient);
         } else {
@@ -79,7 +74,7 @@ export const useAuthClient = (options = defaultOptions) => {
           });
         }
       } catch (error) {
-        console.error("Login error:", error);
+        console.error('Login error:', error);
         reject(error);
       }
     });
@@ -121,26 +116,19 @@ export const useAuthClient = (options = defaultOptions) => {
       console.log(principal);
       const agent = new HttpAgent({ identity });
 
-      const backendActor = createActor(
-        process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND,
-        { agent }
-      );
-      const ledgerActor1 = createLedgerActor("ent7t-2yaaa-aaaap-qhtcq-cai", {
-        agent,
-      });
-      setLedgerActor(ledgerActor1);
+      const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agent });
+      const ledgerActor1 = createLedgerActor("ent7t-2yaaa-aaaap-qhtcq-cai", { agent });
+      setLedgerActor(ledgerActor1)
       setBackendActor(backendActor);
     } catch (error) {
       console.error("Authentication update error:", error);
     }
   };
 
+ 
   const reloadLogin = async () => {
     try {
-      if (
-        authClient.isAuthenticated() &&
-        !(await authClient.getIdentity().getPrincipal().isAnonymous())
-      ) {
+      if (authClient.isAuthenticated() && !(await authClient.getIdentity().getPrincipal().isAnonymous())) {
         updateClient(authClient);
       }
     } catch (error) {

@@ -1,4 +1,5 @@
 import Principal "mo:base/Principal";
+import Array "mo:base/Array";
 import Text "mo:base/Text";
 import TrieMap "mo:base/TrieMap";
 import Result "mo:base/Result";
@@ -70,6 +71,38 @@ actor {
 		userDataRecord := TrieMap.fromEntries(stableUsers.vals(), Principal.equal, Principal.hash);
 		blackjackBetRecord := TrieMap.fromEntries(stableblackjackBet.vals(), Principal.equal, Principal.hash);
 	};
+
+	let approvedPrincipals: [Text] = [
+		"aaaaa-ziaaa-aaaai-aaafq-cai", 
+		"bbbbb-ziaaa-aaaai-aaafq-cai"
+		]; 
+
+    public func isApproved(caller: Principal): async Bool {
+        hasPrivilege(caller, approvedPrincipals);
+    };
+
+    private func hasPrivilege(caller: Principal, privileges: [Text]): Bool {
+        func toPrincipal(entry: Text) : Principal {
+            Principal.fromText(entry);
+        };
+
+        let principals: [Principal] = Array.map(privileges, toPrincipal);
+
+        func filterApproved(approved: Principal): Bool {
+            approved == caller
+        };
+
+        let approved: ?Principal = Array.find(principals, filterApproved);
+
+        switch (approved) {
+            case (null) {
+                return false;
+            };
+            case (?approved) {
+                return true;
+            }
+        }
+    };
 
 	//Functions********************************
 
@@ -208,6 +241,57 @@ actor {
 					};
 				};
 
+			};
+		};
+	};
+
+	public shared ({ caller }) func addMoneyToDefault(amount : Nat) : async Result.Result<Text, Text> {
+		switch (userDataRecord.get(caller)) {
+			case (null) {
+				return #err("User not found");
+			};
+			case (?user) {
+				let response : ICRC.Result_2 = await icrc2_transferFrom(CustomLedger, caller, payment_address, amount);
+				switch (response) {
+					case (#Ok(value)) {
+						return #ok("Points added to default successfully" # Nat.toText(value));
+					};
+					case (#Err(e)) {
+						throw Error.reject(debug_show (e));
+					};
+				};
+
+			};
+		};
+	};
+
+	public shared ({ caller }) func withdrawMoneyFromDefault(amount : Nat) : async Result.Result<Text, Text> {
+		switch (userDataRecord.get(caller)) {
+			case (null) {
+				return #err("User not a principal");
+			};
+			case (?user) {
+				let ledger = actor (CustomLedger) : ICRC.Token;
+				let response : ICRC.Result = await ledger.icrc1_transfer({
+					to = {
+						owner = caller;
+						subaccount = null;
+					};
+					fee : ?Nat = null;
+					memo : ?Blob = null;
+					from_subaccount : ?Blob = null;
+					created_at_time : ?Nat64 = null;
+					amount = amount;
+				});
+				switch (response) {
+					case (#Ok(value)) {
+
+						return #ok("Points Added successfully" # Nat.toText(value));
+					};
+					case (#Err(e)) {
+						throw Error.reject(debug_show (e));
+					};
+				};
 			};
 		};
 	};
