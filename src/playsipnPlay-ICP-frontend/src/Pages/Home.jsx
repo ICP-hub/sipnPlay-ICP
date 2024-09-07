@@ -3,6 +3,7 @@ import Register from "../components/Modals/Register";
 import { useAuth } from "../utils/useAuthClient";
 import { useDispatch, useSelector } from "react-redux";
 import { addUserData, removeUserData } from "../utils/redux/userSlice";
+import GamesList from "../components/Games/GamesList";
 
 function Home() {
   const dispatch = useDispatch();
@@ -79,6 +80,7 @@ function Home() {
         modalIsOpen={modalIsOpen}
         setIsOpen={setIsOpen}
       />
+      <GamesList />
     </div>
   );
 }

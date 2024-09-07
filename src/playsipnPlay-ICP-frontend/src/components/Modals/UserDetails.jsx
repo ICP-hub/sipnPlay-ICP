@@ -95,7 +95,7 @@ const UserDetails = ({ modalIsOpen, setIsOpen }) => {
               <div className="flex flex-col">
                 <span className="text-white font-semibold">TSIP:</span>
                 <p className="text-white font-light opacity-70">
-                  {Math.round(userDetails?.balance || " - ")}
+                  {Math.round(userDetails?.balance) || " - "}
                 </p>
               </div>
             </div>
