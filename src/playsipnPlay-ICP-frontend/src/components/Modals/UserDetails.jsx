@@ -60,16 +60,14 @@ const UserDetails = ({ modalIsOpen, setIsOpen }) => {
         />
       </div>
       {modalIsOpen && (
-        <div className=" inset-0  z-20 flex items-center justify-center bg-transparent">
+        <div className=" inset-0  z-20 flex items-center justify-center ">
           <div
             style={{
               backgroundImage: `url(${bgImage})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
-              opacity: 0.9,
-              backdropFilter: "blur(80px)",
             }}
-            className="absolute right-8 top-24 p-4 md:top-20 md:p-6 md:right-16 lg:top-24 lg:right-24 lg:h-80 lg:w-72  lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4"
+            className="absolute right-8 top-24 p-4 my-4 md:top-20 md:p-6 md:right-16 lg:top-24 lg:right-24 lg:h-80 lg:w-72 lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4 backdrop-filter backdrop-blur-lg bg-black"
             ref={ref}
           >
             {/* Wrapper for positioning the button */}
@@ -85,16 +83,20 @@ const UserDetails = ({ modalIsOpen, setIsOpen }) => {
             <div className=" border-b-2 pb-2 w-full">
               {/* <ImMail4 color="#fff" /> */}
               <div className="flex flex-col">
-                <span className="text-white font-semibold">Email:</span>
-                <span className="text-white font-light opacity-70">
+                <span className="text-white font-semibold font-adam">
+                  Email:
+                </span>
+                <span className="text-white font-light opacity-70 font-adam">
                   {userDetails?.email || " - "}
                 </span>
               </div>
             </div>
             <div className=" border-b-2 pb-2 w-full mb-4">
               <div className="flex flex-col">
-                <span className="text-white font-semibold">TSIP:</span>
-                <p className="text-white font-light opacity-70">
+                <span className="text-white font-semibold font-adam">
+                  TSIP:
+                </span>
+                <p className="text-white font-light opacity-70 font-adam">
                   {Math.round(userDetails?.balance) || " - "}
                 </p>
               </div>

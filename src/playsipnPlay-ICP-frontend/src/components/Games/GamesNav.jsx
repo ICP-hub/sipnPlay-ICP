@@ -8,21 +8,24 @@ const GamesNav = () => {
   }
   return (
     <div>
-      <div className="flex lg:flex-col justify-around lg:justify-start gap-2 md:gap-4 lg:gap-6 py-4 text-xs md:text-md lg:text-lg lg:ps-0 lg:pe-8 px-8 bg-black lg:h-dvh my-4">
-        <div onClick={() => handleLinkClick("home")} className="cursor-pointer">
+      <div className="flex md:flex-col justify-around md:justify-start gap-2 md:gap-4 py-2 text-xs md:text-md lg:text-lg md:ps-8 md:pe-16 px-8 bg-black md:h-dvh">
+        <div
+          onClick={() => handleLinkClick("home")}
+          className="cursor-pointer font-adam font-semibold"
+        >
           <p
             className={`${
               activeLink === "home"
                 ? "text-[#ee3ec9]"
                 : "text-white hover:text-[#fdb6ee]"
-            } transition-colors duration-100`}
+            } transition-colors duration-300`}
           >
             Home
           </p>
         </div>
         <div
           onClick={() => handleLinkClick("recently-played")}
-          className="cursor-pointer"
+          className="cursor-pointer font-adam font-semibold"
         >
           <p
             className={`${
@@ -36,7 +39,7 @@ const GamesNav = () => {
         </div>
         <div
           onClick={() => handleLinkClick("trending")}
-          className="cursor-pointer"
+          className="cursor-pointer font-adam font-semibold"
         >
           <p
             className={`${
@@ -50,7 +53,7 @@ const GamesNav = () => {
         </div>
         <div
           onClick={() => handleLinkClick("most-played")}
-          className="cursor-pointer"
+          className="cursor-pointer font-adam font-semibold"
         >
           <p
             className={`${
