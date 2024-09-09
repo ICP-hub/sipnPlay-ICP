@@ -5,7 +5,7 @@ import BlackJack from "./Pages/BlackJack";
 import { AuthProvider } from "./utils/useAuthClient";
 // import Payment from './Pages/Payment';
 import PrivateLayout from "./Layout/PrivateLayout";
-import AdminPanel from "./Pages/Admin";
+import AdminPanel from "./Pages/Admin/Admin";
 function AllRoutes() {
   return (
     <AuthProvider>
