@@ -27,14 +27,14 @@ const GamesList = () => {
         <GamesNav />
         <div className="flex-1 mt-4 lg:mt-0">
           <div className="flex flex-wrap justify-center md:grid md:grid-cols-2 lg:grid-cols-3 gap-16">
-            {games.map((game) => (
+            {games.map((game, i) => (
               <Game key={game.name} game={game} />
             ))}
           </div>
         </div>
       </div>
       <p className="text-center py-8 place-self-end font-adam font-semibold text-2xl">
-        More games coming soon
+        More games coming soon...
       </p>
     </div>
   );

@@ -21,23 +21,29 @@ const AdminTable = ({ data, title }) => {
           </th>
         </tr>
       </thead>
-      <tbody className="bg-white text-black divide-y divide-gray-200 min-w-full">
+      <tbody className="bg-stone-700 text-black divide-y divide-gray-200 min-w-full">
         {data &&
           data.length > 0 &&
           data.map((item, index) => (
             <tr key={`data${index}`} className="min-w-full">
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-6 py-4 whitespace-nowrap text-stone-200">
                 {convertNanosecondsToDateTime(item.date)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-stone-200">
+                {item.name}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-stone-200">
+                {item.email}
+              </td>
               {title.toLowerCase() === "waitlist" && (
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap text-stone-200">
                   {item.icpAddress}
                 </td>
               )}
               {title.toLowerCase() === "messages" && (
-                <td className="px-6 py-4 whitespace-nowrap">{item.message}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-stone-200">
+                  {item.message}
+                </td>
               )}
             </tr>
           ))}

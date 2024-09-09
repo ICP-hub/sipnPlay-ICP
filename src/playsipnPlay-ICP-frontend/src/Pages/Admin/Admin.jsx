@@ -9,6 +9,8 @@ const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
   const [waitlist, setWaitlist] = useState([]);
   const [addAmount, setAddAmount] = useState(0);
+  const [addAmntToBackend, setAddAmntToBackend] = useState(0);
+  const [removeAmntFromBackend, setRemoveAmntFromBackend] = useState(0);
   const [messages, setMessages] = useState([]);
   const [waitlistPage, setWaitlistPage] = useState(0);
   const [waitlistPageSize, setWaitlistPageSize] = useState(0);
@@ -16,17 +18,11 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(false);
   const [messagesPage, setMessagesPage] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const {
-    backendActor,
-    login,
-    logout,
-    principal,
-    isAuthenticated,
-    reloadLogin,
-  } = useAuth();
+  const [isApproving, setIsApproving] = useState(false);
+  const { backendActor, logout, principal, isAuthenticated } = useAuth();
+  const [adminBalance, setAdminBalance] = useState(0);
+  const [defaultBalance, setDefaultBalance] = useState(0);
   const chunkSize = 10;
-
-  const [modalIsOpen, setIsOpen] = useState(false);
 
   const addMoney = async (e) => {
     e.preventDefault();
@@ -75,6 +71,33 @@ const AdminPanel = () => {
     }
   };
 
+  const fetchAdminBalance = async () => {
+    try {
+      const response = await backendActor.get_balance();
+      if (response.ok) {
+        setAdminBalance(response.ok);
+      }
+    } catch (error) {
+      console.error("Error fetching admin balance:", error);
+    }
+  };
+
+  const fetchDefaultBalance = async () => {
+    try {
+      const response = await backendActor.get_backend_balance();
+      if (response.ok) {
+        setDefaultBalance(response.ok);
+      }
+    } catch (error) {
+      console.error("Error fetching default balance:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdminBalance();
+    fetchDefaultBalance();
+  }, []);
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -86,26 +109,24 @@ const AdminPanel = () => {
   };
 
   useEffect(() => {
-    const approvedPrincipals = [
-      // MAIN
-      "oxj2h-r6fbj-hqtcn-fv7ye-yneeb-ca3se-c6s42-imvp7-juu33-ovnix-mae", //Paras (Client)
-      "42l52-e6bwv-2353f-idnxh-5f42y-catp6-j2yxn-msivr-ljpu2-ifqsy-dqe", //Ankur (Client)
-      "h5plh-utklh-zb3a6-6l4ar-6yytf-p3755-6rjjz-7fwm3-vtnsa-iosdg-4ae", //Tushar
-
-      // Developers
-      "2nh3q-od732-potbk-gs2yh-nkqyt-i4xtt-fs73b-iirbu-ows4f-glqf5-qae", // Somiya Behera
-      "qpi67-2c7z4-3efq2-jnzvv-xdoik-xb72q-4y6ms-mjfwt-7aogy-4it4b-uqe", //Tushar Jain
-
-      "yyjkq-j3ybi-yhe2a-ujlbc-wqxof-ttj65-et3zg-2jsxg-wpa7s-t5lbv-rqe", //Sharan Sir
-      "ajgvz-x3hvi-wvqt2-2r2eb-3hfqx-hxupi-2rnlt-iiott-w6kk2-625vc-uae",
-    ];
-    if (isAuthenticated) {
-      if (approvedPrincipals.includes(principal)) {
-        setIsLoggedIn(true);
-      } else {
-        toast.error("Your account is not an approved admin");
+    // Define the async function inside useEffect
+    const checkApproveStatus = async () => {
+      setIsApproving(true);
+      try {
+        const isApproved = await backendActor.amIApproved();
+        if (isAuthenticated && isApproved) {
+          setIsLoggedIn(true);
+        } else {
+          toast.error("Your account is not an approved admin");
+        }
+      } catch (error) {
+        console.error("Error checking approval status:", error);
+      } finally {
+        setIsApproving(false);
       }
-    }
+    };
+
+    checkApproveStatus();
   }, [principal]);
 
   useEffect(() => {
@@ -177,7 +198,11 @@ const AdminPanel = () => {
         >
           Logout
         </button>
-        <p>Your account is not an approved admin </p>
+        {isApproving ? (
+          <p> Loading ....</p>
+        ) : (
+          <p>Your account is not an approved admin </p>
+        )}
       </div>
     );
   }
@@ -196,7 +221,7 @@ const AdminPanel = () => {
             type="number"
             value={addAmount}
             onChange={(e) => setAddAmount(e.target.value)}
-            className="rounded-lg px-3 text-black  h-11"
+            className="rounded-lg px-3 text-black  h-11 focus:outline-none focus:ring-2 focus:ring-[#ee3ec9]"
           />
           <button className="bg-[#EE3EC9] rounded-lg px-4 py-2 ml-3">
             Submit
@@ -204,7 +229,7 @@ const AdminPanel = () => {
         </form>
         <button
           onClick={handleDownload}
-          className="px-4 py-2 bg-[#EE3EC9] text-white rounded-lg"
+          className="px-4 bg-[#EE3EC9] text-white rounded-lg"
         >
           Download Page's Data
         </button>
@@ -263,6 +288,60 @@ const AdminPanel = () => {
               handlePrev={handlePrevMessage}
               handleNext={handleNextMessage}
             />
+          )}
+          {activeSection === "resources" && (
+            <>
+              <div className="flex justify-around items-center gap-8">
+                <div>
+                  <form onSubmit={addMoney}>
+                    <input
+                      type="number"
+                      placeholder="Enter amount to add"
+                      min={0}
+                      value={addAmntToBackend}
+                      onChange={(e) =>
+                        setAddAmntToBackend(Number(e.target.value))
+                      }
+                      className="rounded-lg px-3 text-black  h-11 focus:outline-none focus:ring-2 focus:ring-[#ee3ec9]"
+                    />
+                    <button className="bg-[#EE3EC9] rounded-lg px-4 py-2 ml-3 min-w-24">
+                      Add
+                    </button>
+                  </form>
+                </div>
+                <div>
+                  <form onSubmit={console.log("withdrawMoneyFromDefault")}>
+                    <input
+                      type="number"
+                      placeholder="Enter amount to withdraw"
+                      min={0}
+                      value={removeAmntFromBackend}
+                      onChange={(e) =>
+                        setRemoveAmntFromBackend(Number(e.target.value))
+                      }
+                      className="rounded-lg px-3 text-black  h-11 focus:outline-none focus:ring-2 focus:ring-[#ee3ec9]"
+                    />
+                    <button className="bg-[#EE3EC9] rounded-lg px-4 py-2 ml-3 min-w-24">
+                      Remove
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <div className="flex justify-around h-24 w-full mt-16 gap-16">
+                <div className="flex gap-4">
+                  <h4 className="font-semibold text-[#ee3ec9]">
+                    Admin's Balance:
+                  </h4>
+                  <span>{adminBalance}</span>
+                </div>
+                <div className="flex gap-4">
+                  <h4 className="font-semibold text-[#ee3ec9]">
+                    Default Balance:
+                  </h4>
+                  <span>{defaultBalance}</span>
+                </div>
+              </div>
+            </>
           )}
         </div>
       )}

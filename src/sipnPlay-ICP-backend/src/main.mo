@@ -74,6 +74,7 @@ actor {
 
 	let approvedPrincipals : [Text] = [
 		"gvbfr-o74tg-sclwi-he2el-2bhqf-wk6xn-zhrtu-lcfhb-wasyl-usx4m-nae", // Tushar Jain
+		"tugav-csyse-6r5qg-7ocfb-epxzf-lmtr5-mzhq3-ogrma-fjgnz-snohb-sae"
 	];
 
 	private func isApproved(caller : Principal) : async Bool {
