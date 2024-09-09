@@ -72,37 +72,36 @@ actor {
 		blackjackBetRecord := TrieMap.fromEntries(stableblackjackBet.vals(), Principal.equal, Principal.hash);
 	};
 
-	let approvedPrincipals: [Text] = [
-		"aaaaa-ziaaa-aaaai-aaafq-cai", 
-		"bbbbb-ziaaa-aaaai-aaafq-cai"
-		]; 
+	let approvedPrincipals : [Text] = [
+		"gvbfr-o74tg-sclwi-he2el-2bhqf-wk6xn-zhrtu-lcfhb-wasyl-usx4m-nae", // Tushar Jain
+	];
 
-    public func isApproved(caller: Principal): async Bool {
-        hasPrivilege(caller, approvedPrincipals);
-    };
+	private func isApproved(caller : Principal) : async Bool {
+		hasPrivilege(caller, approvedPrincipals);
+	};
 
-    private func hasPrivilege(caller: Principal, privileges: [Text]): Bool {
-        func toPrincipal(entry: Text) : Principal {
-            Principal.fromText(entry);
-        };
+	private func hasPrivilege(caller : Principal, privileges : [Text]) : Bool {
+		func toPrincipal(entry : Text) : Principal {
+			Principal.fromText(entry);
+		};
 
-        let principals: [Principal] = Array.map(privileges, toPrincipal);
+		let principals : [Principal] = Array.map(privileges, toPrincipal);
 
-        func filterApproved(approved: Principal): Bool {
-            approved == caller
-        };
+		func filterApproved(approved : Principal) : Bool {
+			approved == caller;
+		};
 
-        let approved: ?Principal = Array.find(principals, filterApproved);
+		let approved : ?Principal = Array.find(principals, filterApproved);
 
-        switch (approved) {
-            case (null) {
-                return false;
-            };
-            case (?approved) {
-                return true;
-            }
-        }
-    };
+		switch (approved) {
+			case (null) {
+				return false;
+			};
+			case (?approved) {
+				return true;
+			};
+		};
+	};
 
 	//Functions********************************
 
@@ -178,6 +177,10 @@ actor {
 
 	public shared query ({ caller }) func whoAmI2() : async Text {
 		return Principal.toText(caller);
+	};
+
+	public shared ({ caller }) func amIApproved() : async Bool {
+		return await isApproved(caller);
 	};
 
 	public shared ({ caller }) func createUser(email : Text) : async Text {
@@ -390,39 +393,47 @@ actor {
 		return #ok("Message sent successfully!");
 	};
 
-	public shared func getMessages(chunkSize : Nat, PageNo : Nat) : async Result.Result<{ data : [Types.MessageData]; current_page : Nat; total_pages : Nat }, Text> {
-		let index_pages = Utils.paginate<(Text, Types.Index)>(Iter.toArray(messageDataRecord.entries()), chunkSize);
+	public shared ({ caller }) func getMessages(chunkSize : Nat, PageNo : Nat) : async Result.Result<{ data : [Types.MessageData]; current_page : Nat; total_pages : Nat }, Text> {
+		let ifApproved = await isApproved(caller);
+		switch (ifApproved) {
+			case (false) {
+				return #err("You are not approved");
+			};
+			case (true) {
+				let index_pages = Utils.paginate<(Text, Types.Index)>(Iter.toArray(messageDataRecord.entries()), chunkSize);
 
-		if (index_pages.size() < PageNo) {
-			return #err("Page not found");
-		};
-
-		if (index_pages.size() == 0) {
-			return #err("No messages found");
-		};
-
-		var pages_data = index_pages[PageNo];
-		var message_list = List.nil<Types.MessageData>();
-
-		for ((k, v) in pages_data.vals()) {
-			let message_blob = await stable_get(v, messageDataRecord_state);
-			let user : ?Types.MessageData = from_candid (message_blob);
-
-			switch (user) {
-				case null {
-					return #err("No blob found in stable memory for the caller");
+				if (index_pages.size() < PageNo) {
+					return #err("Page not found");
 				};
-				case (?val) {
-					message_list := List.push(val, message_list);
+
+				if (index_pages.size() == 0) {
+					return #err("No messages found");
 				};
+
+				var pages_data = index_pages[PageNo];
+				var message_list = List.nil<Types.MessageData>();
+
+				for ((k, v) in pages_data.vals()) {
+					let message_blob = await stable_get(v, messageDataRecord_state);
+					let user : ?Types.MessageData = from_candid (message_blob);
+
+					switch (user) {
+						case null {
+							return #err("No blob found in stable memory for the caller");
+						};
+						case (?val) {
+							message_list := List.push(val, message_list);
+						};
+					};
+				};
+
+				return #ok({
+					data = List.toArray(message_list);
+					current_page = PageNo + 1;
+					total_pages = index_pages.size();
+				});
 			};
 		};
-
-		return #ok({
-			data = List.toArray(message_list);
-			current_page = PageNo + 1;
-			total_pages = index_pages.size();
-		});
 	};
 
 	public shared func joinWaitlist(name : Text, email : Text, icpAddress : Text) : async Result.Result<Text, Text> {
@@ -444,7 +455,8 @@ actor {
 		return #ok("Joined the waitlist successfully!");
 	};
 
-	public shared func getWaitlist(chunkSize : Nat, PageNo : Nat) : async Result.Result<{ data : [Types.WaitlistData]; current_page : Nat; total_pages : Nat }, Text> {
+	public shared ({ caller }) func getWaitlist(chunkSize : Nat, PageNo : Nat) : async Result.Result<{ data : [Types.WaitlistData]; current_page : Nat; total_pages : Nat }, Text> {
+
 		let index_pages = Utils.paginate<(Text, Types.Index)>(Iter.toArray(waitlistDataRecord.entries()), chunkSize);
 
 		if (index_pages.size() < PageNo) {

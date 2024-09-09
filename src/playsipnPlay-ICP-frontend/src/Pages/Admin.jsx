@@ -46,15 +46,12 @@ const AdminPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const {
     backendActor,
-    login,
     logout,
     principal,
     isAuthenticated,
-    reloadLogin,
   } = useAuth();
   const chunkSize = 10;
 
-  const [modalIsOpen, setIsOpen] = useState(false);
 
   const addMoney = async (e) => {
     e.preventDefault();
@@ -114,26 +111,16 @@ const AdminPanel = () => {
   };
 
   useEffect(() => {
-    const approvedPrincipals = [
-      // MAIN
-      "oxj2h-r6fbj-hqtcn-fv7ye-yneeb-ca3se-c6s42-imvp7-juu33-ovnix-mae", //Paras (Client)
-      "42l52-e6bwv-2353f-idnxh-5f42y-catp6-j2yxn-msivr-ljpu2-ifqsy-dqe", //Ankur (Client)
-      "h5plh-utklh-zb3a6-6l4ar-6yytf-p3755-6rjjz-7fwm3-vtnsa-iosdg-4ae", //Tushar
-
-      // Developers
-      "cw6n2-33pvj-6evng-wkqup-md2ty-brw2r-bxcrz-tg72l-nsnq4-xninr-5ae", // Somiya Behera
-      "qpi67-2c7z4-3efq2-jnzvv-xdoik-xb72q-4y6ms-mjfwt-7aogy-4it4b-uqe", //Tushar Jain
-
-      "yyjkq-j3ybi-yhe2a-ujlbc-wqxof-ttj65-et3zg-2jsxg-wpa7s-t5lbv-rqe", //Sharan Sir
-      "ajgvz-x3hvi-wvqt2-2r2eb-3hfqx-hxupi-2rnlt-iiott-w6kk2-625vc-uae",
-    ];
+    const authenticateUser = async () => {
     if (isAuthenticated) {
-      if (approvedPrincipals.includes(principal)) {
+      if (await backendActor.amIApproved()) {
         setIsLoggedIn(true);
       } else {
         toast.error("Your account is not an approved admin");
       }
     }
+  }
+  authenticateUser();
   }, [principal]);
 
   useEffect(() => {
