@@ -456,39 +456,46 @@ actor {
 	};
 
 	public shared ({ caller }) func getWaitlist(chunkSize : Nat, PageNo : Nat) : async Result.Result<{ data : [Types.WaitlistData]; current_page : Nat; total_pages : Nat }, Text> {
+		let ifApproved = await isApproved(caller);
+		switch (ifApproved) {
+			case (false) {
+				return #err("You are not approved");
+			};
+			case (true) {
+				let index_pages = Utils.paginate<(Text, Types.Index)>(Iter.toArray(waitlistDataRecord.entries()), chunkSize);
 
-		let index_pages = Utils.paginate<(Text, Types.Index)>(Iter.toArray(waitlistDataRecord.entries()), chunkSize);
-
-		if (index_pages.size() < PageNo) {
-			return #err("Page not found");
-		};
-
-		if (index_pages.size() == 0) {
-			return #err("No members found");
-		};
-
-		var pages_data = index_pages[PageNo];
-		var waitlist_list = List.nil<Types.WaitlistData>();
-
-		for ((k, v) in pages_data.vals()) {
-			let waitlist_blob = await stable_get(v, waitlistDataRecord_state);
-			let user : ?Types.WaitlistData = from_candid (waitlist_blob);
-
-			switch (user) {
-				case null {
-					return #err("No blob found in stable memory for the caller");
+				if (index_pages.size() < PageNo) {
+					return #err("Page not found");
 				};
-				case (?val) {
-					waitlist_list := List.push(val, waitlist_list);
+
+				if (index_pages.size() == 0) {
+					return #err("No members found");
 				};
+
+				var pages_data = index_pages[PageNo];
+				var waitlist_list = List.nil<Types.WaitlistData>();
+
+				for ((k, v) in pages_data.vals()) {
+					let waitlist_blob = await stable_get(v, waitlistDataRecord_state);
+					let user : ?Types.WaitlistData = from_candid (waitlist_blob);
+
+					switch (user) {
+						case null {
+							return #err("No blob found in stable memory for the caller");
+						};
+						case (?val) {
+							waitlist_list := List.push(val, waitlist_list);
+						};
+					};
+
+				};
+
+				return #ok({
+					data = List.toArray(waitlist_list);
+					current_page = PageNo + 1;
+					total_pages = index_pages.size();
+				});
 			};
 		};
-
-		return #ok({
-			data = List.toArray(waitlist_list);
-			current_page = PageNo + 1;
-			total_pages = index_pages.size();
-		});
 	};
-
 };
