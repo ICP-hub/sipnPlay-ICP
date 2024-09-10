@@ -19,7 +19,6 @@ import Int "mo:base/Int";
 import Utils "./Utils";
 
 actor {
-	// public type Index = Nat64;
 
 	var userDataRecord = TrieMap.TrieMap<Principal, Types.Index>(Principal.equal, Principal.hash);
 	private stable var stableUsers : [(Principal, Types.Index)] = [];
@@ -73,8 +72,7 @@ actor {
 	};
 
 	let approvedPrincipals : [Text] = [
-		"gvbfr-o74tg-sclwi-he2el-2bhqf-wk6xn-zhrtu-lcfhb-wasyl-usx4m-nae", // Tushar Jain
-		"tugav-csyse-6r5qg-7ocfb-epxzf-lmtr5-mzhq3-ogrma-fjgnz-snohb-sae"
+		"moazz-sqhrx-jmtci-26rrd-ncwjk-yvudm-qkkas-ewzyp-pw5mp-6gx5r-dqe", // Tushar Jain
 	];
 
 	private func isApproved(caller : Principal) : async Bool {
@@ -153,7 +151,7 @@ actor {
 	};
 
 	let CustomLedger = "ent7t-2yaaa-aaaap-qhtcq-cai";
-	let payment_address = Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai");
+	let payment_address = Principal.fromText("bd3sg-teaaa-aaaaa-qaaba-cai");
 
 	public shared ({ caller }) func getUser() : async Result.Result<Types.UserData, Text> {
 		switch (userDataRecord.get(caller)) {
@@ -225,6 +223,15 @@ actor {
 		return balance;
 	};
 
+	public shared func get_backend_balance() : async Nat {
+		let ledger = actor (CustomLedger) : ICRC.Token;
+		let balance = await ledger.icrc1_balance_of({
+			owner = payment_address;
+			subaccount = null;
+		});
+		return balance;
+	};
+
 	public shared ({ caller }) func deductMoney(amount : Nat) : async Result.Result<Text, Text> {
 		switch (userDataRecord.get(caller)) {
 			case (null) {
@@ -249,51 +256,39 @@ actor {
 		};
 	};
 
-	public shared ({ caller }) func addMoneyToDefault(amount : Nat) : async Result.Result<Text, Text> {
-		switch (userDataRecord.get(caller)) {
-			case (null) {
-				return #err("User not found");
-			};
-			case (?user) {
-				let response : ICRC.Result_2 = await icrc2_transferFrom(CustomLedger, caller, payment_address, amount);
-				switch (response) {
-					case (#Ok(value)) {
-						return #ok("Points added to default successfully" # Nat.toText(value));
-					};
-					case (#Err(e)) {
-						throw Error.reject(debug_show (e));
-					};
-				};
-
-			};
-		};
-	};
-
 	public shared ({ caller }) func withdrawMoneyFromDefault(amount : Nat) : async Result.Result<Text, Text> {
-		switch (userDataRecord.get(caller)) {
-			case (null) {
-				return #err("User not a principal");
+		let ifApproved = await isApproved(caller);
+		switch (ifApproved) {
+			case (false) {
+				return #err("You are not approved");
 			};
-			case (?user) {
-				let ledger = actor (CustomLedger) : ICRC.Token;
-				let response : ICRC.Result = await ledger.icrc1_transfer({
-					to = {
-						owner = caller;
-						subaccount = null;
+			case (true) {
+				switch (userDataRecord.get(caller)) {
+					case (null) {
+						return #err("User not a principal");
 					};
-					fee : ?Nat = null;
-					memo : ?Blob = null;
-					from_subaccount : ?Blob = null;
-					created_at_time : ?Nat64 = null;
-					amount = amount;
-				});
-				switch (response) {
-					case (#Ok(value)) {
+					case (?user) {
+						let ledger = actor (CustomLedger) : ICRC.Token;
+						let response : ICRC.Result = await ledger.icrc1_transfer({
+							to = {
+								owner = caller;
+								subaccount = null;
+							};
+							fee : ?Nat = null;
+							memo : ?Blob = null;
+							from_subaccount : ?Blob = null;
+							created_at_time : ?Nat64 = null;
+							amount = amount;
+						});
+						switch (response) {
+							case (#Ok(value)) {
 
-						return #ok("Points Added successfully" # Nat.toText(value));
-					};
-					case (#Err(e)) {
-						throw Error.reject(debug_show (e));
+								return #ok("Tokens withdrawn from backend successfully" # Nat.toText(value));
+							};
+							case (#Err(e)) {
+								throw Error.reject(debug_show (e));
+							};
+						};
 					};
 				};
 			};

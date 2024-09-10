@@ -3,40 +3,14 @@ import { useAuth } from "../utils/useAuthClient";
 import toast from "react-hot-toast";
 import ConnectWallet from "../components/Modals/ConnectWallets";
 import * as XLSX from "xlsx";
-
-function convertNanosecondsToDateTime(nanoseconds) {
-  // Convert nanoseconds to milliseconds
-  const milliseconds = Number(nanoseconds) / 1_000_000;
-
-  // Create a new Date object with the milliseconds
-  const date = new Date(milliseconds);
-
-  const IST_OFFSET_MS = 5 * 60 * 60 * 1000 + 30 * 60 * 1000; // 5 hours 30 minutes in milliseconds
-  const istDate = new Date(date.getTime() + IST_OFFSET_MS);
-
-  // Extract date and time components
-  const month = String(istDate.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-based
-  const day = String(istDate.getUTCDate()).padStart(2, "0");
-  const year = String(istDate.getUTCFullYear()).slice(-2); // Get last two digits of the year
-  let hour = istDate.getUTCHours();
-  const minute = String(istDate.getUTCMinutes()).padStart(2, "0");
-  const isPM = hour >= 12;
-
-  // Convert hour to 12-hour format
-  hour = hour % 12;
-  hour = hour ? hour : 12; // the hour '0' should be '12'
-
-  // Format AM/PM
-  const period = isPM ? "PM" : "AM";
-
-  // Format the date and time string
-  return `${day}/${month}/${year} ${hour}:${minute}${period}`;
-}
+import PaginatedData from "../components/Admin/PaginatedData";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
   const [waitlist, setWaitlist] = useState([]);
-  const [addAmount, setAddAmount] = useState(0);
+  const [addAmount, setAddAmount] = useState(0); 
+  const [addAmntToBackend, setAddAmntToBackend] = useState(0);
+  const [removeAmntFromBackend, setRemoveAmntFromBackend] = useState(0);
   const [messages, setMessages] = useState([]);
   const [waitlistPage, setWaitlistPage] = useState(0);
   const [waitlistPageSize, setWaitlistPageSize] = useState(0);
@@ -44,14 +18,11 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(false);
   const [messagesPage, setMessagesPage] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const {
-    backendActor,
-    logout,
-    principal,
-    isAuthenticated,
-  } = useAuth();
+  const [isApproving, setIsApproving] = useState(false);
+  const { backendActor, logout, principal, isAuthenticated } = useAuth();
+  const [adminBalance, setAdminBalance] = useState(0);
+  const [defaultBalance, setDefaultBalance] = useState(0);
   const chunkSize = 10;
-
 
   const addMoney = async (e) => {
     e.preventDefault();
@@ -100,6 +71,35 @@ const AdminPanel = () => {
     }
   };
 
+  const fetchAdminBalance = async () => {
+    try {
+      const response = await backendActor.get_balance();
+      
+      if (response.ok) {
+        setAdminBalance(response);
+      }
+    } catch (error) {
+      console.error("Error fetching admin balance:", error);
+    }
+  };
+
+  const fetchDefaultBalance = async () => {
+    try {
+      const response = await backendActor.get_backend_balance();
+      console.log("response fetchadminbalance",response);
+      if (response.ok) {
+        setDefaultBalance(response);
+      }
+    } catch (error) {
+      console.error("Error fetching default balance:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdminBalance();
+    fetchDefaultBalance();
+  }, []);
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -111,16 +111,24 @@ const AdminPanel = () => {
   };
 
   useEffect(() => {
-    const authenticateUser = async () => {
-    if (isAuthenticated) {
-      if (await backendActor.amIApproved()) {
-        setIsLoggedIn(true);
-      } else {
-        toast.error("Your account is not an approved admin");
+    // Define the async function inside useEffect
+    const checkApproveStatus = async () => {
+      setIsApproving(true);
+      try {
+        const isApproved = await backendActor.amIApproved();
+        if (isAuthenticated && isApproved) {
+          setIsLoggedIn(true);
+        } else {
+          toast.error("Your account is not an approved admin");
+        }
+      } catch (error) {
+        console.error("Error checking approval status:", error);
+      } finally {
+        setIsApproving(false);
       }
-    }
-  }
-  authenticateUser();
+    };
+
+    checkApproveStatus();
   }, [principal]);
 
   useEffect(() => {
@@ -190,7 +198,11 @@ const AdminPanel = () => {
         >
           Logout
         </button>
-        <p>Your account is not an approved admin </p>
+        {isApproving ? (
+          <p> Loading ....</p>
+        ) : (
+          <p>Your account is not an approved admin </p>
+        )}
       </div>
     );
   }
@@ -209,7 +221,7 @@ const AdminPanel = () => {
             type="number"
             value={addAmount}
             onChange={(e) => setAddAmount(e.target.value)}
-            className="rounded-lg px-3 text-black  h-11"
+            className="rounded-lg px-3 text-black  h-11 focus:outline-none focus:ring-2 focus:ring-[#ee3ec9]"
           />
           <button className="bg-[#EE3EC9] rounded-lg px-4 py-2 ml-3">
             Submit
@@ -217,7 +229,7 @@ const AdminPanel = () => {
         </form>
         <button
           onClick={handleDownload}
-          className="px-4 py-2 bg-[#EE3EC9] text-white rounded-lg"
+          className="px-4 bg-[#EE3EC9] text-white rounded-lg"
         >
           Download Page's Data
         </button>
@@ -227,16 +239,15 @@ const AdminPanel = () => {
         <div className="flex justify-around">
           <button
             onClick={() => setActiveSection("waitlist")}
-            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#d83b95] hover:rounded-lg transition-colors duration-300 ${
-              activeSection === "waitlist" ? "bg-[#EE3EC9] " : "bg-black "
+            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
+              activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
             }`}
           >
             Waitlist
           </button>
-
           <button
             onClick={() => setActiveSection("messages")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#d97cb1] hover:rounded-lg transition-colors duration-300 ${
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
               activeSection === "messages"
                 ? "bg-[#EE3EC9] text-white"
                 : "bg-black "
@@ -246,7 +257,7 @@ const AdminPanel = () => {
           </button>
           <button
             onClick={() => setActiveSection("resources")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#d97cb1] hover:rounded-lg transition-colors duration-300  ${
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${
               activeSection === "resources"
                 ? "bg-[#EE3EC9] "
                 : "bg-black text-white"
@@ -263,119 +274,74 @@ const AdminPanel = () => {
       ) : (
         <div>
           {activeSection === "waitlist" && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Waitlist</h2>
-              <div className="bg-stone-900 shadow-md rounded-lg overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200 rounded-t-lg">
-                  <thead className="bg-stone-800 rounded-t-lg">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                        Timestamp
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                        Name
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                        Email
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                        Principal ID
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white text-black divide-y divide-gray-200 min-w-full">
-                    {waitlist &&
-                      waitlist.length > 0 &&
-                      waitlist.map((item, index) => (
-                        <tr key={`waitlist${index}`} className="min-w-full">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {convertNanosecondsToDateTime(item.date)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {item.name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {item.email}
-                          </td>
-                          <td className="px-6 py-4 ">{item.icpAddress}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-                <div className="flex justify-between mt-4">
-                  <button
-                    onClick={handlePrevWaitlist}
-                    className="px-4 py-2 m-3 bg-[#EE3EC9] text-white rounded-lg"
-                  >
-                    Prev
-                  </button>
-                  <button
-                    onClick={handleNextWaitlist}
-                    className="px-4 py-2 m-3 bg-[#EE3EC9] text-white rounded-lg"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            </div>
+            <PaginatedData
+              title="Waitlist"
+              data={waitlist}
+              handlePrev={handlePrevWaitlist}
+              handleNext={handleNextWaitlist}
+            />
           )}
           {activeSection === "messages" && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Messages</h2>
-              <div className="bg-stone-900 shadow-md rounded-lg overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200 rounded-t-lg">
-                  <thead className="bg-stone-800 rounded-t-lg">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                        Timestamp
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                        Name
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                        Email
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                        Message
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white text-black divide-y divide-gray-200">
-                    {messages &&
-                      messages.length > 0 &&
-                      messages.map((item, index) => (
-                        <tr key={`message${index}`}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {convertNanosecondsToDateTime(item.date)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {item.name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {item.email}
-                          </td>
-                          <td className="px-6 py-4">{item.message}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-
-                <div className="flex justify-between mt-4">
-                  <button
-                    onClick={handlePrevMessage}
-                    className="px-4 py-2 m-3 bg-[#EE3EC9] text-white rounded-lg"
-                  >
-                    Prev
-                  </button>
-                  <button
-                    onClick={handleNextMessage}
-                    className="px-4 py-2 m-3 bg-[#EE3EC9] text-white rounded-lg"
-                  >
-                    Next
-                  </button>
+            <PaginatedData
+              title="Messages"
+              data={messages}
+              handlePrev={handlePrevMessage}
+              handleNext={handleNextMessage}
+            />
+          )}
+          {activeSection === "resources" && (
+            <>
+              <div className="flex justify-around items-center gap-8">
+                <div>
+                  <form onSubmit={addMoney}>
+                    <input
+                      type="number"
+                      placeholder="Enter amount to add"
+                      min={0}
+                      value={addAmntToBackend}
+                      onChange={(e) =>
+                        setAddAmntToBackend(Number(e.target.value))
+                      }
+                      className="rounded-lg px-3 text-black  h-11 focus:outline-none focus:ring-2 focus:ring-[#ee3ec9]"
+                    />
+                    <button className="bg-[#EE3EC9] rounded-lg px-4 py-2 ml-3 min-w-24">
+                      Add
+                    </button>
+                  </form>
+                </div>
+                <div>
+                  <form onSubmit={console.log("withdrawMoneyFromDefault")}>
+                    <input
+                      type="number"
+                      placeholder="Enter amount to withdraw"
+                      min={0}
+                      value={removeAmntFromBackend}
+                      onChange={(e) =>
+                        setRemoveAmntFromBackend(Number(e.target.value))
+                      }
+                      className="rounded-lg px-3 text-black  h-11 focus:outline-none focus:ring-2 focus:ring-[#ee3ec9]"
+                    />
+                    <button className="bg-[#EE3EC9] rounded-lg px-4 py-2 ml-3 min-w-24">
+                      Remove
+                    </button>
+                  </form>
                 </div>
               </div>
-            </div>
+              <div className="flex justify-around h-24 w-full mt-16 gap-16">
+                <div className="flex gap-4">
+                  <h4 className="font-semibold text-[#ee3ec9]">
+                    Admin's Balance:
+                  </h4>
+                  <span>{adminBalance}</span>
+                </div>
+                <div className="flex gap-4">
+                  <h4 className="font-semibold text-[#ee3ec9]">
+                    Default Balance:
+                  </h4>
+                  <span>{defaultBalance}</span>
+                </div>
+              </div>
+            </>
           )}
         </div>
       )}

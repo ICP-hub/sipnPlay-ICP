@@ -5,7 +5,7 @@ import BlackJack from "./Pages/BlackJack";
 import { AuthProvider } from "./utils/useAuthClient";
 // import Payment from './Pages/Payment';
 import PrivateLayout from "./Layout/PrivateLayout";
-import AdminPanel from "./Pages/Admin/Admin";
+import AdminPanel from "./Pages/Admin";
 function AllRoutes() {
   return (
     <AuthProvider>
@@ -19,14 +19,7 @@ function AllRoutes() {
           }
         />
         <Route path="/blackjack" element={<BlackJack />} />
-        <Route
-          path="/register"
-          element={
-            <PrivateLayout>
-              <Home />
-            </PrivateLayout>
-          }
-        />
+        
         {/* <Route
           path="/payment"
           element={
