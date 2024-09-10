@@ -36,7 +36,7 @@ const GameMania = () => {
                         {cards[index] && <div className='rou rounded-b-2xl z-10 animate-translate-y -mt-4 bg-gradient-to-r p-[23px] from-[#64646459] to-[#5E5E5E2D] '>
                             <p className='font-inter font-[700] text-[20px] mt-6  '>{game.name} </p>
                             <p className='text-[14px] font-adam font-[300] my-2  '>{game.Description} </p>
-                            <AnimationButton text="Coming Soon" />
+                            <AnimationButton >Coming soon</AnimationButton>
                         </div>}
                     </div>
                 ))}

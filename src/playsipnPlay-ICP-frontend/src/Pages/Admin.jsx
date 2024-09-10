@@ -5,6 +5,7 @@ import ConnectWallet from "../components/Modals/ConnectWallets";
 import * as XLSX from "xlsx";
 import PaginatedData from "../components/Admin/PaginatedData";
 import Resources from "../components/Admin/Resources";
+import { Oval } from "react-loader-spinner";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
@@ -18,8 +19,9 @@ const AdminPanel = () => {
   const [messagesPage, setMessagesPage] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
-  const { backendActor, ledgerActor, logout, principal, isAuthenticated } = useAuth();
-  
+  const { backendActor, ledgerActor, logout, principal, isAuthenticated } =
+    useAuth();
+
   const chunkSize = 10;
 
   const addMoney = async (e) => {
@@ -68,8 +70,6 @@ const AdminPanel = () => {
       toast.error("Error fetching messages data");
     }
   };
-
-
 
   const handleLogout = async () => {
     try {
@@ -170,7 +170,13 @@ const AdminPanel = () => {
           Logout
         </button>
         {isApproving ? (
-          <p> Loading ....</p>
+          <Oval
+            color="#EE3EC9"
+            secondaryColor="#333"
+            height={50}
+            width={50}
+            wrapperClass="flex justify-center items-center"
+          />
         ) : (
           <p>Your account is not an approved admin </p>
         )}
@@ -179,66 +185,65 @@ const AdminPanel = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between p-8">
+    <div className="p-6 text-xs sm:text-sm md:text-md lg:text-lg ">
+      <div className="flex justify-between p-8 ">
         <button
           onClick={handleLogout}
           className="px-4 py-2 bg-black border-[#d83b95] border-2 transition-colors duration-300 hover:bg-[#d839b5] text-white rounded-lg mb-4"
         >
           Logout
         </button>
-        <form onSubmit={addMoney}>
-          <input
-            type="number"
-            value={addAmount}
-            onChange={(e) => setAddAmount(e.target.value)}
-            className="rounded-lg px-3 text-black  h-11 focus:outline-none focus:ring-2 focus:ring-[#ee3ec9]"
-          />
-          <button className="bg-[#EE3EC9] rounded-lg px-4 py-2 ml-3">
-            Submit
+
+        {activeSection !== "resources" && (
+          <button
+            onClick={handleDownload}
+            className="px-4 bg-[#EE3EC9] text-white rounded-lg"
+          >
+            Download Page's Data
           </button>
-        </form>
-        <button
-          onClick={handleDownload}
-          className="px-4 bg-[#EE3EC9] text-white rounded-lg"
-        >
-          Download Page's Data
-        </button>
+        )}
       </div>
 
       <div className="items-center my-12 border-y-[1px] border-[#ee3ec9] mx-12">
         <div className="flex justify-around">
           <button
             onClick={() => setActiveSection("waitlist")}
-            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
-              }`}
+            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
+              activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
+            }`}
           >
             Waitlist
           </button>
           <button
             onClick={() => setActiveSection("messages")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "messages"
-              ? "bg-[#EE3EC9] text-white"
-              : "bg-black "
-              }`}
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
+              activeSection === "messages"
+                ? "bg-[#EE3EC9] text-white"
+                : "bg-black "
+            }`}
           >
             Messages
           </button>
           <button
             onClick={() => setActiveSection("resources")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${activeSection === "resources"
-              ? "bg-[#EE3EC9] "
-              : "bg-black text-white"
-              }`}
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${
+              activeSection === "resources"
+                ? "bg-[#EE3EC9] "
+                : "bg-black text-white"
+            }`}
           >
             Resources
           </button>
         </div>
       </div>
       {loading ? (
-        <div className="text-white text-[18px] mt-[34px] text-center font-adam">
-          Loading ....
-        </div>
+        <Oval
+          color="#EE3EC9"
+          secondaryColor="#333"
+          height={50}
+          width={50}
+          wrapperClass="flex justify-center items-center"
+        />
       ) : (
         <div>
           {activeSection === "waitlist" && (
@@ -257,9 +262,7 @@ const AdminPanel = () => {
               handleNext={handleNextMessage}
             />
           )}
-          {activeSection === "resources" && (
-            <Resources />
-          )}
+          {activeSection === "resources" && <Resources />}
         </div>
       )}
     </div>

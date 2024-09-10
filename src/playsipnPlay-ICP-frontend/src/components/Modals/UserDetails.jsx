@@ -54,10 +54,9 @@ const UserDetails = ({ modalIsOpen, setIsOpen }) => {
   return (
     <>
       <div className="flex">
-        <HeaderButton
-          onClick={openModal}
-          text={userDetails?.email?.slice(0, 10)}
-        />
+        <HeaderButton onClick={openModal}>
+          {userDetails?.email?.slice(0, 10)}...
+        </HeaderButton>
       </div>
       {modalIsOpen && (
         <div className=" inset-0  z-20 flex items-center justify-center ">
@@ -101,7 +100,7 @@ const UserDetails = ({ modalIsOpen, setIsOpen }) => {
                 </p>
               </div>
             </div>
-            <AnimationButton onClick={logout} text="Disconnect" />
+            <AnimationButton onClick={logout}>Disconnect</AnimationButton>
           </div>
         </div>
       )}

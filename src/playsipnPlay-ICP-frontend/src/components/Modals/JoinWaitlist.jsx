@@ -63,7 +63,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
 
   return (
     <>
-      <AnimationButton onClick={openModal} text="Join Waitlist" />
+      <AnimationButton onClick={openModal}>Join Waitlist</AnimationButton>
       <div>
         <Modal
           isOpen={modalIsOpen}
@@ -159,7 +159,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                   />
                 </div>
                 <div className="flex mb-4 justify-center md:justify-end">
-                  <AnimationButton text="Submit" />
+                  <AnimationButton >Submit</AnimationButton>
                 </div>
               </form>
 

@@ -1,7 +1,7 @@
 import React from "react";
 import "./AnimationButton.css";
 
-const HeaderButton = ({ text, onClick }) => {
+const HeaderButton = ({ children, onClick }) => {
   return (
     <>
       <button
@@ -21,7 +21,7 @@ const HeaderButton = ({ text, onClick }) => {
             fill="white"
           />
         </svg>
-        <span className="font-semibold tracking-wide">{text}...</span>
+        <span className="font-semibold tracking-wide">{children}</span>
         <div className="absolute h-[5px] w-[5px] -top-[1px] -left-[1px] border-t-[1px] border-l-[1px] "></div>
         <div className="absolute h-[5px] w-[5px] -top-[1px] -right-[1px] border-t-[1px] border-r-[1px] "></div>
         <div className="absolute h-[5px] w-[5px] -bottom-[1px] -left-[1px] border-b-[1px] border-l-[1px] "></div>

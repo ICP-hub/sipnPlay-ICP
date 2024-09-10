@@ -99,7 +99,7 @@ const Register = ({ setIsRegisterDone, modalIsOpen, setIsOpen }) => {
               </div>
 
               <div className="flex mb-4 justify-center md:justify-end">
-                <AnimationButton text="Submit" />
+                <AnimationButton>Submit</AnimationButton>
               </div>
             </form>
           </div>

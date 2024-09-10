@@ -10,9 +10,11 @@ import { ImCross } from "react-icons/im";
 import { useAuth } from "../../utils/useAuthClient";
 import toast from "react-hot-toast";
 import { createPortal } from "react-dom";
+import { Oval } from "react-loader-spinner";
 
 const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
   const { backendActor } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function closeModal() {
     setIsOpen(false);
@@ -49,21 +51,28 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
       return;
     }
 
-    const response = await backendActor.joinWaitlist(name, email, icpAddress);
-    if (response.ok) {
-      toast.success(response.ok);
-      setName("");
-      setEmail("");
-      setIcpAddress("");
-      closeModal();
-    } else {
-      toast.error("Error sending response");
+    setIsSubmitting(true);
+    try {
+      const response = await backendActor.joinWaitlist(name, email, icpAddress);
+      if (response.ok) {
+        toast.success(response.ok);
+        setName("");
+        setEmail("");
+        setIcpAddress("");
+        closeModal();
+      } else {
+        toast.error("Error sending response");
+      }
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <>
-      <AnimationButton onClick={openModal} text="Join Waitlist" />
+      <AnimationButton onClick={openModal}>Join Waitlist</AnimationButton>
       <div>
         <Modal
           isOpen={modalIsOpen}
@@ -159,7 +168,21 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                   />
                 </div>
                 <div className="flex mb-4 justify-center md:justify-end">
-                  <AnimationButton text="Submit" />
+                  <AnimationButton>
+                    {isSubmitting ? (
+                      <Oval
+                        isVisible={true}
+                        color="#ee3ec9"
+                        secondaryColor="#fff"
+                        strokeWidth={5}
+                        height={20}
+                        width={20}
+                        wrapperClass="flex justify-center"
+                      />
+                    ) : (
+                      "Submit"
+                    )}
+                  </AnimationButton>
                 </div>
               </form>
 

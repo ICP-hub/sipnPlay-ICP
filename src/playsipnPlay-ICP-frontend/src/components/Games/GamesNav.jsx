@@ -8,7 +8,7 @@ const GamesNav = () => {
   }
   return (
     <div>
-      <div className="flex md:flex-col justify-around md:justify-start gap-2 md:gap-4 py-2 text-xs md:text-md lg:text-lg md:ps-8 md:pe-16 px-8 bg-black md:h-dvh">
+      <div className="flex md:flex-col justify-around md:justify-start gap-2 md:gap-4 py-2 sm:py-4 text-xs sm:text-sm md:text-lg lg:text-xl md:ps-8 md:pe-16 px-8 bg-gradient-to-t from-[#ffffff27] to-[#99999927] md:h-dvh md:border-r-2 md:border-t-2 md:border-b-2 border-[#3f3939] md:rounded-r-2xl">
         <div
           onClick={() => handleLinkClick("home")}
           className="cursor-pointer font-adam font-semibold"
@@ -25,7 +25,7 @@ const GamesNav = () => {
         </div>
         <div
           onClick={() => handleLinkClick("recently-played")}
-          className="cursor-pointer font-adam font-semibold"
+          className="cursor-pointer  font-adam font-semibold"
         >
           <p
             className={`${
@@ -39,7 +39,7 @@ const GamesNav = () => {
         </div>
         <div
           onClick={() => handleLinkClick("trending")}
-          className="cursor-pointer font-adam font-semibold"
+          className="cursor-pointer  font-adam font-semibold"
         >
           <p
             className={`${
@@ -53,7 +53,7 @@ const GamesNav = () => {
         </div>
         <div
           onClick={() => handleLinkClick("most-played")}
-          className="cursor-pointer font-adam font-semibold"
+          className="cursor-pointer  font-adam font-semibold"
         >
           <p
             className={`${

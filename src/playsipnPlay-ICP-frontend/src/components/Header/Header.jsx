@@ -31,7 +31,7 @@ const Header = () => {
           </div>
         ) : (
           <>
-          <AnimationButton onClick={openModal} text="Login" />
+          <AnimationButton onClick={openModal}>Login</AnimationButton>
           <ConnectWallets modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
           </>
         )}

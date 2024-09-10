@@ -6,7 +6,7 @@ import logo from "../../assets/images/logo.png";
 import { Link } from "react-router-dom";
 const Footer = () => {
   return (
-    <div className="px-4 py-8 bg-gradient-to-r from-custom-gradient-start to-custom-gradient-end -mt-4 pb-6 flex justify-between ">
+    <div className="px-4 py-8 bg-gradient-to-r from-custom-gradient-start to-custom-gradient-end -mt-4 pb-6 flex justify-between text-xs md:text-md lg:text-lg ">
       <div className="my-auto">
         <img draggable="false" className="w-[200px]" src={logo} />
         <p className="font-adam font-[300]  text-[20px] text-[#96839B]  ">

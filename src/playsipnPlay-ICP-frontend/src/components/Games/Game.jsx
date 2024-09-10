@@ -28,7 +28,7 @@ const Game = ({ game }) => {
   const navigate = useNavigate();
   return (
     <div
-      className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl flex items-center justify-center p-4 bg-gradient-to-r from-[#cd335f] to-[#4999f6] border-[#EE3EC9] border-[1px] transition-transform duration-300 group hover:scale-105"
+      className="relative w-3/4 md:w-full flex items-center justify-center p-4 bg-gradient-to-r from-[#cd335f] to-[#4999f6] border-[#EE3EC9] border-[1px] transition-transform duration-300 group hover:scale-105 aspect-square"
       onClick={() => navigate(`/${game.name}`)}
     >
       <div className="absolute h-[5px] w-[5px] -top-[1px] -left-[1px] border-t-[1px] border-l-[1px] border-white "></div>
@@ -38,11 +38,7 @@ const Game = ({ game }) => {
       <div className="absolute w-full h-0 flex items-center bg-none justify-center transition-all duration-300 bg-black bg-opacity-70 backdrop-filter backdrop-blur-sm opacity-0 translate-y-full group-hover:opacity-100 group-hover:translate-y-0 group-hover:h-full cursor-pointer">
         Play Now
       </div>
-      <img
-        src={game.img}
-        alt="game-image"
-        className="w-full h-auto min-h-full object-contain"
-      />
+      <img src={game.img} alt="game-image" className=" object-contain" />
     </div>
   );
 };

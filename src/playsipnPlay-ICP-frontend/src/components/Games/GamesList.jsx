@@ -15,14 +15,7 @@ const GamesList = () => {
   ]);
 
   return (
-    <div
-      style={{
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-      className="max-w-full bg-cover bg-center min-h-screen lg:py-4"
-    >
+    <div className="max-w-full bg-cover bg-center min-h-[90%] lg:py-4 bg-gradient-to-r from-[#ee3ec927] via-black to-[#ee3ec927]">
       <div className="flex flex-col md:flex-row gap-8 max-w-screen-xl md:pe-16">
         <GamesNav />
         <div className="flex-1 mt-4 lg:mt-0">
