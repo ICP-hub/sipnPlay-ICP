@@ -4,13 +4,12 @@ import toast from "react-hot-toast";
 import ConnectWallet from "../components/Modals/ConnectWallets";
 import * as XLSX from "xlsx";
 import PaginatedData from "../components/Admin/PaginatedData";
+import Resources from "../components/Admin/Resources";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
   const [waitlist, setWaitlist] = useState([]);
-  const [addAmount, setAddAmount] = useState(0); 
-  const [addAmntToBackend, setAddAmntToBackend] = useState(0);
-  const [removeAmntFromBackend, setRemoveAmntFromBackend] = useState(0);
+  const [addAmount, setAddAmount] = useState(0);
   const [messages, setMessages] = useState([]);
   const [waitlistPage, setWaitlistPage] = useState(0);
   const [waitlistPageSize, setWaitlistPageSize] = useState(0);
@@ -19,9 +18,8 @@ const AdminPanel = () => {
   const [messagesPage, setMessagesPage] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
-  const { backendActor, logout, principal, isAuthenticated } = useAuth();
-  const [adminBalance, setAdminBalance] = useState(0);
-  const [defaultBalance, setDefaultBalance] = useState(0);
+  const { backendActor, ledgerActor, logout, principal, isAuthenticated } = useAuth();
+  
   const chunkSize = 10;
 
   const addMoney = async (e) => {
@@ -71,34 +69,7 @@ const AdminPanel = () => {
     }
   };
 
-  const fetchAdminBalance = async () => {
-    try {
-      const response = await backendActor.get_balance();
-      
-      if (response.ok) {
-        setAdminBalance(response);
-      }
-    } catch (error) {
-      console.error("Error fetching admin balance:", error);
-    }
-  };
 
-  const fetchDefaultBalance = async () => {
-    try {
-      const response = await backendActor.get_backend_balance();
-      console.log("response fetchadminbalance",response);
-      if (response.ok) {
-        setDefaultBalance(response);
-      }
-    } catch (error) {
-      console.error("Error fetching default balance:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchAdminBalance();
-    fetchDefaultBalance();
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -239,29 +210,26 @@ const AdminPanel = () => {
         <div className="flex justify-around">
           <button
             onClick={() => setActiveSection("waitlist")}
-            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
-              activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
-            }`}
+            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
+              }`}
           >
             Waitlist
           </button>
           <button
             onClick={() => setActiveSection("messages")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
-              activeSection === "messages"
-                ? "bg-[#EE3EC9] text-white"
-                : "bg-black "
-            }`}
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "messages"
+              ? "bg-[#EE3EC9] text-white"
+              : "bg-black "
+              }`}
           >
             Messages
           </button>
           <button
             onClick={() => setActiveSection("resources")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${
-              activeSection === "resources"
-                ? "bg-[#EE3EC9] "
-                : "bg-black text-white"
-            }`}
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${activeSection === "resources"
+              ? "bg-[#EE3EC9] "
+              : "bg-black text-white"
+              }`}
           >
             Resources
           </button>
@@ -290,58 +258,7 @@ const AdminPanel = () => {
             />
           )}
           {activeSection === "resources" && (
-            <>
-              <div className="flex justify-around items-center gap-8">
-                <div>
-                  <form onSubmit={addMoney}>
-                    <input
-                      type="number"
-                      placeholder="Enter amount to add"
-                      min={0}
-                      value={addAmntToBackend}
-                      onChange={(e) =>
-                        setAddAmntToBackend(Number(e.target.value))
-                      }
-                      className="rounded-lg px-3 text-black  h-11 focus:outline-none focus:ring-2 focus:ring-[#ee3ec9]"
-                    />
-                    <button className="bg-[#EE3EC9] rounded-lg px-4 py-2 ml-3 min-w-24">
-                      Add
-                    </button>
-                  </form>
-                </div>
-                <div>
-                  <form onSubmit={console.log("withdrawMoneyFromDefault")}>
-                    <input
-                      type="number"
-                      placeholder="Enter amount to withdraw"
-                      min={0}
-                      value={removeAmntFromBackend}
-                      onChange={(e) =>
-                        setRemoveAmntFromBackend(Number(e.target.value))
-                      }
-                      className="rounded-lg px-3 text-black  h-11 focus:outline-none focus:ring-2 focus:ring-[#ee3ec9]"
-                    />
-                    <button className="bg-[#EE3EC9] rounded-lg px-4 py-2 ml-3 min-w-24">
-                      Remove
-                    </button>
-                  </form>
-                </div>
-              </div>
-              <div className="flex justify-around h-24 w-full mt-16 gap-16">
-                <div className="flex gap-4">
-                  <h4 className="font-semibold text-[#ee3ec9]">
-                    Admin's Balance:
-                  </h4>
-                  <span>{adminBalance}</span>
-                </div>
-                <div className="flex gap-4">
-                  <h4 className="font-semibold text-[#ee3ec9]">
-                    Default Balance:
-                  </h4>
-                  <span>{defaultBalance}</span>
-                </div>
-              </div>
-            </>
+            <Resources />
           )}
         </div>
       )}

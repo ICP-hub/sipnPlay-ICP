@@ -72,6 +72,9 @@ actor {
 	};
 
 	let approvedPrincipals : [Text] = [
+		"oxj2h-r6fbj-hqtcn-fv7ye-yneeb-ca3se-c6s42-imvp7-juu33-ovnix-mae", //Paras
+		"42l52-e6bwv-2353f-idnxh-5f42y-catp6-j2yxn-msivr-ljpu2-ifqsy-dqe", //Ankur
+
 		"moazz-sqhrx-jmtci-26rrd-ncwjk-yvudm-qkkas-ewzyp-pw5mp-6gx5r-dqe", // Tushar Jain
 	];
 
