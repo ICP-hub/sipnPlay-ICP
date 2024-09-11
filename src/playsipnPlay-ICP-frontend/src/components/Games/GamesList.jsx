@@ -15,7 +15,12 @@ const GamesList = () => {
   ]);
 
   return (
-    <div className="max-w-full bg-cover bg-center min-h-[90%] lg:py-4 bg-gradient-to-r from-[#ee3ec927] via-black to-[#ee3ec927]">
+    <div
+      style={{
+        background: "linear-gradient(to right, #ee3ec927, black, #ee3ec927)",
+      }}
+      className="max-w-full bg-cover bg-center min-h-[90%] lg:py-4"
+    >
       <div className="flex flex-col md:flex-row gap-8 max-w-screen-xl md:pe-16">
         <GamesNav />
         <div className="flex-1 mt-4 lg:mt-0">
