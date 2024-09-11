@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Register from "../components/Modals/Register";
 import { useAuth } from "../utils/useAuthClient";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addUserData, removeUserData } from "../utils/redux/userSlice";
 import GamesList from "../components/Games/GamesList";
+import { Principal } from "@dfinity/principal";
 
 function Home() {
   const dispatch = useDispatch();
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const [modalIsOpen, setIsOpen] = useState(false);
   const [isRegisterDone, setIsRegisterDone] = useState(false);
-  const userData = useSelector((state) => state.user);
 
   const formatTokenMetaData = (arr) => {
     const resultObject = {};
@@ -28,8 +28,13 @@ function Home() {
     if (response.err === "New user") {
       return { isNewUser: true };
     } else {
-      let balance = await backendActor.get_balance();
-      console.log("Balance", balance);
+      let balance2=await backendActor.get_balance()
+      let balance = await ledgerActor.icrc1_balance_of({
+        owner:Principal.fromText(principal),
+        subaccount:[]
+      });
+      console.log("Balance", balance,balance2);
+
 
       let metaData = null;
       await ledgerActor

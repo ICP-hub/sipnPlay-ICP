@@ -10,7 +10,6 @@ import { Oval } from "react-loader-spinner";
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
   const [waitlist, setWaitlist] = useState([]);
-  const [addAmount, setAddAmount] = useState(0);
   const [messages, setMessages] = useState([]);
   const [waitlistPage, setWaitlistPage] = useState(0);
   const [waitlistPageSize, setWaitlistPageSize] = useState(0);
@@ -19,17 +18,9 @@ const AdminPanel = () => {
   const [messagesPage, setMessagesPage] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
-  const { backendActor, ledgerActor, logout, principal, isAuthenticated } =
-    useAuth();
+  const { backendActor, logout, principal, isAuthenticated } = useAuth();
 
   const chunkSize = 10;
-
-  const addMoney = async (e) => {
-    e.preventDefault();
-    const response = await backendActor.addMoney(parseInt(addAmount));
-    console.log(response);
-    toast.success("Money added");
-  };
 
   const fetchWaitlist = async (page) => {
     try {
@@ -86,11 +77,13 @@ const AdminPanel = () => {
     const checkApproveStatus = async () => {
       setIsApproving(true);
       try {
-        const isApproved = await backendActor.amIApproved();
-        if (isAuthenticated && isApproved) {
-          setIsLoggedIn(true);
-        } else {
-          toast.error("Your account is not an approved admin");
+        if (isAuthenticated) {
+          const isApproved = await backendActor.amIApproved();
+          if (isApproved) {
+            setIsLoggedIn(true);
+          } else {
+            toast.error("Your account is not an approved admin");
+          }
         }
       } catch (error) {
         console.error("Error checking approval status:", error);
@@ -100,7 +93,7 @@ const AdminPanel = () => {
     };
 
     checkApproveStatus();
-  }, [principal]);
+  }, [principal, isAuthenticated]);
 
   useEffect(() => {
     if (isAuthenticated && isLoggedIn) {
@@ -208,29 +201,26 @@ const AdminPanel = () => {
         <div className="flex justify-around">
           <button
             onClick={() => setActiveSection("waitlist")}
-            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
-              activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
-            }`}
+            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
+              }`}
           >
             Waitlist
           </button>
           <button
             onClick={() => setActiveSection("messages")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
-              activeSection === "messages"
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "messages"
                 ? "bg-[#EE3EC9] text-white"
                 : "bg-black "
-            }`}
+              }`}
           >
             Messages
           </button>
           <button
             onClick={() => setActiveSection("resources")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${
-              activeSection === "resources"
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${activeSection === "resources"
                 ? "bg-[#EE3EC9] "
                 : "bg-black text-white"
-            }`}
+              }`}
           >
             Resources
           </button>

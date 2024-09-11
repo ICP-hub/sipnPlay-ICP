@@ -1,11 +1,10 @@
 import { AuthClient } from "@dfinity/auth-client";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { HttpAgent, Actor } from "@dfinity/agent";
+import { HttpAgent } from "@dfinity/agent";
 import {
   createActor,
-  idlFactory,
 } from "../../../declarations/sipnPlay-ICP-backend/index";
-import { createLedgerActor } from "../../../declarations/ledger/index";
+
 
 const AuthContext = createContext();
 
@@ -45,7 +44,6 @@ export const useAuthClient = (options = defaultOptions) => {
   const [principal, setPrincipal] = useState(null);
   const [backendActor, setBackendActor] = useState(null);
   const [accountId, setAccountId] = useState(null);
-  const [ledgerActor, setLedgerActor] = useState(null);
 
   useEffect(() => {
     AuthClient.create(options.createOptions).then((client) => {
@@ -125,10 +123,7 @@ export const useAuthClient = (options = defaultOptions) => {
         process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND,
         { agent }
       );
-      const ledgerActor1 = createLedgerActor("rawam-4iaaa-aaaap-qhxoa-cai", {
-        agent,
-      });
-      setLedgerActor(ledgerActor1);
+
       setBackendActor(backendActor);
     } catch (error) {
       console.error("Authentication update error:", error);
@@ -157,7 +152,6 @@ export const useAuthClient = (options = defaultOptions) => {
     principal,
     backendActor,
     accountId,
-    ledgerActor,
     reloadLogin,
     accountIdString,
   };
