@@ -28,7 +28,10 @@ const Game = ({ game }) => {
   const navigate = useNavigate();
   return (
     <div
-      className="relative w-3/4 md:w-full flex items-center justify-center p-4 bg-gradient-to-r from-[#cd335f] to-[#4999f6] border-[#EE3EC9] border-[1px] transition-transform duration-300 group hover:scale-105 aspect-square"
+      style={{
+        background: "linear-gradient(to right, #cd335f, #4999f6)",
+      }}
+      className="relative w-3/4 md:w-full flex items-center justify-center p-4 border-[1px] transition-transform duration-300 group hover:scale-105 aspect-square"
       onClick={() => navigate(`/${game.name}`)}
     >
       <div className="absolute h-[5px] w-[5px] -top-[1px] -left-[1px] border-t-[1px] border-l-[1px] border-white "></div>
