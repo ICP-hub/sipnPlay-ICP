@@ -153,7 +153,7 @@ actor {
 		index;
 	};
 
-	let CustomLedger = "ent7t-2yaaa-aaaap-qhtcq-cai";
+	let CustomLedger = "rawam-4iaaa-aaaap-qhxoa-cai";
 	let payment_address = Principal.fromText("bd3sg-teaaa-aaaaa-qaaba-cai");
 
 	public shared ({ caller }) func getUser() : async Result.Result<Types.UserData, Text> {
@@ -297,6 +297,7 @@ actor {
 			};
 		};
 	};
+	
 
 	public shared ({ caller }) func gameLost() : async Result.Result<Text, Text> {
 		switch (userDataRecord.get(caller)) {
