@@ -31,14 +31,17 @@ const Game = ({ game }) => {
       style={{
         background: "linear-gradient(to right, #cd335f, #4999f6)",
       }}
-      className="relative w-3/4 md:w-full flex items-center justify-center p-4 border-[1px] transition-transform duration-300 group hover:scale-105 aspect-square"
+      className="relative w-3/4 md:w-full flex items-center justify-center p-4 border-[1px] transition-transform duration-300 group hover:scale-105 aspect-square cursor-pointer"
       onClick={() => navigate(`/${game.name}`)}
     >
       <div className="absolute h-[5px] w-[5px] -top-[1px] -left-[1px] border-t-[1px] border-l-[1px] border-white "></div>
       <div className="absolute h-[5px] w-[5px] -top-[1px] -right-[1px] border-t-[1px] border-r-[1px] border-white "></div>
       <div className="absolute h-[5px] w-[5px] -bottom-[1px] -left-[1px] border-b-[1px] border-l-[1px] border-white "></div>
       <div className="absolute h-[5px] w-[5px] -bottom-[1px] -right-[1px] border-b-[1px] border-r-[1px] border-white "></div>
-      <div className="absolute w-full h-0 flex items-center bg-none justify-center transition-all duration-300 bg-black bg-opacity-70 backdrop-filter backdrop-blur-sm opacity-0 translate-y-full group-hover:opacity-100 group-hover:translate-y-0 group-hover:h-full cursor-pointer">
+      <div
+        style={{ backgroundColor: "#00000070", backdropFilter: "blur(5px)" }}
+        className="absolute w-full h-0 flex items-center justify-center transition-all duration-300 opacity-0 translate-y-full group-hover:opacity-100 group-hover:translate-y-0 group-hover:h-full"
+      >
         Play Now
       </div>
       <img src={game.img} alt="game-image" className=" object-contain" />

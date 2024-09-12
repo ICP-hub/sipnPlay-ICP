@@ -35,7 +35,7 @@ const AdminTable = ({ data, title }) => {
               <td className="px-6 py-4 whitespace-nowrap text-stone-200">
                 {item.email}
               </td>
-              {title.toLowerCase() === "waitlist" && (
+              {title.toLowerCase() === "principal" && (
                 <td className="px-6 py-4 whitespace-nowrap text-stone-200">
                   {item.icpAddress}
                 </td>

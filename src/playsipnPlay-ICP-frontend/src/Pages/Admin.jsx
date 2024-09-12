@@ -6,6 +6,7 @@ import * as XLSX from "xlsx";
 import PaginatedData from "../components/Admin/PaginatedData";
 import Resources from "../components/Admin/Resources";
 import { Oval } from "react-loader-spinner";
+import { convertNanosecondsToDateTime } from "../../../sipnPlay-ICP-frontend/src/utils/helpers";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
@@ -75,22 +76,21 @@ const AdminPanel = () => {
   useEffect(() => {
     const checkApproveStatus = async () => {
       setIsApproving(true);
-      if(isAuthenticated)
-      {
+      if (isAuthenticated) {
         let isApproved = false;
         try {
           console.log("caller whoami", await backendActor.whoAmI2());
-          
-        isApproved = await backendActor.amIApproved();
-      } catch (error) {
-        console.error("Error checking approval status:", error);
-      } finally {
-        setIsApproving(false);
-        if (isApproved && isAuthenticated) {
-          setIsLoggedIn(true);
+
+          isApproved = await backendActor.amIApproved();
+        } catch (error) {
+          console.error("Error checking approval status:", error);
+        } finally {
+          setIsApproving(false);
+          if (isApproved && isAuthenticated) {
+            setIsLoggedIn(true);
+          }
         }
       }
-    }
     };
     checkApproveStatus();
   }, [isAuthenticated, principal]);
@@ -139,7 +139,11 @@ const AdminPanel = () => {
 
   const handleDownload = () => {
     const data = activeSection === "waitlist" ? waitlist : messages;
-    const worksheet = XLSX.utils.json_to_sheet(data);
+    const updatedData = data.map((item) => ({
+      ...item,
+      date: convertNanosecondsToDateTime(item.date),
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(updatedData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, activeSection);
     XLSX.writeFile(workbook, `${activeSection}.xlsx`);
@@ -201,26 +205,29 @@ const AdminPanel = () => {
         <div className="flex justify-around">
           <button
             onClick={() => setActiveSection("waitlist")}
-            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
-              }`}
+            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
+              activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
+            }`}
           >
             Waitlist
           </button>
           <button
             onClick={() => setActiveSection("messages")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "messages"
-              ? "bg-[#EE3EC9] text-white"
-              : "bg-black "
-              }`}
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
+              activeSection === "messages"
+                ? "bg-[#EE3EC9] text-white"
+                : "bg-black "
+            }`}
           >
             Messages
           </button>
           <button
             onClick={() => setActiveSection("resources")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${activeSection === "resources"
-              ? "bg-[#EE3EC9] "
-              : "bg-black text-white"
-              }`}
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${
+              activeSection === "resources"
+                ? "bg-[#EE3EC9] "
+                : "bg-black text-white"
+            }`}
           >
             Resources
           </button>
