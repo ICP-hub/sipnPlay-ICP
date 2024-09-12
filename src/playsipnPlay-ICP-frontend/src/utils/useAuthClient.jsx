@@ -5,6 +5,7 @@ import { Principal } from "@dfinity/principal";
 import { createActor, sipnPlay_ICP_backend } from "../../../declarations/sipnPlay-ICP-backend/index";
 import { createLedgerActor } from "../../../declarations/ledger/index";
 import { PlugLogin, StoicLogin, NFIDLogin, IdentityLogin } from "ic-auth";
+import { idlFactory } from "../../../declarations/sipnPlay-ICP-backend/index";
 
 // Create a React context for authentication state
 const AuthContext = createContext();
@@ -58,12 +59,43 @@ export const useAuthClient = () => {
           }
 
           const identity = await userObject.agent._identity;
-          console.log(identity)
           const principal = Principal.fromText(userObject.principal);
+
+          if (provider === "plug") {
+            const host = process.env.DFX_NETWORK === "ic" ? "https://mainnet.dfinity.network" : "http://127.0.0.1:4943";
+            console.log("Host : ", host)
+            const isConnected = await window.ic.plug.requestConnect({ whitelist, host });
+            console.log("isconnected : ", isConnected)
+            if (isConnected) {
+              const userActor = await window.ic.plug.createActor({
+                canisterId: process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND,
+                interfaceFactory: idlFactory
+              });
+              // const EXTActor = await window.ic.plug.createActor({
+              //   canisterId: EXTCanID,
+              //   interfaceFactory: EXTIdlFactory
+              // })
+              setBackendActor(userActor);
+            
+            } else {
+              throw new Error("Plug connection refused");
+            }
+          }
+
+          else {
+            const agent = new HttpAgent({ identity });
+
+            const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agentOptions: { identity, verifyQuerySignatures: false } });
+            const ledgerActor1 = createLedgerActor("rawam-4iaaa-aaaap-qhxoa-cai", { agent });
+            setLedgerActor(ledgerActor1)
+            setBackendActor(backendActor);
+          }
+
           console.log(principal.toString())
           setPrincipal(principal.toString())
           setIdentity(identity);
           setIsAuthenticated(true);
+
         }
       } catch (error) {
         console.error('Login error:', error);
@@ -98,7 +130,6 @@ export const useAuthClient = () => {
 
       const principal = identity.getPrincipal();
       setPrincipal(principal.toString());
-      console.log('principal', principal.toString());
 
       const agent = new HttpAgent({ identity });
 

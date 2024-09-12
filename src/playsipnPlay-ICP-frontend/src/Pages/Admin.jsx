@@ -73,27 +73,27 @@ const AdminPanel = () => {
   };
 
   useEffect(() => {
-    // Define the async function inside useEffect
     const checkApproveStatus = async () => {
       setIsApproving(true);
-      try {
-        if (isAuthenticated) {
-          const isApproved = await backendActor.amIApproved();
-          if (isApproved) {
-            setIsLoggedIn(true);
-          } else {
-            toast.error("Your account is not an approved admin");
-          }
-        }
+      if(isAuthenticated)
+      {
+        let isApproved = false;
+        try {
+          console.log("caller whoami", await backendActor.whoAmI2());
+          
+        isApproved = await backendActor.amIApproved();
       } catch (error) {
         console.error("Error checking approval status:", error);
       } finally {
         setIsApproving(false);
+        if (isApproved && isAuthenticated) {
+          setIsLoggedIn(true);
+        }
       }
+    }
     };
-
     checkApproveStatus();
-  }, [principal, isAuthenticated]);
+  }, [isAuthenticated, principal]);
 
   useEffect(() => {
     if (isAuthenticated && isLoggedIn) {
@@ -209,8 +209,8 @@ const AdminPanel = () => {
           <button
             onClick={() => setActiveSection("messages")}
             className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "messages"
-                ? "bg-[#EE3EC9] text-white"
-                : "bg-black "
+              ? "bg-[#EE3EC9] text-white"
+              : "bg-black "
               }`}
           >
             Messages
@@ -218,8 +218,8 @@ const AdminPanel = () => {
           <button
             onClick={() => setActiveSection("resources")}
             className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${activeSection === "resources"
-                ? "bg-[#EE3EC9] "
-                : "bg-black text-white"
+              ? "bg-[#EE3EC9] "
+              : "bg-black text-white"
               }`}
           >
             Resources
@@ -238,7 +238,7 @@ const AdminPanel = () => {
         <div>
           {activeSection === "waitlist" && (
             <PaginatedData
-              title="Waitlist"
+              title="Principal"
               data={waitlist}
               handlePrev={handlePrevWaitlist}
               handleNext={handleNextWaitlist}
