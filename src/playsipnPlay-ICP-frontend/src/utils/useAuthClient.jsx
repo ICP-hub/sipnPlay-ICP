@@ -6,7 +6,7 @@ import { createActor, sipnPlay_ICP_backend } from "../../../declarations/sipnPla
 import { createLedgerActor } from "../../../declarations/ledger/index";
 import { PlugLogin, StoicLogin, NFIDLogin, IdentityLogin } from "ic-auth";
 import { idlFactory } from "../../../declarations/sipnPlay-ICP-backend/index";
-
+import { idlFactory as ledgerIdlFactory } from "../../../declarations/ledger/index";
 // Create a React context for authentication state
 const AuthContext = createContext();
 
@@ -35,6 +35,8 @@ export const useAuthClient = () => {
   }, [authClient]);
 
   const whitelist = [process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND];
+
+  const ledgerCanId = "vyav3-oaaaa-aaaap-qhxxq-cai";
 
   const login = async (provider) => {
     return new Promise(async (resolve, reject) => {
@@ -71,11 +73,12 @@ export const useAuthClient = () => {
                 canisterId: process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND,
                 interfaceFactory: idlFactory
               });
-              // const EXTActor = await window.ic.plug.createActor({
-              //   canisterId: EXTCanID,
-              //   interfaceFactory: EXTIdlFactory
-              // })
+              const EXTActor = await window.ic.plug.createActor({
+                canisterId: ledgerCanId,
+                interfaceFactory: ledgerIdlFactory
+              })
               setBackendActor(userActor);
+              setLedgerActor(EXTActor);
             
             } else {
               throw new Error("Plug connection refused");
@@ -86,7 +89,7 @@ export const useAuthClient = () => {
             const agent = new HttpAgent({ identity });
 
             const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agentOptions: { identity, verifyQuerySignatures: false } });
-            const ledgerActor1 = createLedgerActor("rawam-4iaaa-aaaap-qhxoa-cai", { agent });
+            const ledgerActor1 = createLedgerActor(ledgerCanId, { agent });
             setLedgerActor(ledgerActor1)
             setBackendActor(backendActor);
           }
@@ -134,7 +137,7 @@ export const useAuthClient = () => {
       const agent = new HttpAgent({ identity });
 
       const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agentOptions: { identity, verifyQuerySignatures: false } });
-      const ledgerActor1 = createLedgerActor("rawam-4iaaa-aaaap-qhxoa-cai", { agent });
+      const ledgerActor1 = createLedgerActor(ledgerCanId, { agent });
       setLedgerActor(ledgerActor1)
       setBackendActor(backendActor);
 

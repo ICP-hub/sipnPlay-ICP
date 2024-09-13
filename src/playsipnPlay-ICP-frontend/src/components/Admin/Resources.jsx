@@ -32,7 +32,7 @@ const Resources = () => {
       metaData = formatTokenMetaData(metadataResponse);
       const amnt = parseInt(
         Number(removeAmntFromBackend) *
-          Math.pow(10, parseInt(metaData?.["icrc1:decimals"]))
+        Math.pow(10, parseInt(metaData?.["icrc1:decimals"]))
       );
       const response = await backendActor.withdrawMoneyFromDefault(
         parseInt(amnt)
@@ -59,8 +59,11 @@ const Resources = () => {
         ledgerActor,
         addAmntToBackend
       );
-      if (res.err) {
-        toast.error("Payment Failed");
+      const identity1 = await backendActor.get_balance();
+      console.log("balance  ", identity1);
+
+      if (res.Err) {
+        console.log(res.Err);
       } else {
         setAddAmntToBackend(0);
         fetchAdminBalance();
@@ -90,7 +93,7 @@ const Resources = () => {
           });
         let amnt = parseFloat(
           Number(response) *
-            Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+          Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
         );
         setAdminBalance(amnt);
       }
@@ -117,7 +120,7 @@ const Resources = () => {
           });
         let amnt = parseFloat(
           Number(response) *
-            Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+          Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
         );
         setDefaultBalance(amnt);
       }
@@ -166,7 +169,18 @@ const Resources = () => {
                   type="submit"
                   className="bg-[#EE3EC9] rounded-lg px-4 py-2 ml-3 min-w-24"
                 >
-                  Withdraw money from Default
+                  {isWithdrawing ? <Oval
+                    visible={isWithdrawing}
+                    height={24}
+                    width={24}
+                    ariaLabel="oval-loading"
+                    color="#ffffff"
+                    secondaryColor="#333"
+                    strokeWidth={2}
+                    strokeWidthSecondary={2}
+                    wrapperClass="flex justify-center items-center"
+                  /> : "Withdraw money from Backend"}
+
                 </button>
               </form>
             </div>
@@ -183,7 +197,17 @@ const Resources = () => {
                   type="submit"
                   className="bg-[#EE3EC9] rounded-lg px-4 py-2 ml-3 min-w-24"
                 >
-                  Add Money to Default
+                  {isAdding ? <Oval
+                    visible={isAdding}
+                    height={24}
+                    width={24}
+                    ariaLabel="oval-loading"
+                    color="#ffffff"
+                    secondaryColor="#333"
+                    strokeWidth={2}
+                    strokeWidthSecondary={2}
+                    wrapperClass="flex justify-center items-center"
+                  /> : "Add Money to Backend"}
                 </button>
               </form>
             </div>

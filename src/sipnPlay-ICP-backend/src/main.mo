@@ -74,8 +74,9 @@ actor {
 	let approvedPrincipals : [Text] = [
 		"oxj2h-r6fbj-hqtcn-fv7ye-yneeb-ca3se-c6s42-imvp7-juu33-ovnix-mae", //Paras
 		"42l52-e6bwv-2353f-idnxh-5f42y-catp6-j2yxn-msivr-ljpu2-ifqsy-dqe", //Ankur
-		"n5ytn-hebsc-fbio3-ll5ed-ermti-6kvdk-sjp4d-pofnb-66xhd-gpj4t-3qe", //Tushar Jain' Plug
-		"4yvm3-hdo2j-eucja-gt673-5cwzh-ottq4-sr4o5-25hxy-flzc5-6hfnx-vae", //Tushar Jain' ii
+		"n5ytn-hebsc-fbio3-ll5ed-ermti-6kvdk-sjp4d-pofnb-66xhd-gpj4t-3qe", //Tushar Jain's Plug
+		"4yvm3-hdo2j-eucja-gt673-5cwzh-ottq4-sr4o5-25hxy-flzc5-6hfnx-vae", //Tushar Jain's ii
+		"hc4gt-vtazq-2beqs-7lv5p-4nezq-wl3hs-fojqx-2iwtc-mpxx6-ggswf-7ae", //Tushar Jain's ii
 		"moazz-sqhrx-jmtci-26rrd-ncwjk-yvudm-qkkas-ewzyp-pw5mp-6gx5r-dqe", // Tushar Jain
 	];
 
@@ -154,8 +155,8 @@ actor {
 		index;
 	};
 
-	let CustomLedger = "rawam-4iaaa-aaaap-qhxoa-cai";
-	let payment_address = Principal.fromText("bd3sg-teaaa-aaaaa-qaaba-cai");
+	let CustomLedger = "vyav3-oaaaa-aaaap-qhxxq-cai";
+	let payment_address = Principal.fromText("ent7t-2yaaa-aaaap-qhtcq-cai");
 
 	public shared ({ caller }) func getUser() : async Result.Result<Types.UserData, Text> {
 		switch (userDataRecord.get(caller)) {
