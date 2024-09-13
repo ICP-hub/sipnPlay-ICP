@@ -4,7 +4,6 @@ import { useAuth } from "../utils/useAuthClient";
 import { useDispatch } from "react-redux";
 import { addUserData, removeUserData } from "../utils/redux/userSlice";
 import GamesList from "../components/Games/GamesList";
-import { Principal } from "@dfinity/principal";
 
 function Home() {
   const dispatch = useDispatch();
@@ -28,14 +27,7 @@ function Home() {
     if (response.err === "New user") {
       return { isNewUser: true };
     } else {
-      let balance2=await backendActor.get_balance()
-      let balance = await ledgerActor.icrc1_balance_of({
-        owner:Principal.fromText(principal),
-        subaccount:[]
-      });
-      console.log("Balance", balance,balance2);
-
-
+      let balance=await backendActor.get_balance()
       let metaData = null;
       await ledgerActor
         .icrc1_metadata()

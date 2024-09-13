@@ -3,13 +3,13 @@ import { useAuth } from "../utils/useAuthClient";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { updateBalance } from "../utils/redux/userSlice";
+import { updateBalance, addUserData } from "../utils/redux/userSlice";
 import { transferApprove } from "../utils/transApprove";
 import LoadingWindow from "../components/Loaders/LoadingWindow";
 import LoadingPopUp from "../components/Loaders/LoadingPopUp";
 
 const BlackJack = () => {
-  const { isAuthenticated, backendActor, ledgerActor } = useAuth();
+  const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isPopUpLoading, setIsPopUpLoading] = useState(false);
@@ -46,6 +46,13 @@ const BlackJack = () => {
         toast.error("Please provide your email");
       } else {
         const amnt = await getBalance();
+        dispatch(
+          addUserData({
+            id: principal.toString(),
+            email:  res.ok.email,
+            balance: amnt,
+          })
+        );
         if (amnt === 0) {
           navigate("/");
           toast.error("Please top up your account");
