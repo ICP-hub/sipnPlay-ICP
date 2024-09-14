@@ -53,10 +53,12 @@ const BlackJack = () => {
             balance: amnt,
           })
         );
-        // if (amnt === 0) {
-        //   navigate("/");
-        //   toast.error("Please top up your account");
-        // }
+        localStorage.setItem('blackjackBalance', amnt);
+
+        if (amnt === 0) {
+          navigate("/");
+          toast.error("Please top up your account");
+        }
         console.log("balance recieved", amnt);
       }
     } catch {
@@ -207,4 +209,5 @@ const BlackJack = () => {
     </div>
   );
 };
+
 export default BlackJack;

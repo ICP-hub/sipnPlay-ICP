@@ -37,7 +37,7 @@ export default defineConfig({
         replacement: fileURLToPath(
           new URL("../declarations", import.meta.url)
         ),
-      },z
+      },
     ],
   },
 });
