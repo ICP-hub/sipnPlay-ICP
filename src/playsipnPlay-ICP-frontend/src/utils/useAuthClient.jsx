@@ -36,7 +36,7 @@ export const useAuthClient = () => {
 
   const whitelist = [process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND];
 
-  const ledgerCanId = "vyav3-oaaaa-aaaap-qhxxq-cai";
+  const ledgerCanId = "cjpyu-kqaaa-aaaap-qhyfq-cai";
 
   const login = async (provider) => {
     return new Promise(async (resolve, reject) => {
@@ -52,6 +52,7 @@ export const useAuthClient = () => {
           };
           if (provider === "plug") {
             userObject = await PlugLogin();
+            console.log("plug provider", userObject);
           } else if (provider === "stoic") {
             userObject = await StoicLogin();
           } else if (provider === "nfid") {
@@ -63,11 +64,9 @@ export const useAuthClient = () => {
           const identity = await userObject.agent._identity;
           const principal = Principal.fromText(userObject.principal);
 
-          if (provider === "plug") {
-            const host = process.env.DFX_NETWORK === "ic" ? "https://mainnet.dfinity.network" : "http://127.0.0.1:4943";
-            console.log("Host : ", host)
+          if (provider === "plug") {            
+            const host = process.env.DFX_NETWORK === "ic" ? userObject.agent._host : "http://127.0.0.1:4943";
             const isConnected = await window.ic.plug.requestConnect({ whitelist, host });
-            console.log("isconnected : ", isConnected)
             if (isConnected) {
               const userActor = await window.ic.plug.createActor({
                 canisterId: process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND,

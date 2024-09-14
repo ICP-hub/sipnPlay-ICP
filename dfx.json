@@ -15,7 +15,8 @@
     },
     "sipnPlay-ICP-backend": {
       "main":"src/sipnPlay-ICP-backend/src/main.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "optimize":"cycles"
     },
     "sipnPlay-ICP-frontend": {
       "dependencies": [

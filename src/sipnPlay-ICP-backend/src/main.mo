@@ -155,7 +155,7 @@ actor {
 		index;
 	};
 
-	let CustomLedger = "vyav3-oaaaa-aaaap-qhxxq-cai";
+	let CustomLedger = "cjpyu-kqaaa-aaaap-qhyfq-cai";
 	let payment_address = Principal.fromText("ent7t-2yaaa-aaaap-qhtcq-cai");
 
 	public shared ({ caller }) func getUser() : async Result.Result<Types.UserData, Text> {
