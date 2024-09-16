@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 
 const Register = ({ setIsRegisterDone, modalIsOpen, setIsOpen }) => {
   const { backendActor, principal } = useAuth();
+  const [isRegistering, setIsRegistering] = useState(false);
 
   function closeModal() {
     setIsOpen(false);
@@ -33,16 +34,22 @@ const Register = ({ setIsRegisterDone, modalIsOpen, setIsOpen }) => {
       return;
     }
 
-    const response = await backendActor.createUser(email);
-
-    if (response !== "User already exists") {
-      toast.success("Congrats!");
-      setIsOpen(false);
-      setIsRegisterDone(true);
-      setEmail("");
-      // closeModal();
-    } else {
-      toast.error("Email already Registered");
+    setIsRegistering(true);
+    try {
+      const response = await backendActor.createUser(email);
+      if (response !== "User already exists") {
+        toast.success("Congrats!");
+        setIsOpen(false);
+        setIsRegisterDone(true);
+        setEmail("");
+        // closeModal();
+      } else {
+        toast.error("Email already Registered");
+      }
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setIsRegistering(false);
     }
   };
 
@@ -99,7 +106,9 @@ const Register = ({ setIsRegisterDone, modalIsOpen, setIsOpen }) => {
               </div>
 
               <div className="flex mb-4 justify-center md:justify-end">
-                <AnimationButton>Submit</AnimationButton>
+                <AnimationButton isLoading={isRegistering}>
+                  Register
+                </AnimationButton>
               </div>
             </form>
           </div>

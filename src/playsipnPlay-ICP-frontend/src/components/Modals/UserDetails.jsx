@@ -5,16 +5,17 @@ import { ImCross, ImMail4 } from "react-icons/im";
 import { useAuth } from "../../utils/useAuthClient";
 import HeaderButton from "../../common/HeaderButton";
 import bgImage from "../../assets/images/waitlistBg.png";
+import { Oval } from "react-loader-spinner";
 
-const UserDetails = ({ modalIsOpen, setIsOpen }) => {
+const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
   const userDetails = useSelector((state) => state.user);
   const { logout } = useAuth();
   const ref = useRef();
   function openModal() {
-    setIsOpen(true);
+    setDetailsModalOpen(true);
   }
   function closeModal() {
-    setIsOpen(false);
+    setDetailsModalOpen(false);
   }
 
   function closeModalOnOutsideClick(e) {
@@ -54,11 +55,21 @@ const UserDetails = ({ modalIsOpen, setIsOpen }) => {
   return (
     <>
       <div className="flex">
-        <HeaderButton onClick={openModal}>
-          {userDetails?.email?.slice(0, 10)}...
+        <HeaderButton onClick={openModal} isFetching={isFetching}>
+          {isFetching ? (
+            <Oval
+              color="#EE3EC9"
+              secondaryColor="#fff"
+              wrapperClass="flex justify-center"
+              width={24}
+              height={24}
+            />
+          ) : (
+            userDetails?.email?.slice(0, 10) + "..."
+          )}
         </HeaderButton>
       </div>
-      {modalIsOpen && (
+      {detailsModalOpen && (
         <div className=" inset-0  z-20 flex items-center justify-center ">
           <div
             style={{
@@ -79,27 +90,41 @@ const UserDetails = ({ modalIsOpen, setIsOpen }) => {
               </button>
             </div>
 
-            <div className=" border-b-2 pb-2 w-full">
-              {/* <ImMail4 color="#fff" /> */}
-              <div className="flex flex-col">
-                <span className="text-white font-semibold font-adam">
-                  Email:
-                </span>
-                <span className="text-white font-light opacity-70 font-adam">
-                  {userDetails?.email || " - "}
-                </span>
+            {isFetching ? (
+              <div className="flex flex-col justify-start items-center gap-2 mb-4">
+                <p className="mb-4">Fetching Details...</p>
+                <Oval
+                  color="#ee3ec9"
+                  secondaryColor="#fff"
+                  height={50}
+                  width={50}
+                />
               </div>
-            </div>
-            <div className=" border-b-2 pb-2 w-full mb-4">
-              <div className="flex flex-col">
-                <span className="text-white font-semibold font-adam">
-                  TSIP:
-                </span>
-                <p className="text-white font-light opacity-70 font-adam">
-                  {Math.round(userDetails?.balance) || " - "}
-                </p>
-              </div>
-            </div>
+            ) : (
+              <>
+                <div className=" border-b-2 pb-2 w-full">
+                  {/* <ImMail4 color="#fff" /> */}
+                  <div className="flex flex-col">
+                    <span className="text-white font-semibold font-adam">
+                      Email:
+                    </span>
+                    <span className="text-white font-light opacity-70 font-adam">
+                      {userDetails?.email || " - "}
+                    </span>
+                  </div>
+                </div>
+                <div className=" border-b-2 pb-2 w-full mb-4">
+                  <div className="flex flex-col">
+                    <span className="text-white font-semibold font-adam">
+                      TSIP:
+                    </span>
+                    <p className="text-white font-light opacity-70 font-adam">
+                      {Math.round(userDetails?.balance) || " - "}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
             <AnimationButton onClick={logout}>Disconnect</AnimationButton>
           </div>
         </div>

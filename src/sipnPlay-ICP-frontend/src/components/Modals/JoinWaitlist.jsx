@@ -168,20 +168,8 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                   />
                 </div>
                 <div className="flex mb-4 justify-center md:justify-end">
-                  <AnimationButton>
-                    {isSubmitting ? (
-                      <Oval
-                        isVisible={true}
-                        color="#ee3ec9"
-                        secondaryColor="#fff"
-                        strokeWidth={5}
-                        height={20}
-                        width={20}
-                        wrapperClass="flex justify-center"
-                      />
-                    ) : (
-                      "Submit"
-                    )}
+                  <AnimationButton isLoading={isSubmitting}>
+                    Submit
                   </AnimationButton>
                 </div>
               </form>

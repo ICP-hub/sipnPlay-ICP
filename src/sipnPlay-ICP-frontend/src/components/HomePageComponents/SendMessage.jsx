@@ -8,6 +8,7 @@ const SendMessage = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const { backendActor } = useAuth();
+  const [isSending, setIsSending] = useState(false);
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -27,12 +28,20 @@ const SendMessage = () => {
       return;
     }
 
-    const response = await backendActor.sendMessage(name, email, message);
-    if (response.ok) {
-      toast.success(response.ok);
-    } else {
-      toast.error("Error sending message");
+    try {
+      setIsSending(true);
+      const response = await backendActor.sendMessage(name, email, message);
+      if (response.ok) {
+        toast.success(response.ok);
+      } else {
+        toast.error("Error sending message");
+      }
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setIsSending(false);
     }
+
     setName("");
     setEmail("");
     setMessage("");
@@ -106,7 +115,7 @@ const SendMessage = () => {
         ></div>
 
         <div className="flex items-center justify-center md:justify-end mt-6">
-          <AnimationButton>Send</AnimationButton>
+          <AnimationButton isLoading={isSending}>Send</AnimationButton>
         </div>
       </form>
     </div>
