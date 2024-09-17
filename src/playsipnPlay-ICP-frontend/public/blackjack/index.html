@@ -21,7 +21,8 @@
     <script type="text/javascript" src="js/howler.min.js"></script>
     <script type="text/javascript" src="js/CLang.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
-    <!-- The two scripts below are for redux. DO NOT remove the type="module" -->
+    <!-- Encryption library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   </head>
 
   <body ondragstart="return false;" ondrop="return false;">
@@ -37,9 +38,23 @@
     ></div>
     <script>
       $(document).ready(function () {
+        const secretKey = "Abh67_#fbau-@y74_7A_0nm6je7";
         function getBalanceFromLocalStorage() {
-          const amnt = localStorage.getItem("blackjackBalance");
-          return amnt !== null ? parseFloat(amnt) : 0;
+          try {
+            const amnt = localStorage.getItem("blackjackBalance");
+
+            if (amnt === null) {
+              return -1;
+            }
+            // Decrypt the amount
+            const decryptedBytes = CryptoJS.AES.decrypt(amnt, secretKey);
+            const decryptedAmnt = decryptedBytes.toString(CryptoJS.enc.Utf8);
+            const balance = parseFloat(decryptedAmnt);
+            return isNaN(balance) ? -1 : balance;
+          } catch (error) {
+            console.error("Error retrieving balance:", error);
+            return -1;
+          }
         }
         const balance = getBalanceFromLocalStorage();
         console.log("Parsed balance:", balance);

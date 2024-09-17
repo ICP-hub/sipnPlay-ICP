@@ -5,8 +5,15 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { updateBalance, addUserData } from "../utils/redux/userSlice";
 import { transferApprove } from "../utils/transApprove";
+import CryptoJS from "crypto-js";
 import LoadingWindow from "../components/Loaders/LoadingWindow";
 import LoadingPopUp from "../components/Loaders/LoadingPopUp";
+
+const secretKey = "Abh67_#fbau-@y74_7A_0nm6je7";
+
+function encryptData(data, key) {
+  return CryptoJS.AES.encrypt(data, key).toString();
+}
 
 const BlackJack = () => {
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
@@ -31,7 +38,7 @@ const BlackJack = () => {
 
     let amnt = parseFloat(
       Number(balance) *
-      Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
     );
     dispatch(updateBalance({ balance: amnt }));
     return amnt;
@@ -46,14 +53,17 @@ const BlackJack = () => {
         toast.error("Please provide your email");
       } else {
         const amnt = await getBalance();
+        const amntString = amnt.toString();
+        const encryptedBalance = encryptData(amntString, secretKey);
         dispatch(
           addUserData({
             id: principal.toString(),
-            email:  res.ok.email,
+            email: res.ok.email,
             balance: amnt,
           })
         );
-        localStorage.setItem('blackjackBalance', amnt);
+
+        localStorage.setItem("blackjackBalance", encryptedBalance);
 
         if (amnt === 0) {
           navigate("/");
@@ -98,7 +108,7 @@ const BlackJack = () => {
           console.log("Balance", amnt);
           console.log("score", event.data.score);
 
-          if (event.data.score > Math.round(amnt * 10) / 10 ) {
+          if (event.data.score > Math.round(amnt * 10) / 10) {
             setTaskName("Adding points");
             let metaData = null;
             await ledgerActor
@@ -121,8 +131,7 @@ const BlackJack = () => {
             if (response.ok) {
               toast.success("Points added successfully");
             }
-          }
-          else {
+          } else {
             setTaskName("Halfway there... Hang tight!");
             setIsPopUpLoading(true);
             const response = await backendActor.gameLost();
@@ -130,8 +139,7 @@ const BlackJack = () => {
           }
         } catch (e) {
           console.log(e);
-        }
-        finally {
+        } finally {
           setIsPopUpLoading(false);
           setTaskName("");
         }
@@ -143,8 +151,6 @@ const BlackJack = () => {
       window.removeEventListener("message", handleScore);
     };
   }, []);
-
-
 
   useEffect(() => {
     const handleBet = async (event) => {
@@ -194,10 +200,7 @@ const BlackJack = () => {
       ) : (
         <div>
           {isPopUpLoading && (
-            <LoadingPopUp
-              gameName="blackjack"
-              taskName={taskName}
-            />
+            <LoadingPopUp gameName="blackjack" taskName={taskName} />
           )}
           <iframe
             title="Blackjack Game"

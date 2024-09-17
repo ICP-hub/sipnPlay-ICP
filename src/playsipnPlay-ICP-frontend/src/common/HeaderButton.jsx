@@ -5,12 +5,9 @@ const HeaderButton = ({ children, onClick, isFetching }) => {
   return (
     <>
       <button
-        disabled={isFetching}
         type="submit"
         onClick={onClick}
-        className={`border z-20 flex justify-evenly items-center text-white relative w-[120px] lg:w-[190px] h-[32px] lg:h-[48px] flip-card font-adam  text-[12px] md:text-[15px] font-[300] border-[#EE3EC9] ${
-          isFetching ? "cursor-not-allowed" : "cursor-pointer"
-        }`}
+        className={`border z-20 flex justify-evenly items-center text-white relative w-[120px] lg:w-[190px] h-[32px] lg:h-[48px] flip-card font-adam  text-[12px] md:text-[15px] font-[300] border-[#EE3EC9]`}
       >
         {!isFetching && (
           <svg
