@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AnimationButton from "../../common/AnimationButton";
 import { useSelector } from "react-redux";
 import { ImCross, ImMail4 } from "react-icons/im";
@@ -6,9 +6,11 @@ import { useAuth } from "../../utils/useAuthClient";
 import HeaderButton from "../../common/HeaderButton";
 import bgImage from "../../assets/images/waitlistBg.png";
 import { Oval } from "react-loader-spinner";
+import { IoCopy, IoCopyOutline } from "react-icons/io5";
 
 const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
   const userDetails = useSelector((state) => state.user);
+  const [isPrincipalCopied, setisPrincipalCopied] = useState(false);
   const { logout } = useAuth();
   const ref = useRef();
   function openModal() {
@@ -22,6 +24,20 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
     if (ref.current && !ref.current.contains(e.target)) {
       closeModal();
     }
+  }
+
+  function copyPrincipal() {
+    navigator.clipboard
+      .writeText(userDetails?.id)
+      .then(() => {
+        setisPrincipalCopied(true);
+        setTimeout(() => {
+          setisPrincipalCopied(false);
+        }, 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
   }
 
   useEffect(() => {
@@ -70,14 +86,14 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
         </HeaderButton>
       </div>
       {detailsModalOpen && (
-        <div className=" inset-0  z-20 flex items-center justify-center ">
+        <div className=" inset-0 z-20 flex items-center justify-center ">
           <div
             style={{
               backgroundImage: `url(${bgImage})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
-            className="absolute right-8 top-24 p-4 my-4 md:top-20 md:p-6 md:right-16 lg:top-24 lg:right-24 lg:h-80 lg:w-72 lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4 backdrop-filter backdrop-blur-lg bg-black"
+            className="absolute right-8 top-16 p-4 my-4 md:top-20 md:p-6 md:right-16 md:h-80 lg:top-24 lg:right-24 lg:h-96 lg:w-72 lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4 backdrop-filter backdrop-blur-lg bg-black"
             ref={ref}
           >
             {/* Wrapper for positioning the button */}
@@ -105,12 +121,34 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
                 <div className=" border-b-2 pb-2 w-full">
                   {/* <ImMail4 color="#fff" /> */}
                   <div className="flex flex-col">
-                    <span className="text-white font-semibold font-adam">
-                      Email:
-                    </span>
-                    <span className="text-white font-light opacity-70 font-adam">
+                    <p className="text-white font-bold font-adam">Email:</p>
+                    <p className="text-white font-semibold font-adam">
                       {userDetails?.email || " - "}
+                    </p>
+                  </div>
+                </div>
+                <div className=" border-b-2 pb-2 w-full">
+                  <div className="flex flex-col">
+                    <span className="text-white font-semibold font-adam">
+                      Principal:
                     </span>
+                    <div className="flex justify-between">
+                      <p className="text-white font-adam font-semibold">
+                        {userDetails?.id.slice(0, 20) || " - "}...
+                      </p>
+                      <span className="cursor-pointer" onClick={copyPrincipal}>
+                        {isPrincipalCopied ? (
+                          <div className="relative flex flex-col justify-between">
+                            <p className="text-[10px] absolute -top-4 right-[1px] ">
+                              Copied
+                            </p>
+                            <IoCopy size={20} />
+                          </div>
+                        ) : (
+                          <IoCopyOutline size={20} />
+                        )}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className=" border-b-2 pb-2 w-full mb-4">
@@ -118,7 +156,7 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
                     <span className="text-white font-semibold font-adam">
                       TSIP:
                     </span>
-                    <p className="text-white font-light opacity-70 font-adam">
+                    <p className="text-white font-semibold font-adam">
                       {Math.round(userDetails?.balance) || " - "}
                     </p>
                   </div>
