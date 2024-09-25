@@ -6,26 +6,28 @@ import logo from "../../assets/images/logo.png";
 import { Link } from "react-router-dom";
 const Footer = () => {
   return (
-    <div className="px-4 py-8 bg-gradient-to-r from-custom-gradient-start to-custom-gradient-end -mt-4 pb-6 flex justify-between text-xs md:text-md lg:text-lg ">
+    <div className="px-4 py-2 bg-gradient-to-r from-custom-gradient-start to-custom-gradient-end flex justify-between text-xs md:text-md lg:text-lg ">
       <div className="my-auto">
-        <img draggable="false" className="w-[200px]" src={logo} />
-        <p className="font-adam font-[300]  text-[20px] text-[#96839B]  ">
+        <img draggable="false" className="max-w-28 sm:max-w-40" src={logo} />
+        <p className="hidden md:block font-adam font-[300] text-sm md:text-md lg:text-lg  text-[#96839B]  ">
           All rights reserved @sipnplay
         </p>
       </div>
-      <div className="flex my-auto gap-4 items-center">
-        <p className="font-adam font-[300] text-[20px] text-[#96839B]">
+      <div className="flex flex-col md:flex-row items-center justify-center md:gap-4">
+        <p className="font-adam font-[300] text-sm md:text-md lg:text-lg text-[#96839B]">
           Follow us on
         </p>
-        <Link to="https://discord.com/invite/6PmNCezvG4" target="__blank">
-          <BsDiscord size={33} />
-        </Link>
-        <Link to="https://t.me/+BpcBOPokAFtmYWE1" target="__blank">
-          <BsTelegram size={33} />
-        </Link>
-        <Link to="https://x.com/SipnPlayGames" target="__blank">
-          <BsTwitterX size={33} />
-        </Link>
+        <div className="flex gap-4 items-center my-auto">
+          <Link to="https://discord.com/invite/6PmNCezvG4" target="__blank">
+            <BsDiscord size={30} />
+          </Link>
+          <Link to="https://t.me/+BpcBOPokAFtmYWE1" target="__blank">
+            <BsTelegram size={30} />
+          </Link>
+          <Link to="https://x.com/SipnPlayGames" target="__blank">
+            <BsTwitterX size={30} />
+          </Link>
+        </div>
       </div>
     </div>
   );

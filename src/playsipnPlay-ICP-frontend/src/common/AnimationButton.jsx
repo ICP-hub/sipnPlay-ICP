@@ -23,7 +23,7 @@ const AnimationButton = ({ children, onClick, isLoading }) => {
             />
           </div>
         ) : (
-          children
+          <span className="z-2 text-white font-semibold">{children}</span>
         )}
         <div className="absolute h-[5px] w-[5px] -top-[1px] -left-[1px] border-t-[1px] border-l-[1px] "></div>
         <div className="absolute h-[5px] w-[5px] -top-[1px] -right-[1px] border-t-[1px] border-r-[1px] "></div>

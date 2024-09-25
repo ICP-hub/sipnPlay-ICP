@@ -9,8 +9,8 @@ import GamesNav from "./GamesNav";
 const GamesList = () => {
   const [games, setGames] = useState([
     { name: "blackjack", img: blackjackLogo },
-    { name: "8ballpool", img: EboolImg },
-    { name: "burgerking", img: bkingImg },
+    // { name: "8ballpool", img: EboolImg },
+    // { name: "burgerking", img: bkingImg },
     ,
   ]);
 
@@ -19,19 +19,19 @@ const GamesList = () => {
       style={{
         background: "linear-gradient(to right, #ee3ec927, black, #ee3ec927)",
       }}
-      className="max-w-full bg-cover bg-center min-h-[90%] lg:py-4"
+      className="max-w-full min-h-screen bg-cover bg-center lg:py-12"
     >
       <div className="flex flex-col md:flex-row gap-8 max-w-screen-xl md:pe-16">
         <GamesNav />
         <div className="flex-1 mt-4 lg:mt-0">
-          <div className="flex flex-wrap justify-center md:grid md:grid-cols-2 lg:grid-cols-3 gap-16">
+          <div className="flex flex-wrap justify-center md:grid lg:grid-cols-2 gap-16">
             {games.map((game, i) => (
               <Game key={game.name} game={game} />
             ))}
           </div>
         </div>
       </div>
-      <p className="text-center py-8 place-self-end font-adam font-semibold text-2xl">
+      <p className="text-center place-self-end font-adam font-semibold text-sm md:text-lg lg:text-xl">
         More games coming soon...
       </p>
     </div>

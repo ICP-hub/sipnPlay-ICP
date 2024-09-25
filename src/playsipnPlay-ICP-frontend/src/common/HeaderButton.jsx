@@ -23,7 +23,9 @@ const HeaderButton = ({ children, onClick, isFetching }) => {
             />
           </svg>
         )}
-        <span className="font-semibold tracking-wide">{children}</span>
+        <span className="font-semibold text-white tracking-wide">
+          {children}
+        </span>
         <div className="absolute h-[5px] w-[5px] -top-[1px] -left-[1px] border-t-[1px] border-l-[1px] "></div>
         <div className="absolute h-[5px] w-[5px] -top-[1px] -right-[1px] border-t-[1px] border-r-[1px] "></div>
         <div className="absolute h-[5px] w-[5px] -bottom-[1px] -left-[1px] border-b-[1px] border-l-[1px] "></div>
