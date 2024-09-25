@@ -19,19 +19,19 @@ const GamesList = () => {
       style={{
         background: "linear-gradient(to right, #ee3ec927, black, #ee3ec927)",
       }}
-      className="max-w-full min-h-screen bg-cover bg-center lg:py-12"
+      className="max-w-full min-h-screen flex flex-col justify-between lg:py-12"
     >
-      <div className="flex flex-col md:flex-row gap-8 max-w-screen-xl md:pe-16">
+      <div className=" relative flex flex-col md:flex-row gap-8 max-w-screen-xl md:pe-16">
         <GamesNav />
-        <div className="flex-1 mt-4 lg:mt-0">
-          <div className="flex flex-wrap justify-center md:grid lg:grid-cols-2 gap-16">
+        <div className="flex-1 mt-4 lg:mt-0 justify-between">
+          <div className=" flex flex-wrap justify-center md:grid lg:grid-cols-2 gap-16">
             {games.map((game, i) => (
               <Game key={game.name} game={game} />
             ))}
           </div>
         </div>
       </div>
-      <p className="text-center place-self-end font-adam font-semibold text-sm md:text-lg lg:text-xl">
+      <p className="md:absolute lg:-bottom-36 md:right-1/4 md:-bottom-24 sm:-bottom-12 lg:right-1/3 text-center font-adam font-semibold text-md md:text-lg lg:text-xl">
         More games coming soon...
       </p>
     </div>

@@ -11,6 +11,7 @@ import { useAuth } from "../../utils/useAuthClient";
 import toast from "react-hot-toast";
 import { createPortal } from "react-dom";
 import { Oval } from "react-loader-spinner";
+import useDisableScroll from "../../utils/useDisableScroll";
 
 const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
   const { backendActor } = useAuth();
@@ -69,6 +70,8 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
       setIsSubmitting(false);
     }
   };
+
+  useDisableScroll(modalIsOpen);
 
   return (
     <>

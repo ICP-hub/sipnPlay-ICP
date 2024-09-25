@@ -7,6 +7,7 @@ import logo from "../../assets/images/logo.png";
 import { ImCross } from "react-icons/im";
 import { useAuth } from "../../utils/useAuthClient";
 import toast from "react-hot-toast";
+import useDisableScroll from "../../../../sipnPlay-ICP-frontend/src/utils/useDisableScroll";
 
 const Register = ({ setIsRegisterDone, modalIsOpen, setIsOpen }) => {
   const { backendActor, principal } = useAuth();
@@ -52,6 +53,8 @@ const Register = ({ setIsRegisterDone, modalIsOpen, setIsOpen }) => {
       setIsRegistering(false);
     }
   };
+
+  useDisableScroll(modalIsOpen);
 
   return (
     <div>
