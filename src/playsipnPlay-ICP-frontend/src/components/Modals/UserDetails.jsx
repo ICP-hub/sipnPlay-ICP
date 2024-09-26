@@ -123,7 +123,9 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
                   <div className="flex flex-col">
                     <p className="text-white font-bold font-adam">Email:</p>
                     <p className="text-white font-semibold font-adam">
-                      {userDetails?.email || " - "}
+                      {userDetails?.email && userDetails.email.length > 20
+                        ? userDetails.email.slice(0, 20) + "..."
+                        : userDetails?.email || " - "}
                     </p>
                   </div>
                 </div>

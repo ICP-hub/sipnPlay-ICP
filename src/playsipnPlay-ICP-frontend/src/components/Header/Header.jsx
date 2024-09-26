@@ -7,11 +7,12 @@ import AnimationButton from "../../common/AnimationButton";
 import Register from "../Modals/Register";
 import { useDispatch } from "react-redux";
 import { addUserData, removeUserData } from "../../utils/redux/userSlice";
+import { useFetching } from "../../utils/fetchingContext";
 
 const Header = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
-  const [isFetching, setIsFetching] = useState(true);
+  const { isFetching, setIsFetching } = useFetching();
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [isRegisterDone, setIsRegisterDone] = useState(false);
@@ -84,7 +85,7 @@ const Header = () => {
   }, [isAuthenticated, isRegisterDone]);
 
   return (
-    <nav className="relative z-20 text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-9 flex justify-between items-center ">
+    <nav className="relative z-20 text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-4 flex justify-between items-center ">
       <div className="flex items-center">
         <img
           src={logo}
