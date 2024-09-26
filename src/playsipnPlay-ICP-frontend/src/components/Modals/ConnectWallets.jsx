@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import logo from "../../assets/images/logo.png";
 import infinite from "../../assets/images/icons/infinity.png";
 import id from "../../assets/images/icons/id.png";
-import stoic from "../../assets/images/icons/stoic.png";
 import plug from "../../assets/images/icons/plug.png";
 import Modal from "react-modal";
 import { RxCross1 } from "react-icons/rx";
@@ -64,17 +63,6 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                     <img src={id} alt="ICP Login" className="w-6" />
                   </div>
                   <span className="ml-3">NFID</span>
-                </button>
-              </div>
-              <div className="mb-4">
-                <button
-                  onClick={() => login("stoic")}
-                  className="w-full bg-[#303030] text-white py-2 rounded-[10px] flex items-center"
-                >
-                  <div className="flex items-center justify-center  ml-2 py-2 px-2 bg-[#3D3F47] rounded">
-                    <img src={stoic} alt="Stoic Login" className="w-6" />
-                  </div>
-                  <span className="ml-3">Stoic</span>
                 </button>
               </div>
               <div className="mb-4">
