@@ -7,12 +7,11 @@ import AnimationButton from "../../common/AnimationButton";
 import Register from "../Modals/Register";
 import { useDispatch } from "react-redux";
 import { addUserData, removeUserData } from "../../utils/redux/userSlice";
-import { useFetching } from "../../utils/fetchingContext";
 
 const Header = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
-  const { isFetching, setIsFetching } = useFetching();
+  const [isFetching, setIsFetching] = useState(false);
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [isRegisterDone, setIsRegisterDone] = useState(false);
