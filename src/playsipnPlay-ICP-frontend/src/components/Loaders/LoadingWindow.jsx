@@ -27,22 +27,22 @@ const LoadingWindow = ({ gameName }) => {
         backgroundPosition: "center",
       }}
     >
-      <div className="min-h-[36px] md:min-h-[75px] lg:min-h-[100px]">
+      <div className="min-h-[80px] md:h-[160px] lg:h-[200px]">
         <img
-          className=" h-[36px] md:h-[75px] lg:h-[100px]"
+          className=" h-[36px] md:h-[45px] lg:h-[60px]"
           draggable="false"
           src={logo}
         />
       </div>
-      <div className="flex flex-col justify-center items-center min-h-[360px] md:min-h-[540px] lg:min-h-[720px]">
+      <div className="flex flex-col my-auto justify-center items-center min-h-[160px] md:h-[200px] lg:h-[160px] mb-4 md:mb-32 lg:mb-44 xl:mb-64">
         <img
-          className="block min-w-[320px]"
+          className="block min-h-[130px] sm:min-h-[201px] md:min-h-[320px]"
           draggable="false"
           src={gameImage}
         />
       </div>
       {/* Loader */}
-      <div className="loader flex justify-center place-self-end mb-2">
+      <div className="loader flex justify-center mb-2">
         <div className={`${styles.coloredDot}`}></div>
         <div className={`${styles.dot} ${styles.dot1}`}></div>
         <div className={`${styles.dot} ${styles.dot2}`}></div>
