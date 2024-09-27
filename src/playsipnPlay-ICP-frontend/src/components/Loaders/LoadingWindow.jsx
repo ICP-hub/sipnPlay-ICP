@@ -27,13 +27,19 @@ const LoadingWindow = ({ gameName }) => {
         backgroundPosition: "center",
       }}
     >
-      <img
-        className=" w-[88px] md:w-[130px] lg:w-[160px]"
-        draggable="false"
-        src={logo}
-      />
-      <div className="flex flex-col justify-center items-center md:h-[480px] mb-16">
-        <img className="block " draggable="false" src={gameImage} />
+      <div className="min-h-[36px] md:min-h-[75px] lg:min-h-[100px]">
+        <img
+          className=" h-[36px] md:h-[75px] lg:h-[100px]"
+          draggable="false"
+          src={logo}
+        />
+      </div>
+      <div className="flex flex-col justify-center items-center min-h-[360px] md:min-h-[540px] lg:min-h-[720px]">
+        <img
+          className="block min-w-[320px]"
+          draggable="false"
+          src={gameImage}
+        />
       </div>
       {/* Loader */}
       <div className="loader flex justify-center place-self-end mb-2">

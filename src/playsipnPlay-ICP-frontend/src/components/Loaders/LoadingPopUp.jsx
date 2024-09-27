@@ -29,16 +29,20 @@ const LoadingPopUp = ({ gameName, taskName }) => {
       shouldCloseOnEsc={false}
     >
       <div className="bg-black w-[85%] py-[39px] bg-opacity-80 rounded-3xl min-h-[260px] md:min-h-[400px] lg:min-h-[700px]">
-        <img
-          src={gameImage}
-          alt=""
-          className="w-[160px] mx-auto md:w-[240px] lg:w-[480px]"
-        />
-        <img
-          src={gamepadLogo}
-          alt=""
-          className="w-[100px] md:w-[160px] mx-auto lg:w-[220px]"
-        />
+        <div className="min-h-[160px] md:min-h-[240px] lg:min-h-[360px] mb-4">
+          <img
+            src={gameImage}
+            alt=""
+            className="h-[160px] mx-auto md:h-[240px] lg:h-[360px] mb-4"
+          />
+        </div>
+        <div className="min-h-[100px] md:min-h-[160px] mx-auto lg:min-h-[180px] mb-4">
+          <img
+            src={gamepadLogo}
+            alt=""
+            className="h-[100px] md:h-[160px] mx-auto lg:h-[180px] mb-4"
+          />
+        </div>
         <div className="flex justify-center items-center">
           <p className="text-white font-semibold text-3xl">{taskName}</p>
           {/* Loader */}
