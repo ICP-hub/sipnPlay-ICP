@@ -93,7 +93,7 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
-            className="absolute right-8 top-16 p-4 my-4 md:top-20 md:p-6 md:right-16 md:h-80 lg:top-24 lg:right-24 lg:h-96 lg:w-72 lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4 backdrop-filter backdrop-blur-lg bg-black"
+            className="absolute right-4 top-10 p-4 my-4 md:top-16 md:p-6 md:right-16 md:h-80 lg:top-16 lg:right-24 lg:h-96 lg:w-72 lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4 backdrop-filter backdrop-blur-lg bg-black"
             ref={ref}
           >
             {/* Wrapper for positioning the button */}
