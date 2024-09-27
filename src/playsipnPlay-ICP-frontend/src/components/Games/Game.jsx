@@ -8,7 +8,7 @@ const Game = ({ game }) => {
       style={{
         background: "linear-gradient(to right, #cd335f, #4999f6)",
       }}
-      className="min-h-[240px] min-w-[320px] relative md:max-w-[400px] md:min-w-[400px] flex items-center justify-center p-4 border-[1px] transition-transform duration-300 group hover:scale-105 cursor-pointer"
+      className="min-h-[240px] max-w-[320px] sm:max-w-[480px] relative md:max-w-[400px] md:min-w-[400px] flex items-center justify-center p-4 border-[1px] transition-transform duration-300 group hover:scale-105 cursor-pointer"
       onClick={() => navigate(`/${game.name}`)}
     >
       <div className="absolute h-[5px] w-[5px] -top-[1px] -left-[1px] border-t-[1px] border-l-[1px] border-white "></div>
