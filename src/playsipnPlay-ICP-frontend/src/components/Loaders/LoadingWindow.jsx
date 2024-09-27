@@ -33,10 +33,10 @@ const LoadingWindow = ({ gameName }) => {
         src={logo}
       />
       <div className="flex flex-col justify-center items-center md:h-[480px] mb-16">
-        <img className="block" draggable="false" src={gameImage} />
+        <img className="block " draggable="false" src={gameImage} />
       </div>
       {/* Loader */}
-      <div className="loader flex justify-center">
+      <div className="loader flex justify-center place-self-end mb-2">
         <div className={`${styles.coloredDot}`}></div>
         <div className={`${styles.dot} ${styles.dot1}`}></div>
         <div className={`${styles.dot} ${styles.dot2}`}></div>

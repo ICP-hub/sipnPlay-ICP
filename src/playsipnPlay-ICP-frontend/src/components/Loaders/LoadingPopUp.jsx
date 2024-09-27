@@ -42,7 +42,7 @@ const LoadingPopUp = ({ gameName, taskName }) => {
         <div className="flex justify-center items-center">
           <p className="text-white font-semibold text-3xl">{taskName}</p>
           {/* Loader */}
-          <div className="loader flex justify-center mt-4">
+          <div className="loader flex justify-center place-self-end mb-2">
             <div className={`${styles.coloredDot}`}></div>
             <div className={`${styles.dot} ${styles.dot1}`}></div>
             <div className={`${styles.dot} ${styles.dot2}`}></div>
