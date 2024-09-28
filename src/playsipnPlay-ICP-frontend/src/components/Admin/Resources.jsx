@@ -162,6 +162,7 @@ const Resources = () => {
                     setRemoveAmntFromBackend(Number(e.target.value))
                   }
                   className="rounded-lg px-3 text-black h-11 focus:outline-none focus:ring-2 focus:ring-[#ee3ec9]"
+                  required
                 />
                 <button
                   type="submit"
@@ -190,6 +191,7 @@ const Resources = () => {
                   value={addAmntToBackend === 0 ? "" : addAmntToBackend}
                   onChange={(e) => setAddAmntToBackend(Number(e.target.value))}
                   className="rounded-lg px-3 text-black h-11 focus:outline-none focus:ring-2 focus:ring-[#ee3ec9]"
+                  required
                 />
                 <button
                   type="submit"
