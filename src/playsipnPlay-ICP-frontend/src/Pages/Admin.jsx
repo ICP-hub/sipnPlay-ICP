@@ -21,7 +21,7 @@ const AdminPanel = () => {
   const [isApproving, setIsApproving] = useState(false);
   const { backendActor, logout, principal, isAuthenticated } = useAuth();
 
-  const chunkSize = 100;
+  const chunkSize = 50;
 
   const fetchWaitlist = async (page) => {
     try {
@@ -79,7 +79,7 @@ const AdminPanel = () => {
       if (isAuthenticated) {
         let isApproved = false;
         try {
-          console.log("caller whoami", await backendActor.whoAmI2());
+          console.log("whoami", await backendActor.whoAmI2());
 
           isApproved = await backendActor.amIApproved();
         } catch (error) {

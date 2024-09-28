@@ -77,7 +77,7 @@ export const useAuthClient = () => {
             if (!window.ic?.plug) throw new Error("Plug extension not installed");
 
             const whitelist = [process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, ledgerCanId];
-            const host = process.env.DFX_NETWORK === "ic" ? "https://mainnet.dfinity.network" : "http://127.0.0.1:4943";
+            const host = process.env.DFX_NETWORK === "ic" ? "https://icp0.io" : "http://127.0.0.1:4943";
             const isConnected = await window.ic.plug.requestConnect({ whitelist, host });
 
             if (isConnected) {

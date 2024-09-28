@@ -9,8 +9,7 @@ import { BsDiscord, BsTelegram, BsTwitterX } from "react-icons/bs";
 import { ImCross } from "react-icons/im";
 import { useAuth } from "../../utils/useAuthClient";
 import toast from "react-hot-toast";
-import { createPortal } from "react-dom";
-import { Oval } from "react-loader-spinner";
+import { Principal } from "@dfinity/principal";
 import useDisableScroll from "../../utils/useDisableScroll";
 
 const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
@@ -34,6 +33,15 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
   const [email, setEmail] = useState("");
   const [icpAddress, setIcpAddress] = useState("");
 
+  function isValidPrincipal(principalText) {
+    try {
+      Principal.fromText(principalText);
+      return false;
+    } catch (error) {
+      return true;
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -47,7 +55,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
       return;
     }
 
-    if (icpAddress.trim() === "") {
+    if (isValidPrincipal(icpAddress.trim())) {
       toast.error("Please enter a valid ICP address.");
       return;
     }
@@ -135,7 +143,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    // required
+                  // required
                   />
                 </div>
                 <div className="md:mb-4  ">
@@ -151,7 +159,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    // required
+                  // required
                   />
                 </div>
                 <div className="md:mb-6 ">
@@ -167,7 +175,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                     id="icpAddress"
                     value={icpAddress}
                     onChange={(e) => setIcpAddress(e.target.value)}
-                    // required
+                  // required
                   />
                 </div>
                 <div className="flex mb-4 justify-center md:justify-end">

@@ -59,8 +59,6 @@ const Resources = () => {
         ledgerActor,
         addAmntToBackend
       );
-      const identity1 = await backendActor.get_balance();
-      console.log("balance  ", identity1);
 
       if (res.Err) {
         console.log(res.Err);

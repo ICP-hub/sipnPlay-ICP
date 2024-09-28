@@ -2,7 +2,6 @@ import React from "react";
 import { convertNanosecondsToDateTime } from "../../../../sipnPlay-ICP-frontend/src/utils/helpers";
 
 const AdminTable = ({ data, title }) => {
-  console.log(data);
   return (
     <table className="min-w-full divide-y divide-gray-200 rounded-t-lg">
       <thead className="bg-stone-800 rounded-t-lg">
