@@ -6,6 +6,7 @@ import { AuthProvider } from "./utils/useAuthClient";
 // import Payment from './Pages/Payment';
 import PrivateLayout from "./Layout/PrivateLayout";
 import AdminPanel from "./Pages/Admin";
+import Gush from "./Pages/Gush";
 function AllRoutes() {
   return (
     <AuthProvider>
@@ -19,13 +20,9 @@ function AllRoutes() {
           }
         />
         <Route path="/blackjack" element={<BlackJack />} />
-        
-        {/* <Route
-          path="/payment"
-          element={
-            <Payment />
-          }
-        /> */}
+
+        <Route path="/gush" element={ <Gush /> }
+        />
         <Route path="/admin" element={<AdminPanel />} />
       </Routes>
     </AuthProvider>
