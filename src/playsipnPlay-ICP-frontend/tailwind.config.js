@@ -1,17 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       screens: {
-        sxxs: "255px",
-        sxs: "265px",
-        sxs1: "275px",
-        sxs2: "285px",
-        sxs3: "295px",
         ss: "305px",
         ss1: "315px",
         ss2: "325px",
@@ -35,32 +27,32 @@ export default {
         lgx: "1134px",
         dxl: "1280px",
         xl: "1440px",
-        xl2: "1600px"
+        xl2: "1600px",
       },
       backgroundImage: {
-        'gamemania-gradient': 'linear-gradient(to top right, #CD335F, #A15591, #717AC9, #4999F6)',
+        "gamemania-gradient":
+          "linear-gradient(to top right, #CD335F, #A15591, #717AC9, #4999F6)",
       },
-      colors:{
-        'custom-gradient-start': 'rgba(255, 255, 255, 0.01)', 
-        'custom-gradient-end': 'rgba(153, 153, 153, 0.2)',
+      colors: {
+        "custom-gradient-start": "rgba(255, 255, 255, 0.01)",
+        "custom-gradient-end": "rgba(153, 153, 153, 0.2)",
       },
       fontFamily: {
-        'monckeberg': ['Monckeberg', 'sans-serif'],
-        'inter': ['Inter', 'sans-serif'],
-        'adam': ['Adam', 'sans-serif'],
-        'monument': ['Monument', 'sans-serif'],
+        monckeberg: ["Monckeberg", "sans-serif"],
+        inter: ["Inter", "sans-serif"],
+        adam: ["Adam", "sans-serif"],
+        monument: ["Monument", "sans-serif"],
       },
       keyframes: {
         translateY: {
-          '0%': { transform: 'translateY(-90px)' },
-          '100%': { transform: 'translateY(0px)' },
+          "0%": { transform: "translateY(-90px)" },
+          "100%": { transform: "translateY(0px)" },
         },
       },
       animation: {
-        'translate-y': 'translateY 1s ease-in-out',
+        "translate-y": "translateY 1s ease-in-out",
       },
     },
   },
   plugins: [],
-}
-
+};

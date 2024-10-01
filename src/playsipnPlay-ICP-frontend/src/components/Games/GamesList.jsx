@@ -3,6 +3,7 @@ import bgImage from "../../assets/images/waitlistBg.png";
 import blackjackLogo from "../../assets/images/blackjack.png";
 import EboolImg from "../../assets/images/8bool.png";
 import bkingImg from "../../assets/images/burgerking.png";
+import Gushgif from "../../assets/images/gush.gif";
 import Game from "./Game";
 import GamesNav from "./GamesNav";
 import { useFetching } from "../../utils/fetchingContext";
@@ -12,6 +13,7 @@ const GamesList = () => {
   const { isFetching, setIsFetching } = useFetching();
   const [games, setGames] = useState([
     { name: "blackjack", img: blackjackLogo },
+    { name: "gush", img: Gushgif },
     // { name: "8ballpool", img: EboolImg },
     // { name: "burgerking", img: bkingImg },
     ,
@@ -24,7 +26,7 @@ const GamesList = () => {
       }}
       className="max-w-full min-h-screen flex flex-col justify-between lg:py-12"
     >
-      <div className=" relative flex flex-col md:flex-row gap-8 max-w-screen-xl md:pe-16">
+      <div className=" relative flex flex-col md:flex-row gap-8 max-w-screen-xl   ">
         <GamesNav />
 
         {isFetching ? (
@@ -39,7 +41,7 @@ const GamesList = () => {
           </div>
         ) : (
           <div className="flex-1 mt-4 lg:mt-0 justify-between">
-            <div className=" flex flex-wrap justify-center md:grid lg:grid-cols-2 gap-16">
+            <div className=" flex flex-wrap justify-center md:grid md:grid-cols-2 lg:grid-cols-3 gap-16">
               {games.map((game, i) => (
                 <Game key={game.name} game={game} />
               ))}
