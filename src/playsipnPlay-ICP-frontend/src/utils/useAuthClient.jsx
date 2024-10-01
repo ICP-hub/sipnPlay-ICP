@@ -4,6 +4,7 @@ import { HttpAgent } from "@dfinity/agent";
 import { createLedgerActor } from "../../../declarations/ledger/index";
 import { idlFactory, createActor } from "../../../declarations/sipnPlay-ICP-backend/index";
 import { idlFactory as ledgerIdlFactory } from "../../../declarations/ledger/index";
+import { PlugMobileProvider } from '@funded-labs/plug-mobile-sdk';
 
 const AuthContext = createContext();
 
@@ -74,30 +75,66 @@ export const useAuthClient = () => {
             });
           }
           if (provider === "plug") {
-            if (!window.ic?.plug) throw new Error("Plug extension not installed");
+            const isMobile = PlugMobileProvider.isMobileBrowser();
+            if (isMobile) {
+              try {
+                const provider = new PlugMobileProvider({
+                  debug: true,
+                  walletConnectProjectId: '03552d978568bdba28d2897eda52ee38',
+                  window: window,
+                })
+                await provider.initialize().catch((err) => alert(`err in initialize : ${err}`))
+                if (!provider.isPaired()) {
+                  alert("provider  ot paired")
+                  await provider.pair().catch(alert)
+                }
+                const agent = await provider.createAgent({
+                  host: 'https://icp0.io',
+                  targets: [process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, ledgerCanId],
+                })
+                alert("agent created")
+                const actor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agent: agent })
+                const ledgerActor = createActor(ledgerCanId, { agent: agent })
+                const principal = await agent.getPrincipal();
+                setBackendActor(actor);
+                setLedgerActor(ledgerActor);
+                setPrincipal(principal);
+                setIsAuthenticated(true);
+                console.log(res)
+                setGreeting(res)
+                alert("hello ", res)
 
-            const whitelist = [process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, ledgerCanId];
-            const host = process.env.DFX_NETWORK === "ic" ? "https://icp0.io" : "http://127.0.0.1:4943";
-            const isConnected = await window.ic.plug.requestConnect({ whitelist, host });
+              } catch (err) {
+                alert(err)
+              }
+            }
 
-            if (isConnected) {
-              const userActor = await window.ic.plug.createActor({
-                canisterId: process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND,
-                interfaceFactory: idlFactory
-              });
-              const EXTActor = await window.ic.plug.createActor({
-                canisterId: ledgerCanId,
-                interfaceFactory: ledgerIdlFactory
-              })
-              setBackendActor(userActor);
-              setLedgerActor(EXTActor);
-              setIsAuthenticated(true);
-              const principal = await window.ic.plug.agent.getPrincipal();
-              const identity = window.ic.plug.agent;
-              setPrincipal(principal);
-              setIdentity(identity);
-            } else {
-              throw new Error("Plug connection refused");
+            else {
+              if (!window.ic?.plug) throw new Error("Plug extension not installed");
+
+              const whitelist = [process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, ledgerCanId];
+              const host = process.env.DFX_NETWORK === "ic" ? "https://icp0.io" : "http://127.0.0.1:4943";
+              const isConnected = await window.ic.plug.requestConnect({ whitelist, host });
+
+              if (isConnected) {
+                const userActor = await window.ic.plug.createActor({
+                  canisterId: process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND,
+                  interfaceFactory: idlFactory
+                });
+                const EXTActor = await window.ic.plug.createActor({
+                  canisterId: ledgerCanId,
+                  interfaceFactory: ledgerIdlFactory
+                })
+                setBackendActor(userActor);
+                setLedgerActor(EXTActor);
+                setIsAuthenticated(true);
+                const principal = await window.ic.plug.agent.getPrincipal();
+                const identity = window.ic.plug.agent;
+                setPrincipal(principal);
+                setIdentity(identity);
+              } else {
+                throw new Error("Plug connection refused");
+              }
             }
           }
 
