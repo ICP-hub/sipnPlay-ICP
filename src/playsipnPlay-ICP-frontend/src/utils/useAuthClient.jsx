@@ -101,9 +101,7 @@ export const useAuthClient = () => {
                 setPrincipal(principal);
                 setIsAuthenticated(true);
                 console.log(principal)
-                setGreeting(principal)
                 alert("hello ", principal)
-
               } catch (err) {
                 alert(err)
               }
