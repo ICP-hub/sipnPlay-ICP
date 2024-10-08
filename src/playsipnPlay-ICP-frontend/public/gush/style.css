@@ -35,3 +35,52 @@ canvas#minimap {
   opacity: 0.5;
   pointer-events: none;
 }
+
+.controls button {
+  border: none;
+  outline: none;
+  background-color: rgb(0, 0, 0, 0.5);
+  border-radius: 4px;
+  color: white;
+}
+
+.fa-solid {
+  font-size: 300%;
+}
+
+.directions,
+.actions {
+  position: absolute;
+  z-index: 102;
+  bottom: 36px;
+}
+
+.directions {
+  left: -30%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+.actions {
+  right: -30%;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+#move-up {
+  grid-column: 2;
+  grid-row: 1;
+}
+#move-down {
+  grid-column: 2;
+  grid-row: 3;
+}
+#move-left {
+  grid-column: 1;
+  grid-row: 2;
+}
+#move-right {
+  grid-column: 3;
+  grid-row: 2;
+}

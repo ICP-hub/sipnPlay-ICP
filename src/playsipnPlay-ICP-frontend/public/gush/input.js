@@ -13,7 +13,7 @@ const input = {
   burp: false,
   attack: false,
   // gamepad state
-  gamepadConnected: false,  
+  gamepadConnected: false,
 };
 export default input;
 
@@ -41,7 +41,12 @@ const getGamepad = () => {
   return gamepads[gamepadIndex];
 };
 
-export const vibrateGamepad = (duration, weakMagnitude, strongMagnitude, startDelay = 0) => {
+export const vibrateGamepad = (
+  duration,
+  weakMagnitude,
+  strongMagnitude,
+  startDelay = 0
+) => {
   const gp = getGamepad();
   if (!gp || !gp.vibrationActuator) return;
   const type = gp.vibrationActuator.type;
@@ -52,7 +57,7 @@ export const vibrateGamepad = (duration, weakMagnitude, strongMagnitude, startDe
     weakMagnitude,
     strongMagnitude,
   });
-}
+};
 
 let gamepadMoving = false;
 let gamepadAiming = false;
@@ -66,7 +71,7 @@ const handleGamepad = () => {
   // left analog stick for moving
   let stickOneMagnitude = 0;
   if (gp.axes[0] || gp.axes[1]) {
-    stickOneMagnitude = Math.sqrt(gp.axes[0]**2 + gp.axes[1]**2);
+    stickOneMagnitude = Math.sqrt(gp.axes[0] ** 2 + gp.axes[1] ** 2);
   }
   if (stickOneMagnitude >= gamepadDeadzone) {
     gamepadMoving = true;
@@ -97,7 +102,7 @@ const handleGamepad = () => {
   // right analog stick for aiming/shooting
   let stickTwoMagnitude = 0;
   if (gp.axes[2] || gp.axes[3]) {
-    stickTwoMagnitude = Math.sqrt(gp.axes[2]**2 + gp.axes[3]**2);
+    stickTwoMagnitude = Math.sqrt(gp.axes[2] ** 2 + gp.axes[3] ** 2);
   }
   if (stickTwoMagnitude >= gamepadDeadzone) {
     gamepadAiming = true;
@@ -113,20 +118,22 @@ const handleGamepad = () => {
 };
 
 const handleMouseDown = (e) => {
-  if (e.button === 0) { // left click
+  if (e.button === 0) {
+    // left click
     input.attack = true;
-  } else if (e.button === 2) { // right click
+  } else if (e.button === 2) {
+    // right click
     input.burp = true;
   }
-}
+};
+
 const handleMouseUp = (e) => {
   if (e.button === 0) {
     input.attack = false;
   } else if (e.button === 2) {
     input.burp = false;
   }
-}
-
+};
 
 let lastMouseX = null;
 let lastMouseY = null;
@@ -141,7 +148,10 @@ const cancelMouseAiming = () => {
 
 const handleMouseMove = (e) => {
   clearTimeout(cancelMouseAimingTimeout);
-  const center = k.vec2(document.body.offsetWidth / 2, document.body.offsetHeight / 2);
+  const center = k.vec2(
+    document.body.offsetWidth / 2,
+    document.body.offsetHeight / 2
+  );
   const mouse = k.vec2(e.clientX, e.clientY);
   const aim = mouse.sub(center).unit();
   input.x2 = aim.x;
@@ -153,13 +163,12 @@ const handleMouseMove = (e) => {
 };
 const handleContextMenu = (e) => {
   e.preventDefault(); // prevent contextmenu so we can use right-click for burp
-}
+};
 const handleMouseLeave = (e) => {
   // when the mouse leaves the page, revert to keyboard aiming
   input.x2 = 0;
   input.y2 = 0;
 };
-
 
 let cancelAll = null;
 let listenerCancelers = [];
@@ -176,37 +185,43 @@ export const enableInputListeners = () => {
     keyLeft: null,
     keyRight: null,
   };
-  Object.keys(keys).forEach(k => keys[k] = state.get(k));
+  Object.keys(keys).forEach((k) => (keys[k] = state.get(k)));
 
   // keyboard
-  listenerCancelers.push(k.keyDown(keys.keyUp, () => input.y = -1));
-  listenerCancelers.push(k.keyRelease(keys.keyUp, () => input.y = 0));
-  listenerCancelers.push(k.keyDown("up", () => input.y = -1));
-  listenerCancelers.push(k.keyRelease("up", () => input.y = 0));
+  listenerCancelers.push(k.keyDown(keys.keyUp, () => (input.y = -1)));
+  listenerCancelers.push(k.keyRelease(keys.keyUp, () => (input.y = 0)));
+  listenerCancelers.push(k.keyDown("up", () => (input.y = -1)));
+  listenerCancelers.push(k.keyRelease("up", () => (input.y = 0)));
 
-  listenerCancelers.push(k.keyDown(keys.keyDown, () => input.y = 1));
-  listenerCancelers.push(k.keyRelease(keys.keyDown, () => input.y = 0));
-  listenerCancelers.push(k.keyDown("down", () => input.y = 1));
-  listenerCancelers.push(k.keyRelease("down", () => input.y = 0));
+  listenerCancelers.push(k.keyDown(keys.keyDown, () => (input.y = 1)));
+  listenerCancelers.push(k.keyRelease(keys.keyDown, () => (input.y = 0)));
+  listenerCancelers.push(k.keyDown("down", () => (input.y = 1)));
+  listenerCancelers.push(k.keyRelease("down", () => (input.y = 0)));
 
-  listenerCancelers.push(k.keyDown(keys.keyLeft, () => input.x = -1));
-  listenerCancelers.push(k.keyRelease(keys.keyLeft, () => input.x = 0));
-  listenerCancelers.push(k.keyDown("left", () => input.x = -1));
-  listenerCancelers.push(k.keyRelease("left", () => input.x = 0));
+  listenerCancelers.push(k.keyDown(keys.keyLeft, () => (input.x = -1)));
+  listenerCancelers.push(k.keyRelease(keys.keyLeft, () => (input.x = 0)));
+  listenerCancelers.push(k.keyDown("left", () => (input.x = -1)));
+  listenerCancelers.push(k.keyRelease("left", () => (input.x = 0)));
 
-  listenerCancelers.push(k.keyDown(keys.keyRight, () => input.x = 1));
-  listenerCancelers.push(k.keyRelease(keys.keyRight, () => input.x = 0));
-  listenerCancelers.push(k.keyDown("right", () => input.x = 1));
-  listenerCancelers.push(k.keyRelease("right", () => input.x = 0));
+  listenerCancelers.push(k.keyDown(keys.keyRight, () => (input.x = 1)));
+  listenerCancelers.push(k.keyRelease(keys.keyRight, () => (input.x = 0)));
+  listenerCancelers.push(k.keyDown("right", () => (input.x = 1)));
+  listenerCancelers.push(k.keyRelease("right", () => (input.x = 0)));
 
-  listenerCancelers.push(k.keyDown(keys.keyAttack, () => input.attack = true));
-  listenerCancelers.push(k.keyRelease(keys.keyAttack, () => input.attack = false));
+  listenerCancelers.push(
+    k.keyDown(keys.keyAttack, () => (input.attack = true))
+  );
+  listenerCancelers.push(
+    k.keyRelease(keys.keyAttack, () => (input.attack = false))
+  );
 
-  listenerCancelers.push(k.keyDown(keys.keyBurp, () => input.burp = true));
-  listenerCancelers.push(k.keyRelease(keys.keyBurp, () => input.burp = false));
+  listenerCancelers.push(k.keyDown(keys.keyBurp, () => (input.burp = true)));
+  listenerCancelers.push(
+    k.keyRelease(keys.keyBurp, () => (input.burp = false))
+  );
 
-  listenerCancelers.push(k.keyDown(keys.keyUse, () => input.use = true));
-  listenerCancelers.push(k.keyRelease(keys.keyUse, () => input.use = false));
+  listenerCancelers.push(k.keyDown(keys.keyUse, () => (input.use = true)));
+  listenerCancelers.push(k.keyRelease(keys.keyUse, () => (input.use = false)));
 
   // gamepad
   listenerCancelers.push(k.action(handleGamepad));
@@ -220,12 +235,106 @@ export const enableInputListeners = () => {
   window.addEventListener("contextmenu", handleContextMenu);
   document.addEventListener("mouseleave", handleMouseLeave);
 
+  // Phone
+
+  // document.addEventListener("DOMContentLoaded", function () {
+  //   const controls = document.querySelector(".controls");
+
+  //   // Function to check if the device is mobile
+  //   function isMobile() {
+  //     return /Mobi|Android/i.test(navigator.userAgent);
+  //   }
+
+  //   // Show controls if the device is mobile
+  //   if (isMobile()) {
+  //     alert("This game is best played on landscape mode.");
+  //     controls.style.display = "block";
+  //   }
+  // });
+
+  // Actions
+  const attack = document.getElementById("attack");
+  const burp = document.getElementById("burp");
+
+  // Directions
+  const left = document.getElementById("move-left");
+  const up = document.getElementById("move-up");
+  const right = document.getElementById("move-right");
+  const down = document.getElementById("move-down");
+
+  // Handlers
+  const handleAttack = () => {
+    input.attack = true;
+    setTimeout(() => (input.attack = false), 80);
+  };
+  const handleBurp = () => {
+    input.burp = true;
+    setTimeout(() => (input.burp = false), 80);
+  };
+
+  //Event listeners
+  attack.addEventListener("touchstart", handleAttack, { passive: true });
+  attack.addEventListener("touchend", handleAttack, { passive: true });
+
+  burp.addEventListener("touchstart", handleBurp, { passive: true });
+  burp.addEventListener("touchend", handleBurp, { passive: true });
+
+  function setupDirectionalInput(element, axis, value) {
+    // Start continuous movement on touchstart
+    element.addEventListener(
+      "touchstart",
+      () => {
+        input[axis] = value;
+      },
+      { passive: true }
+    );
+
+    // Stop movement on touchend or touchcancel
+    element.addEventListener(
+      "touchend",
+      () => {
+        input[axis] = 0; // Reset the input when touch ends
+      },
+      { passive: true }
+    );
+
+    element.addEventListener(
+      "touchcancel",
+      () => {
+        input[axis] = 0; // Reset the input when touch is canceled
+      },
+      { passive: true }
+    );
+
+    element.addEventListener(
+      "touchmove",
+      (e) => {
+        e.preventDefault(); // Prevent scrolling
+        if (input[axis] !== value) {
+          input[axis] = value;
+        }
+      },
+      { passive: false }
+    ); // Set passive to false to prevent default scrolling
+
+    // Start continuous movement on mousedown
+  }
+
+  // Set up directional controls
+  setupDirectionalInput(left, "x", -1); // Left direction (decrease x)
+  setupDirectionalInput(right, "x", 1); // Right direction (increase x)
+  setupDirectionalInput(up, "y", -1); // Up direction (decrease y)
+  setupDirectionalInput(down, "y", 1); // Down direction (increase y)
+
   // cancel function
   cancelAll = () => {
-    listenerCancelers.forEach(fn => fn());
+    listenerCancelers.forEach((fn) => fn());
     listenerCancelers = [];
     window.removeEventListener("gamepadconnected", handleGamepadConnected);
-    window.removeEventListener("gamepaddisconnected", handleGamepadDisconnected);
+    window.removeEventListener(
+      "gamepaddisconnected",
+      handleGamepadDisconnected
+    );
     window.removeEventListener("mousedown", handleMouseDown);
     window.removeEventListener("mouseup", handleMouseUp);
     window.removeEventListener("mousemove", handleMouseMove);
