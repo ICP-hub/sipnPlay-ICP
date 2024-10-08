@@ -100,10 +100,8 @@ export const useAuthClient = () => {
                 setLedgerActor(ledgerActor);
                 setPrincipal(principal);
                 setIsAuthenticated(true);
-                console.log(res)
-                setGreeting(res)
-                alert("hello ", res)
-
+                console.log(principal)
+                alert("hello ", principal)
               } catch (err) {
                 alert(err)
               }
