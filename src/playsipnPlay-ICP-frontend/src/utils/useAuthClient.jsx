@@ -8,8 +8,19 @@ import { PlugMobileProvider } from '@funded-labs/plug-mobile-sdk';
 
 const AuthContext = createContext();
 
+const defaultOptions = {
+  /**
+   *  @type {import("@dfinity/auth-client").AuthClientCreateOptions}
+   */
+  createOptions: {
+    idleOptions: {
+      idleTimeout: 1000 * 60 * 30, // set to 30 minutes
+      disableDefaultIdleCallback: true, // disable the default reload behavior
+    },
+  }
+};
 
-export const useAuthClient = () => {
+export const useAuthClient = (options = defaultOptions) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authClient, setAuthClient] = useState(null);
   const [identity, setIdentity] = useState(null);
@@ -19,7 +30,7 @@ export const useAuthClient = () => {
   const [ledgerActor, setLedgerActor] = useState(null);
 
   useEffect(() => {
-    AuthClient.create().then((client) => {
+    AuthClient.create(options.createOptions).then((client) => {
       setAuthClient(client);
     });
   }, []);
