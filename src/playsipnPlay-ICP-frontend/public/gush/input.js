@@ -1,3 +1,55 @@
+let controls = document.querySelector(".controls");
+let isFullScreen = false;
+let fullScreenBtn = document.querySelector("#full-screen-btn");
+
+function requestFullScreen() {
+  const element = document.documentElement; // The whole document
+  if (element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if (element.mozRequestFullScreen) {
+    // Firefox
+    element.mozRequestFullScreen();
+  } else if (element.webkitRequestFullscreen) {
+    // Chrome, Safari and Opera
+    element.webkitRequestFullscreen();
+  } else if (element.msRequestFullscreen) {
+    // IE/Edge
+    element.msRequestFullscreen();
+  }
+}
+
+function updateButtonVisibility() {
+  if (document.fullscreenElement) {
+    fullScreenBtn.style.display = "none"; // Hide button in fullscreen
+  } else {
+    fullScreenBtn.style.display = "block"; // Show button when exiting fullscreen
+  }
+}
+
+fullScreenBtn.addEventListener("click", () => {
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    document.documentElement.requestFullscreen();
+  }
+});
+
+// Listen for fullscreen change events
+document.addEventListener("fullscreenchange", updateButtonVisibility);
+
+// Initial visibility check
+updateButtonVisibility();
+
+function isMobile() {
+  return /Mobi|Android|iPhone/i.test(navigator.userAgent);
+}
+
+if (isMobile()) {
+  controls.style.display = "block";
+} else {
+  controls.style.display = "none";
+}
+
 import { k } from "./kaboom.js";
 import state from "./state.js";
 
@@ -146,21 +198,21 @@ const cancelMouseAiming = () => {
   }
 };
 
-const handleMouseMove = (e) => {
-  clearTimeout(cancelMouseAimingTimeout);
-  const center = k.vec2(
-    document.body.offsetWidth / 2,
-    document.body.offsetHeight / 2
-  );
-  const mouse = k.vec2(e.clientX, e.clientY);
-  const aim = mouse.sub(center).unit();
-  input.x2 = aim.x;
-  input.y2 = aim.y;
-  lastMouseX = aim.x;
-  lastMouseY = aim.y;
-  // if the mouse hasn't moved in a while, revert to keyboard aiming
-  cancelMouseAimingTimeout = setTimeout(cancelMouseAiming, 5555);
-};
+// const handleMouseMove = (e) => {
+//   clearTimeout(cancelMouseAimingTimeout);
+//   const center = k.vec2(
+//     document.body.offsetWidth / 2,
+//     document.body.offsetHeight / 2
+//   );
+//   const mouse = k.vec2(e.clientX, e.clientY);
+//   const aim = mouse.sub(center).unit();
+//   input.x2 = aim.x;
+//   input.y2 = aim.y;
+//   lastMouseX = aim.x;
+//   lastMouseY = aim.y;
+//   // if the mouse hasn't moved in a while, revert to keyboard aiming
+//   cancelMouseAimingTimeout = setTimeout(cancelMouseAiming, 5555);
+// };
 const handleContextMenu = (e) => {
   e.preventDefault(); // prevent contextmenu so we can use right-click for burp
 };
@@ -231,26 +283,9 @@ export const enableInputListeners = () => {
   // mouse
   window.addEventListener("mousedown", handleMouseDown);
   window.addEventListener("mouseup", handleMouseUp);
-  window.addEventListener("mousemove", handleMouseMove);
+  // window.addEventListener("mousemove", handleMouseMove);
   window.addEventListener("contextmenu", handleContextMenu);
   document.addEventListener("mouseleave", handleMouseLeave);
-
-  // Phone
-
-  // document.addEventListener("DOMContentLoaded", function () {
-  //   const controls = document.querySelector(".controls");
-
-  //   // Function to check if the device is mobile
-  //   function isMobile() {
-  //     return /Mobi|Android/i.test(navigator.userAgent);
-  //   }
-
-  //   // Show controls if the device is mobile
-  //   if (isMobile()) {
-  //     alert("This game is best played on landscape mode.");
-  //     controls.style.display = "block";
-  //   }
-  // });
 
   // Actions
   const attack = document.getElementById("attack");
@@ -321,10 +356,10 @@ export const enableInputListeners = () => {
   }
 
   // Set up directional controls
-  setupDirectionalInput(left, "x", -1); // Left direction (decrease x)
-  setupDirectionalInput(right, "x", 1); // Right direction (increase x)
-  setupDirectionalInput(up, "y", -1); // Up direction (decrease y)
-  setupDirectionalInput(down, "y", 1); // Down direction (increase y)
+  setupDirectionalInput(left, "x", -0.6); // Left direction (decrease x)
+  setupDirectionalInput(right, "x", 0.6); // Right direction (increase x)
+  setupDirectionalInput(up, "y", -0.6); // Up direction (decrease y)
+  setupDirectionalInput(down, "y", 0.6); // Down direction (increase y)
 
   // cancel function
   cancelAll = () => {
@@ -337,7 +372,7 @@ export const enableInputListeners = () => {
     );
     window.removeEventListener("mousedown", handleMouseDown);
     window.removeEventListener("mouseup", handleMouseUp);
-    window.removeEventListener("mousemove", handleMouseMove);
+    // window.removeEventListener("mousemove", handleMouseMove);
     window.removeEventListener("contextmenu", handleContextMenu);
     document.removeEventListener("mouseleave", handleMouseLeave);
   };

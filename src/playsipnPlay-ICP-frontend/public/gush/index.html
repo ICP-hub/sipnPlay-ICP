@@ -33,6 +33,11 @@
     <div id="container">
       <canvas id="game"></canvas>
       <canvas id="minimap"></canvas>
+      <div id="full-screen-btn">
+        <button>
+          <i class="fa-solid fa-expand" style="font-size: 24px"></i>
+        </button>
+      </div>
       <div class="controls">
         <div class="directions">
           <button id="move-up"><i class="fa-solid fa-caret-up"></i></button>
@@ -45,14 +50,14 @@
         <div class="actions">
           <button id="attack">
             <img
-              src="./assets/sprites/weapon_anime_sword.png"
+              src="./assets/sprites/weapon_anime_sword_icon.png"
               alt="sword-image"
               style="rotate: 45deg; padding: 4px 8px; height: 75%; width: 75%"
             />
           </button>
           <button id="burp">
             <img
-              src="./assets/sprites/burp.png"
+              src="./assets/sprites/burp.PNG"
               alt="burp-image"
               style="height: 75%; width: 75%"
             />
@@ -60,6 +65,7 @@
         </div>
       </div>
     </div>
+
     <script src="https://kaboomjs.com/lib/0.6.0/kaboom.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <script type="module" src="./entry.js"></script>
