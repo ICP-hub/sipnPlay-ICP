@@ -167,7 +167,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                     className="block text-white font-adam font-bold text-sm mb-0.2"
                     htmlFor="message"
                   >
-                    Submit ICP Address
+                    Submit ICP Address (Principal)
                   </label>
                   <input
                     className="border-b-2 uppercase w-full py-2 mb-3 text-white bg-transparent leading-tight focus:outline-none focus:shadow-outline"

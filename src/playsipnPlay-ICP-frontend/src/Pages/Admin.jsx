@@ -21,7 +21,7 @@ const AdminPanel = () => {
   const [isApproving, setIsApproving] = useState(false);
   const { backendActor, logout, principal, isAuthenticated } = useAuth();
 
-  const chunkSize = 50;
+  const chunkSize = 10;
 
   const fetchWaitlist = async (page) => {
     try {

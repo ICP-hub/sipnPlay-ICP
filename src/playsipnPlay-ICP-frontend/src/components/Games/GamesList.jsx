@@ -14,8 +14,6 @@ const GamesList = () => {
   const [games, setGames] = useState([
     { name: "blackjack", img: blackjackLogo },
     { name: "gush", img: Gushgif },
-    // { name: "8ballpool", img: EboolImg },
-    // { name: "burgerking", img: bkingImg },
     ,
   ]);
 

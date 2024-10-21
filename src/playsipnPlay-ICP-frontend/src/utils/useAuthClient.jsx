@@ -14,8 +14,8 @@ const defaultOptions = {
    */
   createOptions: {
     idleOptions: {
-      idleTimeout: 1000 * 60 * 30, // set to 30 minutes
-      disableDefaultIdleCallback: true, // disable the default reload behavior
+      idleTimeout: 1000 * 60 * 30,
+      disableDefaultIdleCallback: true,
     },
   }
 };
@@ -103,7 +103,7 @@ export const useAuthClient = (options = defaultOptions) => {
                   host: 'https://icp0.io',
                   targets: [process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, ledgerCanId],
                 })
-                alert("agent created")
+                alert("agent created");
                 const actor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agent: agent })
                 const ledgerActor = createActor(ledgerCanId, { agent: agent })
                 const principal = await agent.getPrincipal();
@@ -170,7 +170,6 @@ export const useAuthClient = (options = defaultOptions) => {
     }
   };
 
-  // Update client state after authentication
   const updateClient = async (client) => {
     try {
       const isAuthenticated = await client.isAuthenticated();

@@ -13,6 +13,9 @@
 # generated files
 **/declarations/
 
+# secondary env file
+**/src/utils/config.js
+
 # rust
 target/
 
