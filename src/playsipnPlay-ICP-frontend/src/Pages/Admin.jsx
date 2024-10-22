@@ -7,6 +7,7 @@ import PaginatedData from "../components/Admin/PaginatedData";
 import Resources from "../components/Admin/Resources";
 import { Oval } from "react-loader-spinner";
 import config from "../utils/config";
+import CryptoJS from "crypto-js";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
@@ -16,12 +17,20 @@ const AdminPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const { backendActor, logout, principal, isAuthenticated } = useAuth();
-
+  const encryptedPrincipal = CryptoJS.AES.encrypt(
+    principal,
+    config.ENCRYPTION_KEY
+  ).toString();
   const fetchWaitlist = async () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${config.BACKEND_URL}/waitlist/getWaitlist`
+        `${config.BACKEND_URL}/waitlist/getWaitlist`,
+        {
+          headers: {
+            "x-principal": encryptedPrincipal,
+          },
+        }
       );
       if (response.status === 200) {
         const { data } = await response.json();
@@ -29,8 +38,7 @@ const AdminPanel = () => {
         setLoading(false);
         return;
       } else {
-        toast.error(response.error);
-        console.log(response.json());
+        toast.error("Error fetching waitlist data");
         setLoading(false);
       }
     } catch (error) {
@@ -44,16 +52,20 @@ const AdminPanel = () => {
       setLoading(true);
       // const response = await backendActor.getMessages(chunkSize, page);
       const response = await fetch(
-        `${config.BACKEND_URL}/messages/getMessages`
+        `${config.BACKEND_URL}/messages/getMessages`,
+        {
+          headers: {
+            "x-principal": encryptedPrincipal,
+          },
+        }
       );
       if (response.status === 200) {
         const { data } = await response.json();
-        console.log(data);
         setMessages(data);
         setLoading(false);
         return;
       } else {
-        toast.error("Error fetching messages")
+        toast.error("Error fetching messages");
         setLoading(false);
       }
     } catch (error) {
@@ -94,7 +106,6 @@ const AdminPanel = () => {
     checkApproveStatus();
   }, [isAuthenticated, principal]);
 
-
   useEffect(() => {
     if (isAuthenticated && isLoggedIn) {
       if (activeSection === "waitlist") {
@@ -103,8 +114,7 @@ const AdminPanel = () => {
         fetchMessages();
       }
     }
-  }, [activeSection,  isLoggedIn]);
- 
+  }, [activeSection, isLoggedIn]);
 
   const handleDownload = () => {
     const data = activeSection === "waitlist" ? waitlist : messages;
@@ -170,26 +180,29 @@ const AdminPanel = () => {
         <div className="flex justify-around">
           <button
             onClick={() => setActiveSection("waitlist")}
-            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
-              }`}
+            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
+              activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
+            }`}
           >
             Waitlist
           </button>
           <button
             onClick={() => setActiveSection("messages")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "messages"
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
+              activeSection === "messages"
                 ? "bg-[#EE3EC9] text-white"
                 : "bg-black "
-              }`}
+            }`}
           >
             Messages
           </button>
           <button
             onClick={() => setActiveSection("resources")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${activeSection === "resources"
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${
+              activeSection === "resources"
                 ? "bg-[#EE3EC9] "
                 : "bg-black text-white"
-              }`}
+            }`}
           >
             Resources
           </button>
@@ -206,16 +219,10 @@ const AdminPanel = () => {
       ) : (
         <div>
           {activeSection === "waitlist" && (
-            <PaginatedData
-              title="Principal"
-              data={waitlist}
-            />
+            <PaginatedData title="Principal" data={waitlist} />
           )}
           {activeSection === "messages" && (
-            <PaginatedData
-              title="Messages"
-              data={messages}
-            />
+            <PaginatedData title="Messages" data={messages} />
           )}
           {activeSection === "resources" && <Resources />}
         </div>
