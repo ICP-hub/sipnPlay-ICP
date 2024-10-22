@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import AnimationButton from "../../common/AnimationButton";
 import { useAuth } from "../../utils/useAuthClient";
 import toast from "react-hot-toast";
+import config from "../../../../playsipnPlay-ICP-frontend/src/utils/config";
 
 const SendMessage = () => {
   const [name, setName] = useState("");
@@ -30,9 +31,25 @@ const SendMessage = () => {
 
     try {
       setIsSending(true);
-      const response = await backendActor.sendMessage(name, email, message);
-      if (response.ok) {
-        toast.success(response.ok);
+      const response = await fetch(
+        `${config.BACKEND_URL}/messages/sendMessage`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            message,
+          }),
+        }
+      );
+      if (response.status === 201) {
+        toast.success("Message sent successfully");
+        setName("");
+        setEmail("");
+        setMessage("");
       } else {
         toast.error("Error sending message");
       }
@@ -41,10 +58,6 @@ const SendMessage = () => {
     } finally {
       setIsSending(false);
     }
-
-    setName("");
-    setEmail("");
-    setMessage("");
   };
 
   return (

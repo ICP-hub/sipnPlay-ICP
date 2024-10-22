@@ -7,6 +7,7 @@ import PaginatedData from "../components/Admin/PaginatedData";
 import Resources from "../components/Admin/Resources";
 import { Oval } from "react-loader-spinner";
 import { convertNanosecondsToDateTime } from "../../../sipnPlay-ICP-frontend/src/utils/helpers";
+import config from "../utils/config";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
@@ -26,13 +27,18 @@ const AdminPanel = () => {
   const fetchWaitlist = async (page) => {
     try {
       setLoading(true);
-      const response = await backendActor.getWaitlist(chunkSize, page);
-      if (response.err) {
-        toast.error(response.err);
-        setWaitlist([]);
+      // const response = await backendActor.getWaitlist(chunkSize, page);
+      const response = await fetch(
+        `${config.BACKEND_URL}/waitlist/getWaitlist`
+      );
+      if (response.status === 200) {
+        const { data } = await response.json();
+        setWaitlist(data);
         setLoading(false);
         return;
-      } else if (response.ok) {
+      } else {
+        toast.error(response.error);
+        console.log(response.json());
         setWaitlist(response.ok.data);
         setWaitlistPageSize(response.ok.total_pages);
         setLoading(false);
@@ -46,10 +52,15 @@ const AdminPanel = () => {
   const fetchMessages = async (page) => {
     try {
       setLoading(true);
-      const response = await backendActor.getMessages(chunkSize, page);
-      if (response.err) {
-        toast.error(response.err);
-        setMessages([]);
+      // const response = await backendActor.getMessages(chunkSize, page);
+      const response = await fetch(
+        `${config.BACKEND_URL}/messages/getMessages`
+      );
+      if (response.status === 200) {
+        const { data } = await response.json();
+        console.log(data);
+
+        setMessages(data);
         setLoading(false);
         return;
       } else if (response.ok) {

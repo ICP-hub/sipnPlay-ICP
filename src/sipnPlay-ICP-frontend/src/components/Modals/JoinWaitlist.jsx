@@ -11,6 +11,7 @@ import { useAuth } from "../../utils/useAuthClient";
 import toast from "react-hot-toast";
 import { Principal } from "@dfinity/principal";
 import useDisableScroll from "../../utils/useDisableScroll";
+import config from "../../../../playsipnPlay-ICP-frontend/src/utils/config";
 
 const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
   const { backendActor } = useAuth();
@@ -61,16 +62,31 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
     }
 
     setIsSubmitting(true);
+
     try {
-      const response = await backendActor.joinWaitlist(name, email, icpAddress);
-      if (response.ok) {
-        toast.success(response.ok);
+      const response = await fetch(
+        `${config.BACKEND_URL}/waitlist/sendWaitlist`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            icpAddress,
+          }),
+        }
+      );
+
+      if (response.status === 201) {
+        toast.success("Joined Waitlist Successfully");
         setName("");
         setEmail("");
         setIcpAddress("");
         closeModal();
       } else {
-        toast.error("Error sending response");
+        toast.error("Error Joining Waitlist");
       }
     } catch (err) {
       console.log(err.message);
@@ -143,7 +159,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                  // required
+                    // required
                   />
                 </div>
                 <div className="md:mb-4  ">
@@ -159,7 +175,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                  // required
+                    // required
                   />
                 </div>
                 <div className="md:mb-6 ">
@@ -175,7 +191,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                     id="icpAddress"
                     value={icpAddress}
                     onChange={(e) => setIcpAddress(e.target.value)}
-                  // required
+                    // required
                   />
                 </div>
                 <div className="flex mb-4 justify-center md:justify-end">
