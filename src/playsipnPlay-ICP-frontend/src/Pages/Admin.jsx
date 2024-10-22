@@ -6,28 +6,20 @@ import * as XLSX from "xlsx";
 import PaginatedData from "../components/Admin/PaginatedData";
 import Resources from "../components/Admin/Resources";
 import { Oval } from "react-loader-spinner";
-import { convertNanosecondsToDateTime } from "../../../sipnPlay-ICP-frontend/src/utils/helpers";
 import config from "../utils/config";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
   const [waitlist, setWaitlist] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [waitlistPage, setWaitlistPage] = useState(0);
-  const [waitlistPageSize, setWaitlistPageSize] = useState(0);
-  const [messagelistPageSize, setMessagelistPageSize] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [messagesPage, setMessagesPage] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const { backendActor, logout, principal, isAuthenticated } = useAuth();
 
-  const chunkSize = 10;
-
-  const fetchWaitlist = async (page) => {
+  const fetchWaitlist = async () => {
     try {
       setLoading(true);
-      // const response = await backendActor.getWaitlist(chunkSize, page);
       const response = await fetch(
         `${config.BACKEND_URL}/waitlist/getWaitlist`
       );
@@ -39,8 +31,6 @@ const AdminPanel = () => {
       } else {
         toast.error(response.error);
         console.log(response.json());
-        setWaitlist(response.ok.data);
-        setWaitlistPageSize(response.ok.total_pages);
         setLoading(false);
       }
     } catch (error) {
@@ -49,7 +39,7 @@ const AdminPanel = () => {
     }
   };
 
-  const fetchMessages = async (page) => {
+  const fetchMessages = async () => {
     try {
       setLoading(true);
       // const response = await backendActor.getMessages(chunkSize, page);
@@ -59,13 +49,11 @@ const AdminPanel = () => {
       if (response.status === 200) {
         const { data } = await response.json();
         console.log(data);
-
         setMessages(data);
         setLoading(false);
         return;
-      } else if (response.ok) {
-        setMessages(response.ok.data);
-        setMessagelistPageSize(response.ok.total_pages);
+      } else {
+        toast.error("Error fetching messages")
         setLoading(false);
       }
     } catch (error) {
@@ -106,55 +94,21 @@ const AdminPanel = () => {
     checkApproveStatus();
   }, [isAuthenticated, principal]);
 
+
   useEffect(() => {
     if (isAuthenticated && isLoggedIn) {
       if (activeSection === "waitlist") {
-        fetchWaitlist(waitlistPage);
+        fetchWaitlist();
       } else if (activeSection === "messages") {
-        fetchMessages(messagesPage);
+        fetchMessages();
       }
     }
-  }, [activeSection, waitlistPage, messagesPage, isLoggedIn]);
-
-  const handlePrevWaitlist = () => {
-    if (waitlistPage === 0) {
-      toast.error("No previous pages");
-      return;
-    }
-    setWaitlistPage((prev) => prev - 1);
-  };
-
-  const handleNextWaitlist = () => {
-    if (waitlistPage === Number(waitlistPageSize) - 1) {
-      toast.error("No more pages");
-      return;
-    }
-    setWaitlistPage((prev) => prev + 1);
-  };
-
-  const handlePrevMessage = () => {
-    if (messagesPage === 0) {
-      toast.error("No previous pages");
-      return;
-    }
-    setMessagesPage((prev) => prev - 1);
-  };
-
-  const handleNextMessage = () => {
-    if (messagesPage === Number(messagelistPageSize) - 1) {
-      toast.error("No more pages");
-      return;
-    }
-    setMessagesPage((prev) => prev + 1);
-  };
+  }, [activeSection,  isLoggedIn]);
+ 
 
   const handleDownload = () => {
     const data = activeSection === "waitlist" ? waitlist : messages;
-    const updatedData = data.map((item) => ({
-      ...item,
-      date: convertNanosecondsToDateTime(item.date),
-    }));
-    const worksheet = XLSX.utils.json_to_sheet(updatedData);
+    const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, activeSection);
     XLSX.writeFile(workbook, `${activeSection}.xlsx`);
@@ -216,29 +170,26 @@ const AdminPanel = () => {
         <div className="flex justify-around">
           <button
             onClick={() => setActiveSection("waitlist")}
-            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
-              activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
-            }`}
+            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
+              }`}
           >
             Waitlist
           </button>
           <button
             onClick={() => setActiveSection("messages")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
-              activeSection === "messages"
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "messages"
                 ? "bg-[#EE3EC9] text-white"
                 : "bg-black "
-            }`}
+              }`}
           >
             Messages
           </button>
           <button
             onClick={() => setActiveSection("resources")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${
-              activeSection === "resources"
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${activeSection === "resources"
                 ? "bg-[#EE3EC9] "
                 : "bg-black text-white"
-            }`}
+              }`}
           >
             Resources
           </button>
@@ -258,16 +209,12 @@ const AdminPanel = () => {
             <PaginatedData
               title="Principal"
               data={waitlist}
-              handlePrev={handlePrevWaitlist}
-              handleNext={handleNextWaitlist}
             />
           )}
           {activeSection === "messages" && (
             <PaginatedData
               title="Messages"
               data={messages}
-              handlePrev={handlePrevMessage}
-              handleNext={handleNextMessage}
             />
           )}
           {activeSection === "resources" && <Resources />}

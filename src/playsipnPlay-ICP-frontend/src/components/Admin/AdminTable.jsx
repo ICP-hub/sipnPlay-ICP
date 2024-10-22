@@ -1,5 +1,4 @@
 import React from "react";
-import { convertNanosecondsToDateTime } from "../../../../sipnPlay-ICP-frontend/src/utils/helpers";
 
 const AdminTable = ({ data, title }) => {
   return (
