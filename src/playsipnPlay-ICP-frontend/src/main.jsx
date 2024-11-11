@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { store, persistor } from './utils/redux/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+
 Modal.setAppElement('#root');
 
 ReactDOM.createRoot(document.getElementById('root')).render(

@@ -6,6 +6,7 @@ import { idlFactory, createActor } from "../../../declarations/sipnPlay-ICP-back
 import { idlFactory as ledgerIdlFactory } from "../../../declarations/ledger/index";
 import { PlugMobileProvider } from '@funded-labs/plug-mobile-sdk';
 
+
 const AuthContext = createContext();
 
 const defaultOptions = {
@@ -68,22 +69,15 @@ export const useAuthClient = (options = defaultOptions) => {
             });
           }
           if (provider === "nfid") {
-            authClient.login({
-              identityProvider:
-                process.env.DFX_NETWORK === "ic"
-                  ? `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
-                  : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`,
-              onError: (error) => reject(error),
-              onSuccess: () => {
-                updateClient(authClient);
-                resolve(authClient);
+            const actor = Actor.createActor(idlFactory, {
+              agent,
+              canisterId: "do25a-dyaaa-aaaak-qifua-cai",
+            })
+            const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agentOptions: { identity, verifyQuerySignatures: false } });
+            const ledgerActor1 = createLedgerActor(ledgerCanId, { agent });
+            setLedgerActor(ledgerActor1)
+            setBackendActor(backendActor);
 
-                const backendActor = createActor(process.env.CANISTER_ID_SIPNPLAY_ICP_BACKEND, { agentOptions: { identity, verifyQuerySignatures: false } });
-                const ledgerActor1 = createLedgerActor(ledgerCanId, { agent });
-                setLedgerActor(ledgerActor1)
-                setBackendActor(backendActor);
-              },
-            });
           }
           if (provider === "plug") {
             const isMobile = PlugMobileProvider.isMobileBrowser();
@@ -96,7 +90,7 @@ export const useAuthClient = (options = defaultOptions) => {
                 })
                 await provider.initialize().catch((err) => alert(`err in initialize : ${err}`))
                 if (!provider.isPaired()) {
-                  alert("provider  ot paired")
+                  alert("provider ot paired")
                   await provider.pair().catch(alert)
                 }
                 const agent = await provider.createAgent({

@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import bgImage from "../../assets/images/waitlistBg.png";
 import blackjackLogo from "../../assets/images/blackjack.png";
-import EboolImg from "../../assets/images/8bool.png";
-import bkingImg from "../../assets/images/burgerking.png";
 import Gushgif from "../../assets/images/gush.gif";
 import Game from "./Game";
 import GamesNav from "./GamesNav";
@@ -13,7 +10,7 @@ const GamesList = () => {
   const { isFetching, setIsFetching } = useFetching();
   const [games, setGames] = useState([
     { name: "blackjack", img: blackjackLogo },
-    { name: "gush", img: Gushgif },
+    { name: "off-the-line", img: Gushgif },
     ,
   ]);
 

@@ -3,10 +3,11 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./Pages/Home";
 import BlackJack from "./Pages/BlackJack";
 import { AuthProvider } from "./utils/useAuthClient";
-// import Payment from './Pages/Payment';
 import PrivateLayout from "./Layout/PrivateLayout";
 import AdminPanel from "./Pages/Admin";
-import Gush from "./Pages/Gush";
+import OffTheLine from "./Pages/OffTheLine";
+import TetrisGame from "./Pages/Tetris";
+
 function AllRoutes() {
   return (
     <AuthProvider>
@@ -20,8 +21,9 @@ function AllRoutes() {
           }
         />
         <Route path="/blackjack" element={<BlackJack />} />
+        <Route path="/tetris" element={<TetrisGame />} />
 
-        <Route path="/gush" element={ <Gush /> }
+        <Route path="/off-the-line" element={ <OffTheLine /> }
         />
         <Route path="/admin" element={<AdminPanel />} />
       </Routes>
