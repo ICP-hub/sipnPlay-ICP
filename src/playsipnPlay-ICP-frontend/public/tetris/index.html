@@ -47,6 +47,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        gap: 10px;
+        justify-content: space-between;
       }
 
       .controls button {
@@ -56,7 +58,7 @@
         color: white;
         opacity: 0.8;
         border: 1px solid white;
-        padding: 8px 16px;
+        padding: 14px 28px;
         border-radius: 8px;
       }
 
@@ -65,52 +67,37 @@
       }
 
       .fa-solid {
-        font-size: 300%;
-      }
-
-      .directions,
-      .actions {
-        /* position: absolute; */
-        z-index: 102;
-        bottom: 10%;
+        font-size: 150%;
       }
 
       .directions {
-        left: -20%;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-      }
-
-      #rotate-block {
-        grid-column: 2;
-        grid-row: 1;
-      }
-      #move-down {
-        grid-column: 2;
-        grid-row: 2;
-      }
-      #move-left {
-        grid-column: 1;
-        grid-row: 2;
-      }
-      #move-right {
-        grid-column: 3;
-        grid-row: 2;
+        z-index: 102;
+        display: flex;
+        gap: 8px;
+        margin-top: 20px;
       }
     </style>
   </head>
   <body>
     <div class="game-container">
+      <!-- <div
+        id="score-display"
+        style="color: white; font-size: 24px; margin-bottom: 10px"
+      >
+        Score: <span id="score">0</span>
+      </div> -->
       <canvas width="320" height="640" id="game"></canvas>
       <div class="controls">
         <div class="directions">
-          <button id="rotate-block">Rotate</button>
-          <button id="move-down"><i class="fa-solid fa-caret-down"></i></button>
           <button id="move-left"><i class="fa-solid fa-caret-left"></i></button>
           <button id="move-right">
             <i class="fa-solid fa-caret-right"></i>
           </button>
+          <button id="rotate-block">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+          <button id="move-down"><i class="fa-solid fa-caret-down"></i></button>
+          <button id="pause"><i class="fa-solid fa-pause"></i></button>
         </div>
       </div>
     </div>
@@ -132,6 +119,55 @@
       // @see https://stackoverflow.com/a/1527820/2124254
 
       var score = 0;
+      var bestScore = 0;
+      var isGamePaused = false;
+
+      function togglePause() {
+        if (!gameOver) {
+          isGamePaused = !isGamePaused;
+          if (!isGamePaused) {
+            rAF = requestAnimationFrame(loop); // Resume the game loop
+          }
+        }
+      }
+
+      function togglePause() {
+        if (!gameOver) {
+          isGamePaused = !isGamePaused;
+          if (isGamePaused) {
+            // Draw "Paused" text on the canvas
+            context.fillStyle = "black";
+            context.globalAlpha = 0.75;
+            context.fillRect(0, canvas.height / 2 - 30, canvas.width, 60);
+
+            context.globalAlpha = 1;
+            context.fillStyle = "white";
+            context.font = "32px monospace";
+            context.textAlign = "center";
+            context.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+          } else {
+            rAF = requestAnimationFrame(loop); // Resume the game loop
+          }
+        }
+      }
+
+      // Increment the score by 1
+      function updateScore() {
+        score++;
+
+        if (score > bestScore) {
+          bestScore = score;
+        }
+      }
+
+      // draw the score
+      function drawScore() {
+        context.fillStyle = "white";
+        context.font = "20px monospace";
+        context.textAlign = "left";
+        context.fillText("Score: " + score, 10, 30);
+        context.fillText("Best: " + bestScore, 10, 60);
+      }
       function getRandomInt(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
@@ -225,7 +261,7 @@
         // check for line clears starting from the bottom and working our way up
         for (let row = playfield.length - 1; row >= 0; ) {
           if (playfield[row].every((cell) => !!cell)) {
-            score++;
+            updateScore();
             // drop every row above this one
             for (let r = row; r >= 0; r--) {
               for (let c = 0; c < playfield[r].length; c++) {
@@ -334,8 +370,15 @@
 
       // game loop
       function loop() {
+        if (isGamePaused) {
+          // If the game is paused, exit the function to stop the game loop
+          return;
+        }
         rAF = requestAnimationFrame(loop);
         context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // show the score at the top
+        drawScore();
 
         // draw the playfield
         for (let row = 0; row < 20; row++) {
@@ -381,6 +424,17 @@
           }
         }
       }
+
+      // pause the game loop
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          togglePause();
+        }
+      });
+
+      // Pause on button click
+      var pauseButton = document.getElementById("pause");
+      pauseButton.addEventListener("click", togglePause);
 
       // listen to keyboard events to move the active tetromino
       document.addEventListener("keydown", function (e) {
