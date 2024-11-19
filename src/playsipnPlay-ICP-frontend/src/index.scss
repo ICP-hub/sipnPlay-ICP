@@ -3,29 +3,38 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: "Monckeberg";
-    src: url("./assets/fonts/Monckeberg-Regular.woff") format("woff");
-} 
-
-@font-face {
-    font-family: "Inter";
-    src: url("./assets/fonts/Inter-VariableFont_slnt\,wght.ttf") format("truetype");
-} 
-
-@font-face {
-    font-family: "Adam";
-    src: url("./assets/fonts/Adam-Light.ttf") format("truetype");
-} 
-
-@font-face {
-    font-family: "Monument";
-    src: url("./assets/fonts/MonumentExtended-Regular.otf") format("opentype");
-} 
-  
-body{
-    background-color: black;
+  font-family: "Monckeberg";
+  src: url("./assets/fonts/Monckeberg-Regular.woff") format("woff");
 }
 
-html{
-    scroll-behavior: smooth;
+@font-face {
+  font-family: "Inter";
+  src: url("./assets/fonts/Inter-VariableFont_slnt\,wght.ttf")
+    format("truetype");
+}
+
+@font-face {
+  font-family: "Adam";
+  src: url("./assets/fonts/Adam-Light.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Monument";
+  src: url("./assets/fonts/MonumentExtended-Regular.otf") format("opentype");
+}
+
+body {
+  background-color: black;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* For Internet Explorer 10+ */
+  scrollbar-width: none; /* For Firefox */
 }
