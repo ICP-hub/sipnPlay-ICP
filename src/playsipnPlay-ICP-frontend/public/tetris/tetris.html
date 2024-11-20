@@ -3,7 +3,7 @@
   <head>
     <title>Basic Tetris HTML Game</title>
     <meta charset="UTF-8" />
-    <!-- BELOW IS FOR DISABLING ZOOM ON DOUBLE TAP -->
+    <!-- BELOW IS FOR DISABLING ZOOM ON DOU -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
@@ -113,6 +113,7 @@
       if (isMobileDevice()) {
         document.querySelector(".controls").style.display = "block";
       }
+
       // https://tetris.fandom.com/wiki/Tetris_Guideline
 
       // get a random integer between the range of [min,max]
@@ -158,6 +159,8 @@
         if (score > bestScore) {
           bestScore = score;
         }
+
+        window.parent.postMessage({ score: score }, "*");
       }
 
       // draw the score
@@ -282,6 +285,8 @@
         gameOver = true;
         console.log(score);
 
+        window.parent.postMessage({ type: "save_score", score: score }, "*");
+
         context.fillStyle = "black";
         context.globalAlpha = 0.75;
         context.fillRect(0, canvas.height / 2 - 30, canvas.width, 60);
@@ -366,7 +371,26 @@
       let count = 0;
       let tetromino = getNextTetromino();
       let rAF = null; // keep track of the animation frame so we can cancel it
+      let gameStarted = false;
       let gameOver = false;
+
+      // function startGame() {
+      //   if (!gameStarted) {
+      //     gameStarted = true;
+      //     gameOver = false;
+      //     score = 0;
+      //     tetromino = getNextTetromino(); // Get the first tetromino
+      //     rAF = requestAnimationFrame(loop); // Start the game loop
+      //   }
+      // }
+
+      // function displayStartScreen() {
+      //   context.fillStyle = "white";
+      //   context.font = "36px monospace";
+      //   context.textAlign = "center";
+      //   context.textBaseline = "middle";
+      //   context.fillText("CLICK TO PLAY", canvas.width / 2, canvas.height / 2);
+      // }
 
       // game loop
       function loop() {
@@ -511,7 +535,15 @@
       });
 
       // start the game
-      rAF = requestAnimationFrame(loop);
+      context.fillStyle = "white";
+      context.font = "36px monospace";
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillText("CLICK TO PLAY", canvas.width / 2, canvas.height / 2);
+
+      document.addEventListener("click", () => {
+        rAF = requestAnimationFrame(loop);
+      });
     </script>
   </body>
 </html>

@@ -14,6 +14,7 @@ function encryptData(data, key) {
 }
 
 const Tetris = () => {
+  const [score, setScore] = useState(0);
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -91,6 +92,18 @@ const Tetris = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleScore = (event) => {
+      if (event.data?.type === "save_score") {
+        setScore(event.data.score);
+      }
+    };
+    window.addEventListener("message", handleScore);
+
+    return () => {
+      window.removeEventListener("message", handleScore);
+    };
+  }, [score]);
 
   useEffect(() => {
     console.log("UPDATED BALANCE", userData.balance);
@@ -104,7 +117,7 @@ const Tetris = () => {
         <div>
           <iframe
             title="Tetris Game"
-            src="tetris/index.html"
+            src="tetris/tetris.html"
             style={{ width: "100vw", height: "100vh", border: "none" }}
           />
         </div>
