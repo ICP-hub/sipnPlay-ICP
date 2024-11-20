@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  scroll-behavior: smooth;
+  -ms-overflow-style: none; /* For Internet Explorer 10+ */
+  scrollbar-width: none; /* For Firefox */
+}
+
 @font-face {
   font-family: "Monckeberg";
   src: url("./assets/fonts/Monckeberg-Regular.woff") format("woff");
@@ -29,12 +35,12 @@ body {
 
 html {
   scroll-behavior: smooth;
+  -ms-overflow-style: none; /* For Internet Explorer 10+ */
+  scrollbar-width: none; /* For Firefox */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 .scrollbar-hide {
-  -ms-overflow-style: none; /* For Internet Explorer 10+ */
-  scrollbar-width: none; /* For Firefox */
 }

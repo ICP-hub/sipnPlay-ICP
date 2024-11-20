@@ -39,8 +39,8 @@ const GameDetails = ({ modalIsOpen, closeModal, game }) => {
           <ImCross onClick={closeModal} className="cursor-pointer" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 mt-8">
-          <div className="pe-12">
-            <div className="flex items-center justify-between mb-10">
+          <div className="pe-14 overflow-y-auto max-h-full border-white">
+            <div className="flex items-center justify-between mb-10 overflow-y-auto">
               <div className="flex justify-between items-center gap-6">
                 <img src={game.img} alt={game.name} className="h-[82px]" />
                 <h3 className="font-monckeberg text-xl">{game.name}</h3>
@@ -59,7 +59,7 @@ const GameDetails = ({ modalIsOpen, closeModal, game }) => {
             </div>
           </div>
 
-          <div className="border-l-2 border-white ps-16 overflow-y-auto max-h-[70vh]">
+          <div className="border-l-2 overflow-y-auto max-h-[70vh] ps-14 absolute top-12 left-1/2">
             <h3 className="text-center mx-[9%] mb-32 font-monckeberg text-xl">
               Leaderboard
             </h3>

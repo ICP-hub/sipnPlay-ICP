@@ -91,9 +91,10 @@ const LeaderBoardList = ({ data }) => {
         return (
           <li
             key={user.principal}
-            className={`flex items-center justify-between px-4 py-2 my-4 ${borderClass}`}
+            className={`flex items-center justify-between p-4 my-4 ${borderClass}`}
           >
             <div className="flex items-center">
+              <span className="text-sm mr-2">{index + 1}</span>
               <img
                 src={userProfilePic}
                 alt={user.principal}
@@ -101,7 +102,7 @@ const LeaderBoardList = ({ data }) => {
               />
               <span className="text-sm">{user.principal}</span>
             </div>
-            <span className="text-sm">{user.points} pts.</span>
+            <span className="text-sm text-end">{user.points} pts.</span>
           </li>
         );
       })}
