@@ -8,7 +8,7 @@ import userProfilePic from "../../assets/images/DefaultUserPic.svg";
 import Crown from "../../assets/images/Crown.svg";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "../../../../sipnPlay-ICP-frontend/src/utils/useDisableScroll";
-import LeaderboardTable from "../LeaderboardTable/LeaderboardTable";
+import LeaderBoardList from "../LeaderboardList/LeaderboardList";
 
 const GameDetails = ({ modalIsOpen, closeModal, game }) => {
   const navigate = useNavigate();
@@ -98,7 +98,7 @@ const GameDetails = ({ modalIsOpen, closeModal, game }) => {
             <div className="overflow-auto max-h-[400px]">
               {" "}
               {/* Added scroll */}
-              <LeaderboardTable
+              <LeaderBoardList
                 data={[
                   {
                     principal:
