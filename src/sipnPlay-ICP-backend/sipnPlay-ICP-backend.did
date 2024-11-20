@@ -1,3 +1,2 @@
-service : {
-    "greet": (text) -> (text) query;
-}
+type Result = variant { Ok : nat; Err : text };
+service : { get_balance : () -> (Result) }
