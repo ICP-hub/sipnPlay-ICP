@@ -1,3 +1,7 @@
+set -a
+source .env
+set +a
+
 
 export PRE_MINTED_TOKENS=100000000000000
 
