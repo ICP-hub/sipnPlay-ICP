@@ -80,11 +80,12 @@ pub fn create_user(email: String) -> String {
                 id: caller,
                 email,
             };
-            state.user_data.insert(caller, new_user).unwrap();
+            state.user_data.insert(caller, new_user);
             "User created!".to_string()
         }
     })
 }
+
 
 #[update]
 async fn icrc2_transfer_from(
@@ -421,7 +422,7 @@ async fn join_waitlist(name: String, email: String, icp_address: String) -> Resu
         let mut state = state.borrow_mut();
         match state.waitlist_data.insert(email.clone(), new_waitlist_entry) {
             None => Ok(()), // Successfully inserted
-            Some(_) => Err("Failed to add waitlist entry to stable memory".to_string()),
+            Some(_) => Err("Already joined the Waitlist".to_string()),
         }
         
     });

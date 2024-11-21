@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "setup": "npm i && dfx canister create sipnPlay-ICP-backend && dfx generate sipnPlay-ICP-backend && dfx deploy",
+    "setup": "npm i && dfx canister create sipnplay_icp_backend && dfx generate sipnplay_icp_backend && dfx deploy",
     "start": "vite --port 3000",
     "prebuild": "dfx generate",
     "build": "tsc && vite build",

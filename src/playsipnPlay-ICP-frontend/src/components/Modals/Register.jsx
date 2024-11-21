@@ -4,7 +4,6 @@ import Modal from "react-modal";
 import bgImage from "../../assets/images/waitlistBg.png";
 import alien from "../../assets/images/alien.png";
 import logo from "../../assets/images/logo.png";
-import { ImCross } from "react-icons/im";
 import { useAuth } from "../../utils/useAuthClient";
 import toast from "react-hot-toast";
 import useDisableScroll from "../../../../sipnPlay-ICP-frontend/src/utils/useDisableScroll";
@@ -37,7 +36,7 @@ const Register = ({ setIsRegisterDone, modalIsOpen, setIsOpen }) => {
 
     setIsRegistering(true);
     try {
-      const response = await backendActor.createUser(email);
+      const response = await backendActor.create_user(email);
       if (response !== "User already exists") {
         toast.success("Congrats!");
         setIsOpen(false);

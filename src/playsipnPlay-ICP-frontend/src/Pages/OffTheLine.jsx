@@ -21,7 +21,7 @@ const OffTheLine = () => {
   const userData = useSelector((state) => state.user);
 
   const getBalance = async () => {
-    let balance = await backendActor.get_balance();
+    let balance = await backendActor.get_caller_balance();
     let metaData = null;
     await ledgerActor
       .icrc1_metadata()
@@ -43,7 +43,7 @@ const OffTheLine = () => {
   const getDetails = async () => {
     setIsLoading(true);
     try {
-      const res = await backendActor.getUser();
+      const res = await backendActor.get_user();
       if (res.err === "New user") {
         navigate("/");
         toast.error("Please provide your email");

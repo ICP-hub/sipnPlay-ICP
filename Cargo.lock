@@ -647,7 +647,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sipnPlay-ICP-backend"
+name = "sipnplay_icp_backend"
 version = "0.1.0"
 dependencies = [
  "base64",

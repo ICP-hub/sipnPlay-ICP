@@ -2,7 +2,7 @@ import { AuthClient } from "@dfinity/auth-client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { HttpAgent } from "@dfinity/agent";
 import { createLedgerActor } from "../../../declarations/ledger/index";
-import { idlFactory, createActor } from "../../../declarations/sipnPlay-ICP-backend/index";
+import { idlFactory, createActor } from "../../../declarations/sipnplay_icp_backend/index";
 import { idlFactory as ledgerIdlFactory } from "../../../declarations/ledger/index";
 import { PlugMobileProvider } from '@funded-labs/plug-mobile-sdk';
 
@@ -42,7 +42,7 @@ export const useAuthClient = (options = defaultOptions) => {
     }
   }, [authClient]);
 
-  const ledgerCanId = "cjpyu-kqaaa-aaaap-qhyfq-cai";
+  const ledgerCanId = process.env.CANISTER_ID_TEST_SIPNPLAY;
 
   const login = async (provider) => {
     return new Promise(async (resolve, reject) => {

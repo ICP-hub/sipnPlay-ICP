@@ -34,12 +34,13 @@ const Header = () => {
 
   const getStatus = async () => {
     setIsFetching(true);
-    const response = await backendActor.getUser();
-    if (response.err === "New user") {
+    const response = await backendActor.get_user();
+    console.log("response from get_user ", response )
+    if (response.Err === "New user") {
       setIsFetching(false);
       return { isNewUser: true };
     } else {
-      let balance = await backendActor.get_balance();
+      let balance = await backendActor.get_caller_balance();
       let metaData = null;
       await ledgerActor
         .icrc1_metadata()
@@ -56,7 +57,7 @@ const Header = () => {
       setIsFetching(false);
       return {
         isNewUser: false,
-        email: response.ok.email,
+        email: response.Ok.email,
         balance: parseFloat(amnt),
       };
     }
