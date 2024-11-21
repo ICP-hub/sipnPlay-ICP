@@ -80,11 +80,12 @@ pub fn create_user(email: String) -> String {
                 id: caller,
                 email,
             };
-            state.user_data.insert(caller, new_user).unwrap();
+            state.user_data.insert(caller, new_user);
             "User created!".to_string()
         }
     })
 }
+
 
 #[update]
 async fn icrc2_transfer_from(
