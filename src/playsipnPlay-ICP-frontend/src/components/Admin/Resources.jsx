@@ -78,7 +78,7 @@ const Resources = () => {
   const fetchAdminBalance = async () => {
     setIsLoading(true);
     try {
-      const response = await backendActor.get_balance();
+      const response = await backendActor.get_caller_balance();
       if (response) {
         let metaData = null;
         await ledgerActor

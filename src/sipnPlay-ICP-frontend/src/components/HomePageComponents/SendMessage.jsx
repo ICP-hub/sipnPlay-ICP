@@ -31,27 +31,15 @@ const SendMessage = () => {
 
     try {
       setIsSending(true);
-      const response = await fetch(
-        `${config.BACKEND_URL}/messages/sendMessage`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            email,
-            message,
-          }),
-        }
-      );
-      if (response.status === 201) {
+      const response = await backendActor.send_message(name, email, message);
+      if (response.Err) {
+        toast.error("Error sending message");
+
+      } else {
         toast.success("Message sent successfully");
         setName("");
         setEmail("");
         setMessage("");
-      } else {
-        toast.error("Error sending message");
       }
     } catch (err) {
       console.log(err.message);

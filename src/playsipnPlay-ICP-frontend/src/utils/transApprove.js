@@ -22,7 +22,7 @@ const formatTokenMetaData = (arr) => {
 };
 
 const getBalance = async (backendActor) => {
-  let bal = await backendActor.get_balance();
+  let bal = await backendActor.get_caller_balance();
   return parseInt(bal);
 };
 

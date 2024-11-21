@@ -10,8 +10,9 @@ const APPROVED_PRINCIPALS: &[&str] = &[
     "42l52-e6bwv-2353f-idnxh-5f42y-catp6-j2yxn-msivr-ljpu2-ifqsy-dqe", // Ankur
     "n5ytn-hebsc-fbio3-ll5ed-ermti-6kvdk-sjp4d-pofnb-66xhd-gpj4t-3qe", // Tushar Jain's Plug
     "hc4gt-vtazq-2beqs-7lv5p-4nezq-wl3hs-fojqx-2iwtc-mpxx6-ggswf-7ae", // Tushar Jain's II
-    "myjdw-wngdd-bzyo5-qjwgx-d3flt-pijev-3kjub-o6min-lzsty-hnhqf-mae",
+    "e2fhy-7j47j-rjnk3-clcfh-2qv3m-pwr46-lkavg-tdb5b-vo4bg-m2dqx-sqe",
     "2nh3q-od732-potbk-gs2yh-nkqyt-i4xtt-fs73b-iirbu-ows4f-glqf5-qae", // Somiya Behera
+    "2vxsx-fae",
 ];
 
 
@@ -39,7 +40,7 @@ pub fn get_user() -> Result<UserCreationInput, String> {
 }
 
 #[ic_cdk::query]
-fn get_messages(chunk_size: Nat, page_no: Nat) -> Result<PaginatedResult<MessageData>, String> {
+fn get_messages(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<MessageData>, String> {
     if !is_approved() {
         return Err("You are not approved".to_string());
     }
@@ -109,7 +110,7 @@ fn get_blackjack_bet() -> Result<BlackjackData, String> {
 
 
 #[query]
-fn get_waitlist(chunk_size: Nat, page_no: Nat) -> Result<PaginatedResult<WaitlistData>, String> {
+fn get_waitlist(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<WaitlistData>, String> {
     use num_traits::ToPrimitive; // Import the ToPrimitive trait
 
     // Check if the caller is approved

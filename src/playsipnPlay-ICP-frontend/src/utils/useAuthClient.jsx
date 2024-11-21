@@ -42,7 +42,7 @@ export const useAuthClient = (options = defaultOptions) => {
     }
   }, [authClient]);
 
-  const ledgerCanId = "cjpyu-kqaaa-aaaap-qhyfq-cai";
+  const ledgerCanId = process.env.CANISTER_ID_TEST_SIPNPLAY;
 
   const login = async (provider) => {
     return new Promise(async (resolve, reject) => {

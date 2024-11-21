@@ -32,7 +32,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [icpAddress, setIcpAddress] = useState("");
+  const [icp_address, setIcpAddress] = useState("");
 
   function isValidPrincipal(principalText) {
     try {
@@ -46,7 +46,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name || !email || !icpAddress) {
+    if (!name || !email || !icp_address) {
       toast.error("Please fill all required fields.");
       return;
     }
@@ -56,7 +56,7 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
       return;
     }
 
-    if (isValidPrincipal(icpAddress.trim())) {
+    if (isValidPrincipal(icp_address.trim())) {
       toast.error("Please enter a valid ICP address.");
       return;
     }
@@ -64,29 +64,16 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(
-        `${config.BACKEND_URL}/waitlist/sendWaitlist`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            email,
-            icpAddress,
-          }),
-        }
-      );
-
-      if (response.status === 201) {
-        toast.success("Joined Waitlist Successfully");
+      const response = await backendActor.join_waitlist(name, email, icp_address);
+      console.log(response)
+      if (response.Err) {
+        toast.error(response.Err);
+      } else {
+        toast.success(response.Ok);
         setName("");
         setEmail("");
         setIcpAddress("");
         closeModal();
-      } else {
-        toast.error("Error Joining Waitlist");
       }
     } catch (err) {
       console.log(err.message);
@@ -188,8 +175,8 @@ const JoinWaitlist = ({ modalIsOpen, setIsOpen }) => {
                   <input
                     className="border-b-2 uppercase w-full py-2 mb-3 text-white bg-transparent leading-tight focus:outline-none focus:shadow-outline"
                     type="text"
-                    id="icpAddress"
-                    value={icpAddress}
+                    id="icp_address"
+                    value={icp_address}
                     onChange={(e) => setIcpAddress(e.target.value)}
                     // required
                   />

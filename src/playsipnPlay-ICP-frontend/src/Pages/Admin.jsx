@@ -6,8 +6,6 @@ import * as XLSX from "xlsx";
 import PaginatedData from "../components/Admin/PaginatedData";
 import Resources from "../components/Admin/Resources";
 import { Oval } from "react-loader-spinner";
-import config from "../utils/config";
-import CryptoJS from "crypto-js";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
@@ -17,28 +15,17 @@ const AdminPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const { backendActor, logout, principal, isAuthenticated } = useAuth();
-  const encryptedPrincipal = CryptoJS.AES.encrypt(
-    principal,
-    config.ENCRYPTION_KEY
-  ).toString();
+
   const fetchWaitlist = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${config.BACKEND_URL}/waitlist/getWaitlist`,
-        {
-          headers: {
-            "x-principal": encryptedPrincipal,
-          },
-        }
-      );
-      if (response.status === 200) {
-        const { data } = await response.json();
-        setWaitlist(data);
-        setLoading(false);
-        return;
-      } else {
+      const response = await backendActor.get_waitlist(0,10);
+      console.log("Waitlist response  ",response)
+      if (response.Err) {
         toast.error("Error fetching waitlist data");
+        setLoading(false);
+      } else {
+        setWaitlist(response.Ok.data);
         setLoading(false);
       }
     } catch (error) {
@@ -50,22 +37,14 @@ const AdminPanel = () => {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      // const response = await backendActor.getMessages(chunkSize, page);
-      const response = await fetch(
-        `${config.BACKEND_URL}/messages/getMessages`,
-        {
-          headers: {
-            "x-principal": encryptedPrincipal,
-          },
-        }
-      );
-      if (response.status === 200) {
-        const { data } = await response.json();
-        setMessages(data);
-        setLoading(false);
-        return;
-      } else {
+      const response = await backendActor.get_messages(0,10);
+      console.log("Message response",response);
+      if (response.Err) {
         toast.error("Error fetching messages");
+        setLoading(false);
+       
+      } else {
+        setMessages(response.Ok.data);
         setLoading(false);
       }
     } catch (error) {
@@ -87,12 +66,12 @@ const AdminPanel = () => {
   useEffect(() => {
     const checkApproveStatus = async () => {
       setIsApproving(true);
+      
       if (isAuthenticated) {
         let isApproved = false;
         try {
-          console.log("whoami", await backendActor.whoAmI2());
-
-          isApproved = await backendActor.amIApproved();
+          isApproved = await backendActor.is_approved();
+          console.log("isaprroveddd", principal);
         } catch (error) {
           console.error("Error checking approval status:", error);
         } finally {
