@@ -29,7 +29,7 @@ export MINTER=$(dfx identity get-principal)
 
 export FEATURE_FLAGS=true
 
-dfx identity use controller
+dfx identity use default
 
 dfx deploy test_sipnplay --argument "(variant {Init =
 record {
@@ -48,9 +48,9 @@ record {
      };
  }
 })"
-dfx identity use controller
 
-cargo build --release --target wasm32-unknown-unknown --package sipnPlay-ICP-backend
-candid-extractor target/wasm32-unknown-unknown/release/sipnPlay_ICP_backend.wasm > src/sipnPlay-ICP-backend/sipnPlay-ICP-backend.did
 
-dfx deploy sipnPlay-ICP-backend
+cargo build --release --target wasm32-unknown-unknown --package sipnplay_icp_backend
+candid-extractor target/wasm32-unknown-unknown/release/sipnplay_icp_backend.wasm > src/sipnplay_icp_backend/sipnplay_icp_backend.did
+
+dfx deploy sipnplay_icp_backend

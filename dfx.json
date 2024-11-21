@@ -13,10 +13,10 @@
       "type": "pull",
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     },
-    "sipnPlay-ICP-backend": {
-      "main": "src/sipnPlay-ICP-backend/src/lib.rs",
-      "candid": "src/sipnPlay-ICP-backend/sipnPlay-ICP-backend.did",
-      "package": "sipnPlay-ICP-backend",
+    "sipnplay_icp_backend": {
+      "main": "src/sipnplay_icp_backend/src/lib.rs",
+      "candid": "src/sipnplay_icp_backend/sipnplay_icp_backend.did",
+      "package": "sipnplay_icp_backend",
       "type": "rust",
       "optimize":"cycles"
     },
@@ -27,7 +27,7 @@
     },
     "sipnPlay-ICP-frontend": {
       "dependencies": [
-        "sipnPlay-ICP-backend"
+        "sipnplay_icp_backend"
       ],
       "source": [
         "src/sipnPlay-ICP-frontend/dist"
@@ -37,7 +37,7 @@
     },
     "playsipnPlay-ICP-frontend": {
       "dependencies": [
-        "sipnPlay-ICP-backend"
+        "sipnplay_icp_backend"
       ],
       "source": [
         "src/playsipnPlay-ICP-frontend/dist"

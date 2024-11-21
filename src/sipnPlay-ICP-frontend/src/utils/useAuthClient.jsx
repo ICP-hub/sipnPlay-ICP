@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { HttpAgent } from "@dfinity/agent";
 import {
   createActor,
-} from "../../../declarations/sipnPlay-ICP-backend/index";
+} from "../../../declarations/sipnplay_icp_backend/index";
 
 
 const AuthContext = createContext();
