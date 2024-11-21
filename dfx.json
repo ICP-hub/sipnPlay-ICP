@@ -14,9 +14,16 @@
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     },
     "sipnPlay-ICP-backend": {
-      "main":"src/sipnPlay-ICP-backend/src/main.mo",
-      "type": "motoko",
+      "main": "src/sipnPlay-ICP-backend/src/lib.rs",
+      "candid": "src/sipnPlay-ICP-backend/sipnPlay-ICP-backend.did",
+      "package": "sipnPlay-ICP-backend",
+      "type": "rust",
       "optimize":"cycles"
+    },
+    "test_sipnplay": {
+      "type": "custom",
+      "candid": "src/test_sipnplay/test_sipnplay.did",
+      "wasm": "src/test_sipnplay/ic-icrc1-ledger.wasm.gz"
     },
     "sipnPlay-ICP-frontend": {
       "dependencies": [
