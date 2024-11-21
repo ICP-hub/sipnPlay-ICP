@@ -1,8 +1,14 @@
-use candid::Principal;
-use ic_cdk::{call, caller, update};
+use candid::{Nat, Principal};
+use ic_cdk::api::time;
+use ic_cdk::{api::call::CallResult, call, caller, update};
+use ic_ledger_types::TransferResult;
+use icrc_ledger_types::icrc1::transfer::TransferArg;
+use icrc_ledger_types::{icrc1::account::Account, icrc2::transfer_from::TransferFromArgs};
 
-use crate::types::BalanceOfArgs;
-
+use crate::api_query::is_approved;
+use crate::state_handler::{mutate_state, read_state};
+use crate::{state_handler::STATE, types::BalanceOfArgs, UserCreationInput};
+use crate::{BlackjackData, MessageData, TransferFromResult, WaitlistData};
 
 #[update]
 pub async fn get_caller_balance() -> Result<u128, String> {
@@ -113,8 +119,10 @@ async fn icrc2_transfer_from(
     }
 }
 
+
 #[update]
 async fn deduct_money(amount: Nat) -> Result<String, String> {
+    use num_traits::ToPrimitive;
     let caller_principal = caller();
 
     // Check if the user exists in `user_data`
@@ -180,12 +188,16 @@ async fn deduct_money(amount: Nat) -> Result<String, String> {
     }
 }
 
+
 #[update]
 async fn withdraw_money_from_default(amount: Nat) -> Result<String, String> {
+    use ic_cdk::caller;
+
+    // Get the caller's principal
     let caller_principal = caller();
 
     // Check if the caller is approved
-    if !is_approved(caller_principal) {
+    if !is_approved() {
         return Err("You are not approved".to_string());
     }
 
@@ -196,33 +208,40 @@ async fn withdraw_money_from_default(amount: Nat) -> Result<String, String> {
     let backend_canister_id = Principal::from_text(backend_canister_id_str)
         .map_err(|_| "Invalid backend canister ID".to_string())?;
 
-    // Perform the inter-canister call to transfer tokens
-    let transfer_args = TransferArgs {
+    // Create transfer arguments
+    let transfer_args = TransferArg {
         to: Account {
             owner: caller_principal, // Transfer to the caller
             subaccount: None,
         },
-        fee: None,
-        memo: None,
-        from_subaccount: None,
-        created_at_time: None,
-        amount: amount.clone(),
+        fee: None,              // Optional fee
+        memo: None,             // Optional memo
+        from_subaccount: None,  // Default subaccount
+        created_at_time: None,  // No timestamp
+        amount: amount.clone(), // Transfer amount
     };
 
+    // Perform the inter-canister call to transfer tokens
     let response: CallResult<(TransferResult,)> =
-        call(backend_canister_id, "icrc1_transfer", (transfer_args,)).await;
+        ic_cdk::api::call::call(backend_canister_id, "icrc1_transfer", (transfer_args,)).await;
 
     match response {
-        Ok((TransferResult::Ok(value),)) => {
-            Ok(format!(
-                "Tokens withdrawn from backend successfully: {}",
-                value.to_string()
-            ))
-        }
-        Ok((TransferResult::Err(error),)) => Err(format!("Ledger transfer error: {:?}", error)),
-        Err((code, message)) => Err(format!("Failed to call ledger: {:?} - {}", code, message)),
+        // Successful transfer
+        Ok((TransferResult::Ok(block_index),)) => Ok(format!(
+            "Tokens withdrawn from backend successfully: Block Index: {}",
+            block_index
+        )),
+        // Transfer failed with a specific error
+        Ok((TransferResult::Err(error),)) => Err(error.to_string()),
+        // Inter-canister call failed
+        Err((code, message)) => Err(format!(
+            "Failed to call ledger canister: Code: {:?}, Message: {}",
+            code, message
+        )),
     }
 }
+
+
 
 #[update]
 async fn game_lost() -> Result<String, String> {
@@ -269,29 +288,24 @@ async fn add_money(amount: Nat) -> Result<String, String> {
     let caller_principal = caller();
 
     // Check if the caller exists in `user_data`
-    let user_exists = STATE.with(|state| {
-        let state = state.borrow();
-        state.user_data.contains_key(&caller_principal)
-    });
-
+    let user_exists = read_state(|state| state.user_data.contains_key(&caller_principal));
     if !user_exists {
         return Err("User not found".to_string());
     }
 
-    // Check if the caller exists in `blackjack_bet`
-    let bet_record = STATE.with(|state| {
-        let state = state.borrow();
-        state.blackjack_bet.get(&caller_principal).cloned()
-    });
+    // Fetch the caller's blackjack bet data
+    let bet_data = read_state(|state| state.blackjack_bet.get(&caller_principal));
 
-    let bet_data = match bet_record {
+    // Handle missing bet record
+    let bet_data = match bet_data {
         Some(data) => data,
         None => return Err("User not found in the bet record".to_string()),
     };
 
     // Ensure the amount is not more than 2.5 times the bet amount
     let bet_amount = Nat::from(bet_data.amount);
-    let threshold = bet_amount.clone() * Nat::from(25) / Nat::from(10); // 2.5x threshold
+    let threshold = bet_amount.clone() * Nat::from(25u32) / Nat::from(10u32); // 2.5x threshold
+
 
     if amount > threshold {
         return Err("fraud".to_string());
@@ -304,27 +318,28 @@ async fn add_money(amount: Nat) -> Result<String, String> {
     let backend_canister_id = Principal::from_text(backend_canister_id_str)
         .map_err(|_| "Invalid backend canister ID".to_string())?;
 
-    // Perform the inter-canister call to transfer tokens
-    let transfer_args = TransferArgs {
+    // Create transfer arguments
+    let transfer_args = TransferArg {
         to: Account {
             owner: caller_principal, // Transfer to the caller
             subaccount: None,
         },
-        fee: None,
-        memo: None,
-        from_subaccount: None,
-        created_at_time: None,
-        amount: amount.clone(),
+        fee: None,              // Optional fee
+        memo: None,             // Optional memo
+        from_subaccount: None,  // Default subaccount
+        created_at_time: None,  // No timestamp
+        amount: amount.clone(), // Transfer amount
     };
 
+    // Perform the inter-canister call to transfer tokens
     let response: CallResult<(TransferResult,)> =
-        call(backend_canister_id, "icrc1_transfer", (transfer_args,)).await;
+        ic_cdk::api::call::call(backend_canister_id, "icrc1_transfer", (transfer_args,)).await;
 
     match response {
+        // Successful transfer
         Ok((TransferResult::Ok(_block_index),)) => {
             // Reset the user's blackjack bet amount to 0
-            STATE.with(|state| {
-                let mut state = state.borrow_mut();
+            mutate_state(|state| {
                 state.blackjack_bet.insert(
                     caller_principal,
                     BlackjackData {
@@ -332,7 +347,6 @@ async fn add_money(amount: Nat) -> Result<String, String> {
                         amount: 0, // Reset amount to 0
                     },
                 )
-                .expect("Failed to update bet record");
             });
 
             Ok(format!(
@@ -340,10 +354,20 @@ async fn add_money(amount: Nat) -> Result<String, String> {
                 amount.to_string()
             ))
         }
-        Ok((TransferResult::Err(error),)) => Err(format!("Ledger transfer error: {:?}", error)),
-        Err((code, message)) => Err(format!("Failed to call ledger: {:?} - {}", code, message)),
+        // Transfer failed with a specific error
+        Ok((TransferResult::Err(error),)) => Err(error.to_string()),
+        // Inter-canister call failed
+        Err((code, message)) => Err(format!(
+            "Failed to call ledger canister: Code: {:?}, Message: {}",
+            code, message
+        )),
     }
 }
+
+
+
+
+
 
 #[update]
 async fn send_message(name: String, email: String, message: String) -> Result<String, String> {
@@ -363,10 +387,11 @@ async fn send_message(name: String, email: String, message: String) -> Result<St
     // Insert into stable memory
     let insert_result = STATE.with(|state| {
         let mut state = state.borrow_mut();
-        state
-            .message_data
-            .insert(email.clone(), new_message)
-            .map_err(|_| "Failed to add message to stable memory".to_string())
+        match state.message_data.insert(email.clone(), new_message) {
+            None => Ok(()), // Insertion was successful
+            Some(_) => Err("Failed to add message to stable memory".to_string()),
+        }
+        
     });
 
     // Return appropriate message
@@ -394,10 +419,11 @@ async fn join_waitlist(name: String, email: String, icp_address: String) -> Resu
     // Add to stable memory
     let insert_result = STATE.with(|state| {
         let mut state = state.borrow_mut();
-        state
-            .waitlist_data
-            .insert(email.clone(), new_waitlist_entry)
-            .map_err(|_| "Failed to add waitlist entry to stable memory".to_string())
+        match state.waitlist_data.insert(email.clone(), new_waitlist_entry) {
+            None => Ok(()), // Successfully inserted
+            Some(_) => Err("Failed to add waitlist entry to stable memory".to_string()),
+        }
+        
     });
 
     // Return appropriate message

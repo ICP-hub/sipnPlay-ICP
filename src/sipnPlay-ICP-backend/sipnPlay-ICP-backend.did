@@ -1,2 +1,47 @@
-type Result = variant { Ok : nat; Err : text };
-service : { get_balance : () -> (Result) }
+type BlackjackData = record { id : principal; amount : nat64 };
+type MessageData = record {
+  date : int64;
+  name : text;
+  email : text;
+  message : text;
+};
+type PaginatedResult = record {
+  data : vec MessageData;
+  total_pages : nat;
+  current_page : nat;
+};
+type PaginatedResult_1 = record {
+  data : vec WaitlistData;
+  total_pages : nat;
+  current_page : nat;
+};
+type Result = variant { Ok : text; Err : text };
+type Result_1 = variant { Ok : nat; Err : text };
+type Result_2 = variant { Ok : BlackjackData; Err : text };
+type Result_3 = variant { Ok : PaginatedResult; Err : text };
+type Result_4 = variant { Ok : UserCreationInput; Err : text };
+type Result_5 = variant { Ok : PaginatedResult_1; Err : text };
+type UserCreationInput = record { id : principal; email : text };
+type WaitlistData = record {
+  date : int64;
+  name : text;
+  icp_address : text;
+  email : text;
+};
+service : () -> {
+  add_money : (nat) -> (Result);
+  create_user : (text) -> (text);
+  deduct_money : (nat) -> (Result);
+  game_lost : () -> (Result);
+  get_backend_balance : () -> (Result_1);
+  get_blackjack_bet : () -> (Result_2) query;
+  get_caller_balance : () -> (Result_1);
+  get_messages : (nat, nat) -> (Result_3) query;
+  get_user : () -> (Result_4) query;
+  get_waitlist : (nat, nat) -> (Result_5) query;
+  icrc2_transfer_from : (principal, principal, principal, nat) -> (Result_1);
+  is_approved : () -> (bool) query;
+  join_waitlist : (text, text, text) -> (Result);
+  send_message : (text, text, text) -> (Result);
+  withdraw_money_from_default : (nat) -> (Result);
+}

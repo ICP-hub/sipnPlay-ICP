@@ -8,11 +8,11 @@ use std::borrow::Cow;
 use crate::types::*;
 
 // Define Memory Types
-type Memory = VirtualMemory<DefaultMemoryImpl>;
-type BlackjackBetMap = StableBTreeMap<Principal, BlackjackData, Memory>; // Map Principal to UserData
-type UserDataMap= StableBTreeMap<Principal, UserCreationInput, Memory>; // Map Principal to Elem
-type MessageDataMap = StableBTreeMap<String, MessageData, Memory>; // Map String to MessageData
-type WaitlistDataMap = StableBTreeMap<String, WaitlistData, Memory>; // Map String to WaitlistData
+pub type Memory = VirtualMemory<DefaultMemoryImpl>;
+pub type BlackjackBetMap = StableBTreeMap<Principal, BlackjackData, Memory>;
+pub type UserDataMap = StableBTreeMap<Principal, UserCreationInput, Memory>;
+pub type MessageDataMap = StableBTreeMap<String, MessageData, Memory>;
+pub type WaitlistDataMap = StableBTreeMap<String, WaitlistData, Memory>;
 
 // Memory IDs for stable storage
 const USER_DATA_MEMORY_ID: MemoryId = MemoryId::new(0);
@@ -20,7 +20,7 @@ const BLACKJACK_BET_MEMORY_ID: MemoryId = MemoryId::new(1);
 const MESSAGE_DATA_MEMORY_ID: MemoryId = MemoryId::new(2);
 const WAITLIST_DATA_MEMORY_ID: MemoryId = MemoryId::new(3);
 
-// Thread-local state
+// Thread-local memory manager
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> = RefCell::new(
         MemoryManager::init(DefaultMemoryImpl::default())
@@ -44,7 +44,62 @@ pub struct State {
     pub waitlist_data: WaitlistDataMap,
 }
 
-// Implement Storable for UserData
+// State Initialization
+#[ic_cdk::init]
+fn init() {
+    STATE.with(|state| {
+        let mut state = state.borrow_mut();
+        state.user_data = init_user_data_map();
+        state.blackjack_bet = init_blackjack_bet_map();
+        state.message_data = init_message_data_map();
+        state.waitlist_data = init_waitlist_data_map();
+    });
+}
+
+// Initialize each map
+pub fn init_user_data_map() -> UserDataMap {
+    UserDataMap::init(get_user_data_memory())
+}
+
+pub fn init_blackjack_bet_map() -> BlackjackBetMap {
+    BlackjackBetMap::init(get_blackjack_bet_memory())
+}
+
+pub fn init_message_data_map() -> MessageDataMap {
+    MessageDataMap::init(get_message_data_memory())
+}
+
+pub fn init_waitlist_data_map() -> WaitlistDataMap {
+    WaitlistDataMap::init(get_waitlist_data_memory())
+}
+
+// Memory accessors
+pub fn get_user_data_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(USER_DATA_MEMORY_ID))
+}
+
+pub fn get_blackjack_bet_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(BLACKJACK_BET_MEMORY_ID))
+}
+
+pub fn get_message_data_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(MESSAGE_DATA_MEMORY_ID))
+}
+
+pub fn get_waitlist_data_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(WAITLIST_DATA_MEMORY_ID))
+}
+
+// Helper functions for state read/mutation
+pub fn read_state<R>(f: impl FnOnce(&State) -> R) -> R {
+    STATE.with(|cell| f(&cell.borrow()))
+}
+
+pub fn mutate_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
+    STATE.with(|cell| f(&mut cell.borrow_mut()))
+}
+
+// Implement Storable for BlackjackData
 impl Storable for BlackjackData {
     fn to_bytes(&self) -> Cow<[u8]> {
         Cow::Owned(Encode!(self).unwrap())
@@ -57,7 +112,7 @@ impl Storable for BlackjackData {
     const BOUND: ic_stable_structures::storable::Bound = ic_stable_structures::storable::Bound::Unbounded;
 }
 
-// Implement Storable for Elem
+// Implement Storable for UserCreationInput
 impl Storable for UserCreationInput {
     fn to_bytes(&self) -> Cow<[u8]> {
         Cow::Owned(Encode!(self).unwrap())
@@ -94,33 +149,4 @@ impl Storable for WaitlistData {
     }
 
     const BOUND: ic_stable_structures::storable::Bound = ic_stable_structures::storable::Bound::Unbounded;
-}
-
-// Initialize memory for each map
-pub fn init_user_data_map() -> UserDataMap {
-    MEMORY_MANAGER.with(|mm| UserDataMap::init(mm.borrow().get(USER_DATA_MEMORY_ID)))
-}
-
-pub fn init_blackjack_bet_map() -> BlackjackBetMap {
-    MEMORY_MANAGER.with(|mm| BlackjackBetMap::init(mm.borrow().get(BLACKJACK_BET_MEMORY_ID)))
-}
-
-pub fn init_message_data_map() -> MessageDataMap {
-    MEMORY_MANAGER.with(|mm| MessageDataMap::init(mm.borrow().get(MESSAGE_DATA_MEMORY_ID)))
-}
-
-pub fn init_waitlist_data_map() -> WaitlistDataMap {
-    MEMORY_MANAGER.with(|mm| WaitlistDataMap::init(mm.borrow().get(WAITLIST_DATA_MEMORY_ID)))
-}
-
-// State initialization
-#[ic_cdk::init]
-fn init() {
-    STATE.with(|state| {
-        let mut state = state.borrow_mut();
-        state.user_data = init_user_data_map();
-        state.blackjack_bet = init_blackjack_bet_map();
-        state.message_data = init_message_data_map();
-        state.waitlist_data = init_waitlist_data_map();
-    });
 }

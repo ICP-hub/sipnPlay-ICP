@@ -658,6 +658,8 @@ dependencies = [
  "ic-ledger-types",
  "ic-stable-structures",
  "icrc-ledger-types",
+ "num-bigint",
+ "num-traits",
  "serde",
  "serde_bytes",
  "serde_json",

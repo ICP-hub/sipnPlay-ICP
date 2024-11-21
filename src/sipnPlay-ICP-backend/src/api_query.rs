@@ -1,3 +1,10 @@
+use candid::{Nat, Principal};
+use ic_cdk::{caller, query};
+use num_traits::ToPrimitive;
+
+
+use crate::{state_handler::STATE, types::{MessageData, PaginatedResult, UserCreationInput}, BlackjackData, WaitlistData};
+
 const APPROVED_PRINCIPALS: &[&str] = &[
     "oxj2h-r6fbj-hqtcn-fv7ye-yneeb-ca3se-c6s42-imvp7-juu33-ovnix-mae", // Paras
     "42l52-e6bwv-2353f-idnxh-5f42y-catp6-j2yxn-msivr-ljpu2-ifqsy-dqe", // Ankur
@@ -7,12 +14,10 @@ const APPROVED_PRINCIPALS: &[&str] = &[
     "2nh3q-od732-potbk-gs2yh-nkqyt-i4xtt-fs73b-iirbu-ows4f-glqf5-qae", // Somiya Behera
 ];
 
-pub const CUSTOM_LEDGER: &str = "cjpyu-kqaaa-aaaap-qhyfq-cai";
 
-pub const PAYMENT_ADDRESS: Principal = Principal::from_text("ent7t-2yaaa-aaaap-qhtcq-cai").unwrap();
 
 // Function to check if the caller is approved
-#[ic_cdk_macros::query]
+#[ic_cdk::query]
 pub fn is_approved() -> bool {
     let caller_principal = caller(); 
     APPROVED_PRINCIPALS
@@ -20,7 +25,7 @@ pub fn is_approved() -> bool {
         .any(|&approved| Principal::from_text(approved).unwrap() == caller_principal)
 }
 
-#[query]
+#[ic_cdk::query]
 pub fn get_user() -> Result<UserCreationInput, String> {
     let caller = ic_cdk::caller();
     STATE.with(|state| {
@@ -33,11 +38,8 @@ pub fn get_user() -> Result<UserCreationInput, String> {
     })
 }
 
-#[query]
-async fn get_messages(chunk_size: Nat, page_no: Nat) -> Result<PaginatedResult<MessageData>, String> {
-    let caller_principal = caller();
-
-    // Check if the caller is approved
+#[ic_cdk::query]
+fn get_messages(chunk_size: Nat, page_no: Nat) -> Result<PaginatedResult<MessageData>, String> {
     if !is_approved() {
         return Err("You are not approved".to_string());
     }
@@ -52,21 +54,23 @@ async fn get_messages(chunk_size: Nat, page_no: Nat) -> Result<PaginatedResult<M
             .collect()
     });
 
-    // Check for empty data
     if entries.is_empty() {
         return Err("No messages found".to_string());
     }
 
-    // Paginate the data
-    let total_pages = (entries.len() as u64 + chunk_size.0 - 1) / chunk_size.0;
-    let total_pages_nat = Nat::from(total_pages);
+    // Convert `Nat` to `usize`
+    let chunk_size_usize = chunk_size.0.to_usize().ok_or("Chunk size is too large for usize")?;
+    let page_no_usize = page_no.0.to_usize().ok_or("Page number is too large for usize")?;
 
-    if page_no.0 >= total_pages {
+    // Calculate total pages
+    let total_pages = (entries.len() + chunk_size_usize - 1) / chunk_size_usize;
+    if page_no_usize >= total_pages {
         return Err("Page not found".to_string());
     }
 
-    let start_index = (page_no.0 * chunk_size.0) as usize;
-    let end_index = ((start_index as u64 + chunk_size.0).min(entries.len() as u64)) as usize;
+    // Paginate the data
+    let start_index = page_no_usize * chunk_size_usize;
+    let end_index = (start_index + chunk_size_usize).min(entries.len());
 
     let paginated_data = entries[start_index..end_index]
         .iter()
@@ -76,10 +80,12 @@ async fn get_messages(chunk_size: Nat, page_no: Nat) -> Result<PaginatedResult<M
     // Return the paginated result
     Ok(PaginatedResult {
         data: paginated_data,
-        current_page: page_no.clone() + Nat::from(1),
-        total_pages: total_pages_nat,
+        current_page: Nat::from(page_no_usize + 1),
+        total_pages: Nat::from(total_pages),
     })
 }
+
+
 
 #[query]
 fn get_blackjack_bet() -> Result<BlackjackData, String> {
@@ -91,7 +97,7 @@ fn get_blackjack_bet() -> Result<BlackjackData, String> {
             .borrow()
             .blackjack_bet
             .get(&caller_principal)
-            .cloned()
+            .map(|data| data.clone()) // Use map to clone the data if it exists
     });
 
     // Return the result or an error message
@@ -101,9 +107,10 @@ fn get_blackjack_bet() -> Result<BlackjackData, String> {
     }
 }
 
+
 #[query]
-async fn get_waitlist(chunk_size: Nat, page_no: Nat) -> Result<PaginatedResult<WaitlistData>, String> {
-    let caller_principal = caller();
+fn get_waitlist(chunk_size: Nat, page_no: Nat) -> Result<PaginatedResult<WaitlistData>, String> {
+    use num_traits::ToPrimitive; // Import the ToPrimitive trait
 
     // Check if the caller is approved
     if !is_approved() {
@@ -125,16 +132,19 @@ async fn get_waitlist(chunk_size: Nat, page_no: Nat) -> Result<PaginatedResult<W
         return Err("No members found".to_string());
     }
 
-    // Paginate the data
-    let total_pages = (entries.len() as u64 + chunk_size.0 - 1) / chunk_size.0;
-    let total_pages_nat = Nat::from(total_pages);
+    // Convert `Nat` to `usize` using `ToPrimitive`
+    let chunk_size_usize = chunk_size.0.to_usize().ok_or("Chunk size is too large for usize")?;
+    let page_no_usize = page_no.0.to_usize().ok_or("Page number is too large for usize")?;
 
-    if page_no.0 >= total_pages {
+    // Calculate total pages
+    let total_pages = (entries.len() + chunk_size_usize - 1) / chunk_size_usize;
+    if page_no_usize >= total_pages {
         return Err("Page not found".to_string());
     }
 
-    let start_index = (page_no.0 * chunk_size.0) as usize;
-    let end_index = ((start_index as u64 + chunk_size.0).min(entries.len() as u64)) as usize;
+    // Paginate the data
+    let start_index = page_no_usize * chunk_size_usize;
+    let end_index = (start_index + chunk_size_usize).min(entries.len());
 
     let paginated_data = entries[start_index..end_index]
         .iter()
@@ -144,7 +154,8 @@ async fn get_waitlist(chunk_size: Nat, page_no: Nat) -> Result<PaginatedResult<W
     // Return the paginated result
     Ok(PaginatedResult {
         data: paginated_data,
-        current_page: page_no.clone() + Nat::from(1),
-        total_pages: total_pages_nat,
+        current_page: Nat::from(page_no_usize + 1),
+        total_pages: Nat::from(total_pages),
     })
 }
+
