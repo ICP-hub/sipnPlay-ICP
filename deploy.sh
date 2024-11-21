@@ -49,8 +49,8 @@ record {
  }
 })"
 dfx identity use controller
-
 cargo build --release --target wasm32-unknown-unknown --package sipnPlay-ICP-backend
+
 candid-extractor target/wasm32-unknown-unknown/release/sipnPlay_ICP_backend.wasm > src/sipnPlay-ICP-backend/sipnPlay-ICP-backend.did
 
 dfx deploy sipnPlay-ICP-backend

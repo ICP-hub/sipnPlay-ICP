@@ -43,7 +43,7 @@ window.addEventListener("resize", function () {
   screenHeight = window.innerHeight;
 
   // Re-initialize or update the game screen size
-  aw.resize(screenWidth, screenHeight); // You may need to call this depending on the framework you are using
+  aw.resize(screenWidth, screenHeight);
 });
 
 // Disable mouse wheel scrolling
