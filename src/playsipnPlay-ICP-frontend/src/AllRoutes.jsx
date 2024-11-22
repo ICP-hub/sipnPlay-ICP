@@ -7,7 +7,7 @@ import PrivateLayout from "./Layout/PrivateLayout";
 import AdminPanel from "./Pages/Admin";
 import OffTheLine from "./Pages/OffTheLine";
 import TetrisGame from "./Pages/Tetris";
-import NotFound from "../../sipnPlay-ICP-frontend/src/Pages/NotFound";
+import NotFound from "./Pages/NotFound";
 
 function AllRoutes() {
   return (
@@ -26,7 +26,9 @@ function AllRoutes() {
 
         <Route path="/off-the-line" element={<OffTheLine />} />
         <Route path="/admin" element={<AdminPanel />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="/*" element={<PrivateLayout>
+          <NotFound />
+        </PrivateLayout>} />
       </Routes>
     </AuthProvider>
   );

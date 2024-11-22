@@ -18,7 +18,9 @@ function AllRoutes() {
             </PrivateLayout>
           }
         />
-        <Route path="*" element={<NotFound />} />
+        <Route path="/*" element={<PrivateLayout>
+          <NotFound />
+        </PrivateLayout>} />
       </Routes>
     </AuthProvider>
   );

@@ -8,6 +8,7 @@ import Register from "../Modals/Register";
 import { useDispatch } from "react-redux";
 import { addUserData, removeUserData } from "../../utils/redux/userSlice";
 import { useFetching } from "../../utils/fetchingContext";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -35,7 +36,7 @@ const Header = () => {
   const getStatus = async () => {
     setIsFetching(true);
     const response = await backendActor.get_user();
-    console.log("response from get_user ", response )
+    console.log("response from get_user ", response)
     if (response.Err === "New user") {
       setIsFetching(false);
       return { isNewUser: true };
@@ -88,12 +89,14 @@ const Header = () => {
   return (
     <nav className="relative z-20 text-white bg-gradient-to-r from-[#FFFFFF00] to-[#9999992B] shadow-lg px-[9%] py-4 flex justify-between items-center ">
       <div className="flex items-center">
-        <img
-          src={logo}
-          alt="Logo"
-          className="md:h-[50px] w-[132px] md:w-[167px] lg:w-[200px]"
-          draggable="false"
-        />
+        <Link to="/">
+          <img
+            src={logo}
+            alt="Logo"
+            className="md:h-[50px] w-[132px] md:w-[167px] lg:w-[200px]"
+            draggable="false"
+          />
+        </Link>
       </div>
 
       <Register
