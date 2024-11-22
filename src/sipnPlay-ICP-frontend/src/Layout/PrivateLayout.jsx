@@ -1,12 +1,12 @@
-import React from 'react';
-import Header from '../components/Header/Header';
-import Footer from '../components/Footer/Footer';
+import React from "react";
+import Header from "../components/Header/Header";
+import Footer from "../components/Footer/Footer";
 
 const PrivateLayout = ({ children }) => {
   return (
-    <div className='overflow-hidden'>
+    <div className="overflow-hidden min-h-screen">
       <Header />
-      <main>{children}</main>
+      <main className="flex-grow">{children}</main>
       <Footer />
     </div>
   );

@@ -103,7 +103,7 @@ const Tetris = () => {
     return () => {
       window.removeEventListener("message", handleScore);
     };
-  }, [score]);
+  }, []);
 
   useEffect(() => {
     console.log("UPDATED BALANCE", userData.balance);

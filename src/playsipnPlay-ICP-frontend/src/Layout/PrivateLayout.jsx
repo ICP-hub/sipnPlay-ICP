@@ -6,9 +6,9 @@ import { FetchingProvider } from "../utils/fetchingContext";
 const PrivateLayout = ({ children }) => {
   return (
     <FetchingProvider>
-      <div className="overflow-hidden">
+      <div className="overflow-hidden flex flex-col min-h-screen">
         <Header />
-        <main>{children}</main>
+        <main className="flex-grow">{children}</main>
         <Footer />
       </div>
     </FetchingProvider>

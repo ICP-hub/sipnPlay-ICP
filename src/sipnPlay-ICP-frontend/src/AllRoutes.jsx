@@ -4,6 +4,7 @@ import Home from "./Pages/Home";
 import { AuthProvider } from "./utils/useAuthClient";
 // import Payment from './Pages/Payment';
 import PrivateLayout from "./Layout/PrivateLayout";
+import NotFound from "./Pages/NotFound";
 
 function AllRoutes() {
   return (
@@ -17,6 +18,7 @@ function AllRoutes() {
             </PrivateLayout>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AuthProvider>
   );
