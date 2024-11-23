@@ -1,4 +1,3 @@
-import React from "react";
 // import React from "react";
 // import logo from "../../assets/images/logo.png";
 // import AnimationButton from "../../common/AnimationButton";
@@ -167,7 +166,7 @@ const GameDetails = ({ modalIsOpen, closeModal, game }) => {
   const navigate = useNavigate();
   useDisableScroll(modalIsOpen);
 
-  const { backendActor, principal } = useAuth();
+  const { backendActor } = useAuth();
 
   const [tetrisLeaderboard, setTetrisLeaderboard] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -176,11 +175,11 @@ const GameDetails = ({ modalIsOpen, closeModal, game }) => {
   const fetchTetrisLeaderboard = async () => {
     try {
       const leaderboardResponse = await backendActor.get_tetris_leaderboard();
-      const userleaderboardResponse = await backendActor.get_loggedin_user();
+      const userleaderboardResponse = await backendActor.get_logged_in_user_leaderboard();
       console.log("Tetris Leaderboard: ", leaderboardResponse);
-      console.log("User Leaderboard: ", userleaderboardResponse);
+      console.log("User Tetris Leaderboard: ", userleaderboardResponse);
       if(leaderboardResponse.Err){
-        console.error("Error fetching Tetris Leaderboard:", leaderboardResponse.Err);
+        console.error("Error fetching Tetris Leaderboard", leaderboardResponse.Err);
         toast.error("Error fetching Tetris Leaderboard");
         return
       }else{
@@ -189,8 +188,8 @@ const GameDetails = ({ modalIsOpen, closeModal, game }) => {
         }
       }
       if(userleaderboardResponse.Err){
-        console.error("Error fetching Tetris Leaderboard:", userleaderboardResponse.Err);
-        toast.error("Error fetching Tetris Leaderboard");
+        console.error("Error fetching User Tetris Leaderboard:", userleaderboardResponse.Err);
+        toast.error("Error fetching User Tetris Leaderboard");
         return
       }else{
         if(userleaderboardResponse.Ok){

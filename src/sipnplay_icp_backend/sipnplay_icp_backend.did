@@ -42,7 +42,7 @@ service : () -> {
   get_blackjack_bet : () -> (Result_3) query;
   get_caller_balance : () -> (Result_2);
   get_current_principal : () -> (text) query;
-  get_loggedin_user : () -> (Result_4) query;
+  get_logged_in_user_leaderboard : () -> (Result_4) query;
   get_messages : (nat, nat) -> (Result_5) query;
   get_principals : () -> (vec text) query;
   get_tetris_leaderboard : () -> (Result_6) query;

@@ -20,6 +20,7 @@ const Tetris = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
   const getBalance = async () => {
     let balance = await backendActor.get_caller_balance();
@@ -80,6 +81,30 @@ const Tetris = () => {
     return resultObject;
   };
 
+  // 
+  const checkUserScore = async () => {
+    let bestScore = 0;
+    const userLeaderboard = await backendActor.get_logged_in_user_leaderboard();
+    if(userLeaderboard.Err){
+      console.error("Error fetching User Tetris Leaderboard:", userLeaderboard.Err);
+      toast.error("Error fetching User Tetris Leaderboard");
+      return
+    }else if(userLeaderboard == null){
+      console.log("User did not play the Tetris Game!");
+      bestScore = score;
+    }else{
+      if(userLeaderboard.Ok && userLeaderboard.Ok.score){
+        // Check the new Score with Previous Score.
+        if(score > userLeaderboard.Ok.score) {
+          bestScore = score;
+        }else{
+          bestScore = userLeaderboard.Ok.score;
+         }
+      }
+    }
+    return bestScore;
+  }
+
   useEffect(() => {
     if (!userData.id || !userData.email) {
       toast.error("You are not logged in! ");
@@ -102,7 +127,7 @@ const Tetris = () => {
 
     return () => {
       window.removeEventListener("message", handleScore);
-    };
+    };    
   }, []);
 
   useEffect(() => {

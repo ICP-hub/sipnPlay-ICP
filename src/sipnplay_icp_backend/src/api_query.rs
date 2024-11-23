@@ -197,7 +197,7 @@ pub fn get_tetris_leaderboard() -> Result<Vec<TetrisLeaderboardData>, String> {
 
 // Get the logged-in user
 #[ic_cdk::query]
-pub fn get_loggedin_user() -> Result<TetrisLeaderboardData, String> {
+pub fn get_logged_in_user_leaderboard() -> Result<TetrisLeaderboardData, String> {
     
     // Get the caller's principal
     let principal = caller();
