@@ -37,7 +37,7 @@ const BlackJack = () => {
       });
 
     let amnt = parseFloat(
-      Number(balance) *
+      Number(balance.Ok) *
         Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
     );
     dispatch(updateBalance({ balance: amnt }));
@@ -48,7 +48,8 @@ const BlackJack = () => {
     setIsLoading(true);
     try {
       const res = await backendActor.get_user();
-      if (res.err === "New user") {
+      console.log(res)
+      if (!res.Ok) {
         navigate("/");
         toast.error("Please provide your email");
       } else {
@@ -58,21 +59,20 @@ const BlackJack = () => {
         dispatch(
           addUserData({
             id: principal.toString(),
-            email: res.ok.email,
+            email: res.Ok.email,
             balance: amnt,
           })
         );
 
         localStorage.setItem("blackjackBalance", encryptedBalance);
 
-        if (amnt === 0) {
-          navigate("/");
-          toast.error("Please top up your account");
-        }
-        console.log("balance recieved", amnt);
+        // if (amnt === 0) {
+        //   navigate("/");
+        //   toast.error("Please top up your account");
+        // }
       }
-    } catch {
-      console.log("getDetails Error");
+    } catch(err) {
+      console.log(err);
     } finally {
       setIsLoading(false);
     }

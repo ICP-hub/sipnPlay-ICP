@@ -1,6 +1,6 @@
 export PRE_MINTED_TOKENS=100000000000000
 
-export DEFAULT=33sjo-rytgq-qwn6x-tevi6-zc2a3-ogpi2-23xiz-3k7ih-rkjif-xwrpy-aqe
+export DEFAULT=n5ytn-hebsc-fbio3-ll5ed-ermti-6kvdk-sjp4d-pofnb-66xhd-gpj4t-3qe
 
 export TRANSFER_FEE=0
 
