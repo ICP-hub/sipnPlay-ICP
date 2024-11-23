@@ -13,12 +13,14 @@ pub type BlackjackBetMap = StableBTreeMap<Principal, BlackjackData, Memory>;
 pub type UserDataMap = StableBTreeMap<Principal, UserCreationInput, Memory>;
 pub type MessageDataMap = StableBTreeMap<String, MessageData, Memory>;
 pub type WaitlistDataMap = StableBTreeMap<String, WaitlistData, Memory>;
+pub type TetrisLeaderboadDataMap =  StableBTreeMap<String, TetrisLeaderboardData, Memory>;
 
 // Memory IDs for stable storage
 const USER_DATA_MEMORY_ID: MemoryId = MemoryId::new(0);
 const BLACKJACK_BET_MEMORY_ID: MemoryId = MemoryId::new(1);
 const MESSAGE_DATA_MEMORY_ID: MemoryId = MemoryId::new(2);
 const WAITLIST_DATA_MEMORY_ID: MemoryId = MemoryId::new(3);
+const TETRIS_LEADERBOARD_DATA_MEMORY_ID: MemoryId = MemoryId::new(4);
 
 // Thread-local memory manager
 thread_local! {
@@ -32,6 +34,7 @@ thread_local! {
             blackjack_bet: BlackjackBetMap::init(mm.borrow().get(BLACKJACK_BET_MEMORY_ID)),
             message_data: MessageDataMap::init(mm.borrow().get(MESSAGE_DATA_MEMORY_ID)),
             waitlist_data: WaitlistDataMap::init(mm.borrow().get(WAITLIST_DATA_MEMORY_ID)),
+            tetris_leaderboard_data: TetrisLeaderboadDataMap::init(mm.borrow().get(TETRIS_LEADERBOARD_DATA_MEMORY_ID)),
         })
     );
 }
@@ -42,6 +45,7 @@ pub struct State {
     pub blackjack_bet: BlackjackBetMap,
     pub message_data: MessageDataMap,
     pub waitlist_data: WaitlistDataMap,
+    pub tetris_leaderboard_data: TetrisLeaderboadDataMap,
 }
 
 // State Initialization
@@ -53,6 +57,7 @@ fn init() {
         state.blackjack_bet = init_blackjack_bet_map();
         state.message_data = init_message_data_map();
         state.waitlist_data = init_waitlist_data_map();
+        state.tetris_leaderboard_data = init_tetris_leaderboard_data_map();
     });
 }
 
@@ -73,6 +78,10 @@ pub fn init_waitlist_data_map() -> WaitlistDataMap {
     WaitlistDataMap::init(get_waitlist_data_memory())
 }
 
+pub fn init_tetris_leaderboard_data_map() -> TetrisLeaderboadDataMap {
+    TetrisLeaderboadDataMap::init(get_tetris_leaderboard_data_memory())
+}
+
 // Memory accessors
 pub fn get_user_data_memory() -> Memory {
     MEMORY_MANAGER.with(|m| m.borrow().get(USER_DATA_MEMORY_ID))
@@ -88,6 +97,10 @@ pub fn get_message_data_memory() -> Memory {
 
 pub fn get_waitlist_data_memory() -> Memory {
     MEMORY_MANAGER.with(|m| m.borrow().get(WAITLIST_DATA_MEMORY_ID))
+}
+
+pub fn get_tetris_leaderboard_data_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(TETRIS_LEADERBOARD_DATA_MEMORY_ID))
 }
 
 // Helper functions for state read/mutation
@@ -144,6 +157,18 @@ impl Storable for WaitlistData {
         Cow::Owned(Encode!(self).unwrap())
     }
 
+    fn from_bytes(bytes: Cow<[u8]>) -> Self {
+        Decode!(bytes.as_ref(), Self).unwrap()
+    }
+
+    const BOUND: ic_stable_structures::storable::Bound = ic_stable_structures::storable::Bound::Unbounded;
+}
+
+// Implement Storable for TetrisLeaderboard
+impl Storable for TetrisLeaderboardData {
+    fn to_bytes(&self) -> Cow<[u8]> {
+        Cow::Owned(Encode!(self).unwrap())
+    }
     fn from_bytes(bytes: Cow<[u8]>) -> Self {
         Decode!(bytes.as_ref(), Self).unwrap()
     }

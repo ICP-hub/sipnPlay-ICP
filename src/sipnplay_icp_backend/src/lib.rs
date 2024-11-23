@@ -9,5 +9,4 @@ mod api_query;
 mod state_handler;
 
 
-
 export_candid!();

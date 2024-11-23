@@ -67,3 +67,11 @@ pub struct TransferAccount {
     pub owner: Principal,
     pub subaccount: Option<Vec<u8>>,
 }
+
+
+// Tetris LeaderBoard Structure..
+#[derive(CandidType, Deserialize, Clone, Debug)]
+pub struct TetrisLeaderboardData {
+    pub owner: Principal,
+    pub score: u32,
+}

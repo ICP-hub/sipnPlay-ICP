@@ -90,19 +90,19 @@ const LeaderBoardList = ({ data }) => {
         // Add return statement to render the <li> element
         return (
           <li
-            key={user.principal}
+            key={JSON.stringify(user.owner.toText().slice(0, 5))}
             className={`flex items-center justify-between p-4 my-4 ${borderClass}`}
           >
             <div className="flex items-center">
-              <span className="text-sm mr-2">{index + 1}</span>
+              <span className="text-sm mr-2">{index+1}</span>
               <img
                 src={userProfilePic}
-                alt={user.principal}
+                alt={JSON.stringify(user.owner.toText().slice(0, 5))}
                 className="h-8 rounded-full mr-2"
               />
-              <span className="text-sm">{user.principal}</span>
+              <span className="text-sm">{user.owner.toText().slice(0, 5)}</span>
             </div>
-            <span className="text-sm text-end">{user.points} pts.</span>
+            <span className="text-sm text-end">{user.score} pts.</span>
           </li>
         );
       })}

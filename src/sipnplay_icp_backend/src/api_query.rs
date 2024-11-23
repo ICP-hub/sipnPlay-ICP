@@ -2,8 +2,7 @@ use candid::{Nat, Principal};
 use ic_cdk::{caller, query};
 use num_traits::ToPrimitive;
 
-
-use crate::{state_handler::STATE, types::{MessageData, PaginatedResult, UserCreationInput}, BlackjackData, WaitlistData};
+use crate::{state_handler::STATE, types::{MessageData, PaginatedResult, UserCreationInput}, BlackjackData, WaitlistData, TetrisLeaderboardData};
 
 const APPROVED_PRINCIPALS: &[&str] = &[
     "oxj2h-r6fbj-hqtcn-fv7ye-yneeb-ca3se-c6s42-imvp7-juu33-ovnix-mae", // Paras
@@ -16,7 +15,6 @@ const APPROVED_PRINCIPALS: &[&str] = &[
 ];
 
 
-
 // Function to check if the caller is approved
 #[ic_cdk::query]
 pub fn is_approved() -> bool {
@@ -26,6 +24,16 @@ pub fn is_approved() -> bool {
         .any(|&approved| Principal::from_text(approved).unwrap() == caller_principal)
 }
 
+// Authenticate the logged-in user
+#[ic_cdk::query]
+pub fn is_authenticated() -> bool {
+    STATE.with(|state| {
+        let state = state.borrow();
+        state.user_data.contains_key(&caller())
+    })
+}
+
+// Get the user
 #[ic_cdk::query]
 pub fn get_user() -> Result<UserCreationInput, String> {
     let caller = ic_cdk::caller();
@@ -39,6 +47,7 @@ pub fn get_user() -> Result<UserCreationInput, String> {
     })
 }
 
+// Get the messages
 #[ic_cdk::query]
 fn get_messages(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<MessageData>, String> {
     if !is_approved() {
@@ -86,8 +95,7 @@ fn get_messages(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<Message
     })
 }
 
-
-
+// Get the blackjack bet
 #[query]
 fn get_blackjack_bet() -> Result<BlackjackData, String> {
     let caller_principal = caller();
@@ -108,7 +116,7 @@ fn get_blackjack_bet() -> Result<BlackjackData, String> {
     }
 }
 
-
+// Get the waitlist
 #[query]
 fn get_waitlist(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<WaitlistData>, String> {
     use num_traits::ToPrimitive; // Import the ToPrimitive trait
@@ -160,3 +168,74 @@ fn get_waitlist(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<Waitlis
     })
 }
 
+// Get the Tetris LeaderBoard Details All users.
+#[ic_cdk::query]
+pub fn get_tetris_leaderboard() -> Result<Vec<TetrisLeaderboardData>, String> {
+    // Check if the caller is approved
+    if !is_authenticated() {
+        return Err("You are not authenticated".to_string());
+    }
+
+    // Retrieve the entire leaderboard data
+    let mut leaderboard = STATE.with(|state| {
+        state
+            .borrow().tetris_leaderboard_data
+            .iter()
+            .map(|(_, data)| data.clone()) // Collect all leaderboard data
+            .collect::<Vec<_>>()
+    });
+
+    // Sort the leaderboard by score in descending order
+    leaderboard.sort_by(|a, b| b.score.cmp(&a.score)); // Sorting in descending order
+
+    if leaderboard.is_empty() {
+        return Err("No leaderboard data found".to_string());
+    }
+
+    Ok(leaderboard)
+}
+
+// Get the logged-in user
+#[ic_cdk::query]
+pub fn get_loggedin_user() -> Result<TetrisLeaderboardData, String> {
+    
+    // Get the caller's principal
+    let principal = caller();
+
+    // Check if the caller is authenticated
+    if !is_authenticated() {
+        return Err("You are not authenticated".to_string());
+    }
+
+    // Access the state to fetch the leaderboard data
+    STATE.with(|state| {
+        let state_ref = state.borrow();
+        // Attempt to retrieve the user's leaderboard data
+        state_ref
+            .tetris_leaderboard_data
+            .get(&principal.to_text())
+            .map(|data| data.clone()) // Clone the data if found
+            .ok_or_else(|| "User not found in the leaderboard".to_string())
+    })
+}
+
+
+// Get the Principals
+#[ic_cdk::query]
+pub fn get_principals() -> Vec<String> {
+    STATE.with(|state| {
+        state
+            .borrow()
+            .user_data
+            .iter() // Use iter to iterate over key-value pairs
+            .map(|(principal, _)| principal.to_text()) // Extract and convert the keys to strings
+            .collect()
+    })
+}
+
+#[ic_cdk::query]
+// Get Current Principal
+pub fn get_current_principal() -> String {
+    // Return the principal as a string
+    caller().to_text()  // No semicolon here, so it returns the value
+}

@@ -5,10 +5,10 @@ use ic_ledger_types::TransferResult;
 use icrc_ledger_types::icrc1::transfer::TransferArg;
 use icrc_ledger_types::{icrc1::account::Account, icrc2::transfer_from::TransferFromArgs};
 
-use crate::api_query::is_approved;
+use crate::api_query::{is_approved, is_authenticated};
 use crate::state_handler::{mutate_state, read_state};
 use crate::{state_handler::STATE, types::BalanceOfArgs, UserCreationInput};
-use crate::{BlackjackData, MessageData, TransferFromResult, WaitlistData};
+use crate::{BlackjackData, MessageData, TetrisLeaderboardData, TransferFromResult, WaitlistData};
 
 #[update]
 pub async fn get_caller_balance() -> Result<u128, String> {
@@ -119,7 +119,6 @@ async fn icrc2_transfer_from(
         Err((code, message)) => Err(format!("Failed to call ledger: {:?} - {}", code, message)),
     }
 }
-
 
 #[update]
 async fn deduct_money(amount: Nat) -> Result<String, String> {
@@ -365,11 +364,6 @@ async fn add_money(amount: Nat) -> Result<String, String> {
     }
 }
 
-
-
-
-
-
 #[update]
 async fn send_message(name: String, email: String, message: String) -> Result<String, String> {
     // Validate input fields
@@ -433,3 +427,83 @@ async fn join_waitlist(name: String, email: String, icp_address: String) -> Resu
         Err(e) => Err(e),
     }
 }
+
+
+// Post Functions of Tetris LeaderBoard:
+
+// Add Score according to user.
+
+// #[update] // Approach 1 where user can add update score existing user.
+// fn add_score(input_score: u32) -> Result<(), String> {
+//     // Only approved callers can add scores
+//     if !is_approved() {
+//         return Err("You are not approved".to_string());
+//     }
+
+//     // Use the caller's Principal as the player ID
+//     let player_id = ic_cdk::caller();
+
+//     // Update or add the player's score
+//     STATE.with(|state| {
+//         let mut state = state.borrow_mut();  // Mutably borrow the state
+//         let leaderboard = &mut state.tetris_leaderboard_data;  // Get mutable reference to the leaderboard
+
+//         // Check if the player already exists in the leaderboard
+//         if let Some(data) = leaderboard.get_mut(&player_id.to_text()) {
+//             // If the player exists, update the score (no need to re-insert)
+//             data.score += input_score; // Modify the score directly
+//         } else {
+//             // If the player doesn't exist, add them with their score
+//             leaderboard.insert(
+//                 player_id.to_text(),
+//                 TetrisLeaderboardData {
+//                     owner: player_id,
+//                     score: input_score,
+//                 },
+//             );
+//         }
+//     });
+
+//     Ok(())
+// }
+
+#[update] // Approach 2 Insert the score when user exits then firstly remove the previous entry and then add new entry
+fn add_score(input_score: u32) -> Result<(), String> {
+    // Only approved callers can add scores
+    if !is_authenticated() {
+        return Err("You are not authenticated".to_string());
+    }
+
+    // Use the caller's Principal as the player ID
+    let player_id = ic_cdk::caller();
+
+    // Update or add the player's score
+    STATE.with(|state| {
+        let mut state = state.borrow_mut();  // Mutably borrow the state
+        let leaderboard = &mut state.tetris_leaderboard_data;  // Get mutable reference to the leaderboard
+
+        // Check if the player already exists in the leaderboard
+        if leaderboard.contains_key(&player_id.to_text()) {
+            // If the player exists, fetch and update the score
+            let mut player_data = leaderboard.remove(&player_id.to_text()).unwrap(); // Remove existing entry
+            player_data.score += input_score; // Modify the score directly
+
+            // Re-insert the updated player data
+            leaderboard.insert(player_id.to_text(), player_data);
+        } else {
+            // If the player doesn't exist, add them with their score
+            leaderboard.insert(
+                player_id.to_text(),
+                TetrisLeaderboardData {
+                    owner: player_id,
+                    score: input_score,
+                },
+            );
+        }
+    });
+
+    Ok(())
+}
+
+
+
