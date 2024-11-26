@@ -70,6 +70,15 @@ pub struct TransferAccount {
 
 
 // Tetris LeaderBoard Structure..
+
+// TetrisData struct
+#[derive(CandidType, Deserialize, Serialize, Debug, Clone)]
+pub struct TetrisData {
+    pub id: Principal,
+    pub amount:u64,
+}
+
+// Tetris Leaderboard struct
 #[derive(CandidType, Deserialize, Clone, Debug)]
 pub struct TetrisLeaderboardData {
     pub owner: Principal,

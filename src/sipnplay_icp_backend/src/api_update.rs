@@ -8,7 +8,7 @@ use icrc_ledger_types::{icrc1::account::Account, icrc2::transfer_from::TransferF
 use crate::api_query::{is_approved, is_authenticated};
 use crate::state_handler::{mutate_state, read_state};
 use crate::{state_handler::STATE, types::BalanceOfArgs, UserCreationInput};
-use crate::{BlackjackData, MessageData, TetrisLeaderboardData, TransferFromResult, WaitlistData};
+use crate::{BlackjackData, MessageData, TetrisData, TetrisLeaderboardData, TransferFromResult, WaitlistData};
 
 #[update]
 pub async fn get_caller_balance() -> Result<u128, String> {
@@ -422,46 +422,84 @@ async fn join_waitlist(name: String, email: String, icp_address: String) -> Resu
     }
 }
 
-// Post Functions of Tetris LeaderBoard:
+// Functions of Tetris LeaderBoard:
 
-// Add Score according to user.
+// Function to Start the game and transfer the tokens to the users
+// #[update]
+// async fn tetris_game_start() -> Result<String, String> {
+//     use num_traits::ToPrimitive;
+//     let caller_principal = caller();
 
-// #[update] // Approach 1 where user can add update score existing user.
-// fn add_score(input_score: u32) -> Result<(), String> {
-//     // Only approved callers can add scores
-//     if !is_approved() {
-//         return Err("You are not approved".to_string());
-//     }
-
-//     // Use the caller's Principal as the player ID
-//     let player_id = ic_cdk::caller();
-
-//     // Update or add the player's score
-//     STATE.with(|state| {
-//         let mut state = state.borrow_mut();  // Mutably borrow the state
-//         let leaderboard = &mut state.tetris_leaderboard_data;  // Get mutable reference to the leaderboard
-
-//         // Check if the player already exists in the leaderboard
-//         if let Some(data) = leaderboard.get_mut(&player_id.to_text()) {
-//             // If the player exists, update the score (no need to re-insert)
-//             data.score += input_score; // Modify the score directly
-//         } else {
-//             // If the player doesn't exist, add them with their score
-//             leaderboard.insert(
-//                 player_id.to_text(),
-//                 TetrisLeaderboardData {
-//                     owner: player_id,
-//                     score: input_score,
-//                 },
-//             );
-//         }
+//     // Check if the user exists in `user_data`
+//     let user_exists = STATE.with(|state| {
+//         let state = state.borrow();
+//         state.user_data.contains_key(&caller_principal)
 //     });
 
-//     Ok(())
+//     if !user_exists {
+//         return Err("User not found".to_string());
+//     }
+
+//     // Fetch backend canister ID from the environment variable
+//     let backend_canister_id_str = option_env!("CANISTER_ID_SIPNPLAY_ICP_BACKEND")
+//         .ok_or("Backend canister ID not found in environment variables")?;
+
+//     let backend_canister_id = Principal::from_text(backend_canister_id_str)
+//         .map_err(|_| "Invalid backend canister ID".to_string())?;
+
+//     let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
+//         .ok_or("Ledger canister ID not found in environment variables")?;
+
+//     let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
+//         .map_err(|_| "Invalid backend canister ID".to_string())?;
+
+//     // Create transfer arguments
+//     let transfer_args = TransferFromArgs {
+//         spender_subaccount: None,
+//         from: Account {
+//             owner: caller_principal,
+//             subaccount: None,
+//         },
+//         to: Account {
+//             owner: backend_canister_id,
+//             subaccount: None,
+//         },
+//         amount: Nat::from(30), // Transfer 30 tokens
+//         fee: None,
+//         memo: None,
+//         created_at_time: None,
+//     };
+
+//     // Perform the inter-canister call to transfer money
+//     let response: CallResult<(TransferFromResult,)> =
+//         call(ledger_canister_id, "icrc2_transfer_from", (transfer_args,)).await;
+
+//     match response {
+//         Ok((TransferFromResult::Ok(_block_index),)) => {
+//             // Add (caller, amount) to `blackjack_bet` map
+//             STATE.with(|state| {
+//                 let mut state = state.borrow_mut();
+//                 state.tetris_data.insert(
+//                     caller_principal.to_text(),
+//                     TetrisData {
+//                         id: caller_principal,                          // Use Principal ID
+//                         amount: transfer_args.amount.0.to_u64().unwrap(), // Convert Nat to u64
+//                     },
+//                 );
+//             });
+//             Ok(format!(
+//                 "Points deducted successfully: {}",
+//                 transfer_args.amount.to_string()
+//             ))
+//         }
+//         Ok((TransferFromResult::Err(error),)) => Err(format!("Ledger transfer error: {:?}", error)),
+//         Err((code, message)) => Err(format!("Failed to call ledger: {:?} - {}", code, message)),
+//     }
 // }
 
-#[update] // Approach 2 Insert the score when user exits then firstly remove the previous entry and then add new entry
-fn add_score(input_score: u32) -> Result<(), String> {
+// Approach 2 Insert the score when user exits then firstly remove the previous entry and then add new entry
+#[update] 
+fn tetris_game_over(input_score: u32) -> Result<(), String> {
     // Only approved callers can add scores
     if !is_authenticated() {
         return Err("You are not authenticated".to_string());
@@ -472,14 +510,24 @@ fn add_score(input_score: u32) -> Result<(), String> {
 
     // Update or add the player's score
     STATE.with(|state| {
-        let mut state = state.borrow_mut(); // Mutably borrow the state
-        let leaderboard = &mut state.tetris_leaderboard_data; // Get mutable reference to the leaderboard
+        let mut state = state.borrow_mut();  // Mutably borrow the state
+        let leaderboard = &mut state.tetris_leaderboard_data;  // Get mutable reference to the leaderboard
 
         // Check if the player already exists in the leaderboard
         if leaderboard.contains_key(&player_id.to_text()) {
             // If the player exists, fetch and update the score
             let mut player_data = leaderboard.remove(&player_id.to_text()).unwrap(); // Remove existing entry
-            player_data.score += input_score; // Modify the score directly
+
+            // Update the high score
+            let high_score = player_data.high_score;
+            if input_score > high_score {
+                player_data.high_score = input_score;
+            }else{
+                player_data.high_score = high_score;
+            }
+            
+            // Add points
+            player_data.points += input_score;
 
             // Re-insert the updated player data
             leaderboard.insert(player_id.to_text(), player_data);
@@ -489,7 +537,8 @@ fn add_score(input_score: u32) -> Result<(), String> {
                 player_id.to_text(),
                 TetrisLeaderboardData {
                     owner: player_id,
-                    score: input_score,
+                    high_score: input_score,
+                    points: input_score
                 },
             );
         }
