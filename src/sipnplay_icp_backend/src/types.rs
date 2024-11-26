@@ -73,5 +73,6 @@ pub struct TransferAccount {
 #[derive(CandidType, Deserialize, Clone, Debug)]
 pub struct TetrisLeaderboardData {
     pub owner: Principal,
-    pub score: u32,
+    pub high_score: u32, 
+    pub points: u32,
 }

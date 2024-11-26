@@ -168,57 +168,68 @@ fn get_waitlist(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<Waitlis
     })
 }
 
-// Get the Tetris LeaderBoard Details All users.
+// Get the Tetris LeaderBoard Details All users with logged in user rank.
 #[ic_cdk::query]
-pub fn get_tetris_leaderboard() -> Result<Vec<TetrisLeaderboardData>, String> {
+pub fn get_tetris_leaderboard() -> (Result<Vec<TetrisLeaderboardData>, String>, Nat) {
     // Check if the caller is approved
     if !is_authenticated() {
-        return Err("You are not authenticated".to_string());
+        return (Err("You are not authenticated".to_string()), Nat::from(0u32));
     }
 
     // Retrieve the entire leaderboard data
     let mut leaderboard = STATE.with(|state| {
         state
-            .borrow().tetris_leaderboard_data
+            .borrow()
+            .tetris_leaderboard_data
             .iter()
             .map(|(_, data)| data.clone()) // Collect all leaderboard data
             .collect::<Vec<_>>()
     });
 
-    // Sort the leaderboard by score in descending order
-    leaderboard.sort_by(|a, b| b.score.cmp(&a.score)); // Sorting in descending order
+    // // Sort the leaderboard by score in descending order
+    leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
 
     if leaderboard.is_empty() {
-        return Err("No leaderboard data found".to_string());
+        return (Err("No leaderboard data found".to_string()), Nat::from(0u32));
     }
 
-    Ok(leaderboard)
+    // Get the logged-in Principal
+    let principal = caller();
+    let mut user_rank = Nat::from(0u32); // Initialize with 0 by default
+
+    // Find the index of the logged-in user in the leaderboard
+    if let Some(index) = leaderboard.iter().position(|data| data.owner == principal) {
+        user_rank = Nat::from(index as u32 + 1); // Index + 1 for rank (1-based indexing)
+        println!("Logged-in user found at rank {}", user_rank);
+    } else {
+        println!("Logged-in user not found in the leaderboard");
+    }
+
+    // Return the sorted leaderboard along with the user rank
+    (Ok(leaderboard), user_rank)
 }
 
-// Get the logged-in user
+// Get the Logged-in User LeaderBoard Details 
 #[ic_cdk::query]
 pub fn get_logged_in_user_leaderboard() -> Result<TetrisLeaderboardData, String> {
-    
-    // Get the caller's principal
     let principal = caller();
 
-    // Check if the caller is authenticated
-    if !is_authenticated() {
-        return Err("You are not authenticated".to_string());
-    }
-
-    // Access the state to fetch the leaderboard data
-    STATE.with(|state| {
-        let state_ref = state.borrow();
-        // Attempt to retrieve the user's leaderboard data
-        state_ref
+    // Retrieve the leaderboard data for the logged-in user
+    let leaderboard = STATE.with(|state| {
+        state
+            .borrow()
             .tetris_leaderboard_data
             .get(&principal.to_text())
-            .map(|data| data.clone()) // Clone the data if found
-            .ok_or_else(|| "User not found in the leaderboard".to_string())
-    })
-}
+            .map(|data| data.clone()) // Use map to clone the data if it exists
+    });
 
+    // Return the result or an error message
+    if let Some(data) = leaderboard {
+        Ok(data) // Return the leaderboard data if it exists
+    } else {
+        Err("Logged-in user not found in the leaderboard".to_string())
+    }
+}
 
 // Get the Principals
 #[ic_cdk::query]

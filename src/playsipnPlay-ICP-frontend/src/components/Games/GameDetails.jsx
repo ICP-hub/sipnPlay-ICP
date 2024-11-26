@@ -7,8 +7,6 @@ import { ImCross } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "../../../../sipnPlay-ICP-frontend/src/utils/useDisableScroll";
 import LeaderBoardList from "../LeaderboardList/LeaderboardList";
-
-
 const GameDetails = ({ modalIsOpen, closeModal, game }) => {
 
   const navigate = useNavigate();
@@ -59,8 +57,6 @@ const GameDetails = ({ modalIsOpen, closeModal, game }) => {
             </div>
           </div>
           {game.leaderboard && <LeaderBoardList game={game} />}
-
-
         </div>
       </div>
     </Modal>

@@ -16,15 +16,19 @@ type PaginatedResult_1 = record {
   current_page : nat;
 };
 type Result = variant { Ok : text; Err : text };
-type Result_1 = variant { Ok; Err : text };
-type Result_2 = variant { Ok : nat; Err : text };
-type Result_3 = variant { Ok : BlackjackData; Err : text };
-type Result_4 = variant { Ok : TetrisLeaderboardData; Err : text };
-type Result_5 = variant { Ok : PaginatedResult; Err : text };
-type Result_6 = variant { Ok : vec TetrisLeaderboardData; Err : text };
-type Result_7 = variant { Ok : UserCreationInput; Err : text };
-type Result_8 = variant { Ok : PaginatedResult_1; Err : text };
-type TetrisLeaderboardData = record { owner : principal; score : nat32 };
+type Result_1 = variant { Ok : nat; Err : text };
+type Result_2 = variant { Ok : BlackjackData; Err : text };
+type Result_3 = variant { Ok : TetrisLeaderboardData; Err : text };
+type Result_4 = variant { Ok : PaginatedResult; Err : text };
+type Result_5 = variant { Ok : vec TetrisLeaderboardData; Err : text };
+type Result_6 = variant { Ok : UserCreationInput; Err : text };
+type Result_7 = variant { Ok : PaginatedResult_1; Err : text };
+type Result_8 = variant { Ok; Err : text };
+type TetrisLeaderboardData = record {
+  high_score : nat32;
+  owner : principal;
+  points : nat32;
+};
 type UserCreationInput = record { id : principal; email : text };
 type WaitlistData = record {
   date : int64;
@@ -34,24 +38,24 @@ type WaitlistData = record {
 };
 service : () -> {
   add_money : (nat) -> (Result);
-  add_score : (nat32) -> (Result_1);
   create_user : (text) -> (text);
   deduct_money : (nat) -> (Result);
   game_lost : () -> (Result);
-  get_backend_balance : () -> (Result_2);
-  get_blackjack_bet : () -> (Result_3) query;
-  get_caller_balance : () -> (Result_2);
+  get_backend_balance : () -> (Result_1);
+  get_blackjack_bet : () -> (Result_2) query;
+  get_caller_balance : () -> (Result_1);
   get_current_principal : () -> (text) query;
-  get_logged_in_user_leaderboard : () -> (Result_4) query;
-  get_messages : (nat, nat) -> (Result_5) query;
+  get_logged_in_user_leaderboard : () -> (Result_3) query;
+  get_messages : (nat, nat) -> (Result_4) query;
   get_principals : () -> (vec text) query;
-  get_tetris_leaderboard : () -> (Result_6) query;
-  get_user : () -> (Result_7) query;
-  get_waitlist : (nat, nat) -> (Result_8) query;
-  icrc2_transfer_from : (principal, principal, principal, nat) -> (Result_2);
+  get_tetris_leaderboard : () -> (Result_5, nat) query;
+  get_user : () -> (Result_6) query;
+  get_waitlist : (nat, nat) -> (Result_7) query;
+  icrc2_transfer_from : (principal, principal, principal, nat) -> (Result_1);
   is_approved : () -> (bool) query;
   is_authenticated : () -> (bool) query;
   join_waitlist : (text, text, text) -> (Result);
   send_message : (text, text, text) -> (Result);
+  tetris_game_over : (nat32) -> (Result_8);
   withdraw_money_from_default : (nat) -> (Result);
 }
