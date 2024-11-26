@@ -6,6 +6,7 @@ import * as XLSX from "xlsx";
 import PaginatedData from "../components/Admin/PaginatedData";
 import Resources from "../components/Admin/Resources";
 import { Oval } from "react-loader-spinner";
+import Rewards from "../components/Admin/Rewards";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
@@ -19,8 +20,8 @@ const AdminPanel = () => {
   const fetchWaitlist = async () => {
     try {
       setLoading(true);
-      const response = await backendActor.get_waitlist(0,10);
-      console.log("Waitlist response  ",response)
+      const response = await backendActor.get_waitlist(0, 10);
+      console.log("Waitlist response  ", response);
       if (response.Err) {
         toast.error("Error fetching waitlist data");
         setLoading(false);
@@ -37,12 +38,11 @@ const AdminPanel = () => {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      const response = await backendActor.get_messages(0,10);
-      console.log("Message response",response);
+      const response = await backendActor.get_messages(0, 10);
+      console.log("Message response", response);
       if (response.Err) {
         toast.error("Error fetching messages");
         setLoading(false);
-       
       } else {
         setMessages(response.Ok.data);
         setLoading(false);
@@ -66,7 +66,7 @@ const AdminPanel = () => {
   useEffect(() => {
     const checkApproveStatus = async () => {
       setIsApproving(true);
-      
+
       if (isAuthenticated) {
         let isApproved = false;
         try {
@@ -185,6 +185,16 @@ const AdminPanel = () => {
           >
             Resources
           </button>
+          <button
+            onClick={() => setActiveSection("rewards")}
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${
+              activeSection === "rewards"
+                ? "bg-[#EE3EC9] "
+                : "bg-black text-white"
+            }`}
+          >
+            Rewards
+          </button>
         </div>
       </div>
       {loading ? (
@@ -204,6 +214,7 @@ const AdminPanel = () => {
             <PaginatedData title="Messages" data={messages} />
           )}
           {activeSection === "resources" && <Resources />}
+          {activeSection === "rewards" && <Rewards />}
         </div>
       )}
     </div>

@@ -5,7 +5,6 @@ import BlackJack from "./Pages/BlackJack";
 import { AuthProvider } from "./utils/useAuthClient";
 import PrivateLayout from "./Layout/PrivateLayout";
 import AdminPanel from "./Pages/Admin";
-import OffTheLine from "./Pages/OffTheLine";
 import TetrisGame from "./Pages/Tetris";
 import NotFound from "./Pages/NotFound";
 
@@ -23,12 +22,15 @@ function AllRoutes() {
         />
         <Route path="/blackjack" element={<BlackJack />} />
         <Route path="/tetris" element={<TetrisGame />} />
-
-        <Route path="/off-the-line" element={<OffTheLine />} />
         <Route path="/admin" element={<AdminPanel />} />
-        <Route path="/*" element={<PrivateLayout>
-          <NotFound />
-        </PrivateLayout>} />
+        <Route
+          path="/*"
+          element={
+            <PrivateLayout>
+              <NotFound />
+            </PrivateLayout>
+          }
+        />
       </Routes>
     </AuthProvider>
   );
