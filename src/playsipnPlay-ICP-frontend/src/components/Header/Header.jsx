@@ -42,7 +42,7 @@ const Header = () => {
       return { isNewUser: true };
     } else {
       let balance = await backendActor.get_caller_balance();
-      let metaData = null;
+      let metaData = null;      
       await ledgerActor
         .icrc1_metadata()
         .then((res) => {
@@ -53,13 +53,14 @@ const Header = () => {
         });
 
       let amnt =
-        Number(balance) *
+        parseInt(balance.Ok) *
         Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]));
+        
       setIsFetching(false);
       return {
         isNewUser: false,
         email: response.Ok.email,
-        balance: parseFloat(amnt),
+        balance: (amnt),
       };
     }
   };

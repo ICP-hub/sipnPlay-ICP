@@ -76,23 +76,19 @@ pub fn create_user(email: String) -> String {
         if state.user_data.contains_key(&caller) {
             "User already exists".to_string()
         } else {
-            let new_user = UserCreationInput {
-                id: caller,
-                email,
-            };
+            let new_user = UserCreationInput { id: caller, email };
             state.user_data.insert(caller, new_user);
             "User created!".to_string()
         }
     })
 }
 
-
 #[update]
 async fn icrc2_transfer_from(
-    ledger_id: Principal,         // Ledger canister ID as a Principal
-    transfer_from: Principal,     // Sender's Principal
-    transfer_to: Principal,       // Recipient's Principal
-    amount: Nat,                  // Amount to transfer
+    ledger_id: Principal,     // Ledger canister ID as a Principal
+    transfer_from: Principal, // Sender's Principal
+    transfer_to: Principal,   // Recipient's Principal
+    amount: Nat,              // Amount to transfer
 ) -> Result<Nat, String> {
     let transfer_args = TransferFromArgs {
         spender_subaccount: None,
@@ -142,6 +138,12 @@ async fn deduct_money(amount: Nat) -> Result<String, String> {
     let backend_canister_id = Principal::from_text(backend_canister_id_str)
         .map_err(|_| "Invalid backend canister ID".to_string())?;
 
+    let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
+        .ok_or("Ledger canister ID not found in environment variables")?;
+
+    let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
+        .map_err(|_| "Invalid backend canister ID".to_string())?;
+
     // Create transfer arguments
     let transfer_args = TransferFromArgs {
         spender_subaccount: None,
@@ -161,7 +163,7 @@ async fn deduct_money(amount: Nat) -> Result<String, String> {
 
     // Perform the inter-canister call to transfer money
     let response: CallResult<(TransferFromResult,)> =
-        call(backend_canister_id, "icrc2_transfer_from", (transfer_args,)).await;
+        call(ledger_canister_id, "icrc2_transfer_from", (transfer_args,)).await;
 
     match response {
         Ok((TransferFromResult::Ok(_block_index),)) => {
@@ -171,13 +173,11 @@ async fn deduct_money(amount: Nat) -> Result<String, String> {
                 state.blackjack_bet.insert(
                     caller_principal,
                     BlackjackData {
-                        id: caller_principal, // Use Principal ID
+                        id: caller_principal,                          // Use Principal ID
                         amount: amount.0.to_u64().unwrap_or_default(), // Convert Nat to u64
                     },
-                )
-                .expect("Failed to insert into blackjack_bet map");
+                );
             });
-
             Ok(format!(
                 "Points deducted successfully: {}",
                 amount.to_string()
@@ -187,7 +187,6 @@ async fn deduct_money(amount: Nat) -> Result<String, String> {
         Err((code, message)) => Err(format!("Failed to call ledger: {:?} - {}", code, message)),
     }
 }
-
 
 #[update]
 async fn withdraw_money_from_default(amount: Nat) -> Result<String, String> {
@@ -201,11 +200,10 @@ async fn withdraw_money_from_default(amount: Nat) -> Result<String, String> {
         return Err("You are not approved".to_string());
     }
 
-    // Fetch backend canister ID from the environment variable
-    let backend_canister_id_str = option_env!("CANISTER_ID_SIPNPLAY_ICP_BACKEND")
+    let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
         .ok_or("Backend canister ID not found in environment variables")?;
 
-    let backend_canister_id = Principal::from_text(backend_canister_id_str)
+    let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
         .map_err(|_| "Invalid backend canister ID".to_string())?;
 
     // Create transfer arguments
@@ -223,7 +221,7 @@ async fn withdraw_money_from_default(amount: Nat) -> Result<String, String> {
 
     // Perform the inter-canister call to transfer tokens
     let response: CallResult<(TransferResult,)> =
-        ic_cdk::api::call::call(backend_canister_id, "icrc1_transfer", (transfer_args,)).await;
+        ic_cdk::api::call::call(ledger_canister_id, "icrc1_transfer", (transfer_args,)).await;
 
     match response {
         // Successful transfer
@@ -240,8 +238,6 @@ async fn withdraw_money_from_default(amount: Nat) -> Result<String, String> {
         )),
     }
 }
-
-
 
 #[update]
 async fn game_lost() -> Result<String, String> {
@@ -270,14 +266,16 @@ async fn game_lost() -> Result<String, String> {
     // Update the user's blackjack bet record to 0
     STATE.with(|state| {
         let mut state = state.borrow_mut();
-        state.blackjack_bet.insert(
-            caller_principal,
-            BlackjackData {
-                id: caller_principal,
-                amount: 0, // Reset the amount to 0
-            },
-        )
-        .expect("Failed to update bet record");
+        state
+            .blackjack_bet
+            .insert(
+                caller_principal,
+                BlackjackData {
+                    id: caller_principal,
+                    amount: 0, // Reset the amount to 0
+                },
+            )
+            .expect("Failed to update bet record");
     });
 
     Ok("Bet Record updated successfully".to_string())
@@ -306,17 +304,15 @@ async fn add_money(amount: Nat) -> Result<String, String> {
     let bet_amount = Nat::from(bet_data.amount);
     let threshold = bet_amount.clone() * Nat::from(25u32) / Nat::from(10u32); // 2.5x threshold
 
-
     if amount > threshold {
         return Err("fraud".to_string());
     }
 
-    // Fetch backend canister ID from environment variable
-    let backend_canister_id_str = option_env!("CANISTER_ID_SIPNPLAY_ICP_BACKEND")
-        .ok_or("Backend canister ID not found in environment variables")?;
+    let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
+        .ok_or("Ledger canister ID not found in environment variables")?;
 
-    let backend_canister_id = Principal::from_text(backend_canister_id_str)
-        .map_err(|_| "Invalid backend canister ID".to_string())?;
+    let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
+        .map_err(|_| "Invalid ledger canister ID".to_string())?;
 
     // Create transfer arguments
     let transfer_args = TransferArg {
@@ -333,7 +329,7 @@ async fn add_money(amount: Nat) -> Result<String, String> {
 
     // Perform the inter-canister call to transfer tokens
     let response: CallResult<(TransferResult,)> =
-        ic_cdk::api::call::call(backend_canister_id, "icrc1_transfer", (transfer_args,)).await;
+        ic_cdk::api::call::call(ledger_canister_id, "icrc1_transfer", (transfer_args,)).await;
 
     match response {
         // Successful transfer
@@ -349,10 +345,7 @@ async fn add_money(amount: Nat) -> Result<String, String> {
                 )
             });
 
-            Ok(format!(
-                "Points added successfully: {}",
-                amount.to_string()
-            ))
+            Ok(format!("Points added successfully: {}", amount.to_string()))
         }
         // Transfer failed with a specific error
         Ok((TransferResult::Err(error),)) => Err(error.to_string()),
@@ -386,7 +379,6 @@ async fn send_message(name: String, email: String, message: String) -> Result<St
             None => Ok(()), // Insertion was successful
             Some(_) => Err("Failed to add message to stable memory".to_string()),
         }
-        
     });
 
     // Return appropriate message
@@ -414,11 +406,13 @@ async fn join_waitlist(name: String, email: String, icp_address: String) -> Resu
     // Add to stable memory
     let insert_result = STATE.with(|state| {
         let mut state = state.borrow_mut();
-        match state.waitlist_data.insert(email.clone(), new_waitlist_entry) {
+        match state
+            .waitlist_data
+            .insert(email.clone(), new_waitlist_entry)
+        {
             None => Ok(()), // Successfully inserted
             Some(_) => Err("Already joined the Waitlist".to_string()),
         }
-        
     });
 
     // Return appropriate message
@@ -427,7 +421,6 @@ async fn join_waitlist(name: String, email: String, icp_address: String) -> Resu
         Err(e) => Err(e),
     }
 }
-
 
 // Post Functions of Tetris LeaderBoard:
 
@@ -479,8 +472,8 @@ fn add_score(input_score: u32) -> Result<(), String> {
 
     // Update or add the player's score
     STATE.with(|state| {
-        let mut state = state.borrow_mut();  // Mutably borrow the state
-        let leaderboard = &mut state.tetris_leaderboard_data;  // Get mutable reference to the leaderboard
+        let mut state = state.borrow_mut(); // Mutably borrow the state
+        let leaderboard = &mut state.tetris_leaderboard_data; // Get mutable reference to the leaderboard
 
         // Check if the player already exists in the leaderboard
         if leaderboard.contains_key(&player_id.to_text()) {
@@ -504,6 +497,3 @@ fn add_score(input_score: u32) -> Result<(), String> {
 
     Ok(())
 }
-
-
-

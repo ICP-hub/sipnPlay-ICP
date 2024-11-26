@@ -2,7 +2,7 @@ import { Principal } from "@dfinity/principal";
 
 const afterPaymentFlow = async (backendActor, amount) => {
   try {
-    const res = await backendActor.deductMoney(amount);
+    const res = await backendActor.deduct_money(amount);
     console.log(res);
     return res;
   } catch (error) {
@@ -23,7 +23,7 @@ const formatTokenMetaData = (arr) => {
 
 const getBalance = async (backendActor) => {
   let bal = await backendActor.get_caller_balance();
-  return parseInt(bal);
+  return parseInt(bal.Ok);
 };
 
 export const transferApprove = async (
@@ -58,6 +58,8 @@ export const transferApprove = async (
       };
 
       const approvalResponse = await ledgerActor.icrc2_approve(transaction);
+      console.log("approval response",approvalResponse);
+      
 
       if (approvalResponse?.Err) {
         return approvalResponse;

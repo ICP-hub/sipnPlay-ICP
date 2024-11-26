@@ -125,7 +125,7 @@ const BlackJack = () => {
               Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
             console.log("Tokens won ", tokensWon);
             setIsPopUpLoading(true);
-            const response = await backendActor.addMoney(parseInt(tokensWon));
+            const response = await backendActor.add_money(parseInt(tokensWon));
             dispatch(updateBalance({ balance: event.data.score }));
             console.log(response);
             if (response.ok) {
@@ -134,7 +134,7 @@ const BlackJack = () => {
           } else {
             setTaskName("Halfway there... Hang tight!");
             setIsPopUpLoading(true);
-            const response = await backendActor.gameLost();
+            const response = await backendActor.game_lost();
             console.log(response);
           }
         } catch (e) {
