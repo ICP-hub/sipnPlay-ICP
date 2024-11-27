@@ -15,6 +15,7 @@ const Game = ({ game }) => {
           modalIsOpen={showPopUp}
           closeModal={closemodal}
           game={game}
+          tokenomics={game.tokenomics}
         />
       )}
       <div

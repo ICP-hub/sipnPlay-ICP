@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import logo from "../../assets/images/logo.png";
 import AnimationButton from "../../common/AnimationButton";
 import Modal from "react-modal";
@@ -7,8 +7,7 @@ import { ImCross } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "../../../../sipnPlay-ICP-frontend/src/utils/useDisableScroll";
 import LeaderBoardList from "../LeaderboardList/LeaderboardList";
-const GameDetails = ({ modalIsOpen, closeModal, game }) => {
-
+const GameDetails = ({ modalIsOpen, closeModal, game, tokenomics }) => {
   const navigate = useNavigate();
   useDisableScroll(modalIsOpen);
 
@@ -36,8 +35,12 @@ const GameDetails = ({ modalIsOpen, closeModal, game }) => {
           />
           <ImCross onClick={closeModal} className="cursor-pointer" />
         </div>
-        <div className={`grid grid-cols-1 ${game.leaderboard? "md:grid-cols-2":""}  gap-4 md:gap-8 mt-8 overflow-y-auto max-h-[70vh]`}>
-          <div className="lg:pe-14 overflow-y-auto max-h-[70vh] border-white">
+        <div
+          className={`grid grid-cols-1 ${
+            game.leaderboard ? "md:grid-cols-2" : ""
+          }  gap-4 md:gap-8 mt-8 overflow-y-auto max-h-[70vh]`}
+        >
+          <div className="lg:pe-14 overflow-y-auto max-h-[70vh] pb-12 border-white">
             <div className="flex items-center justify-between mb-10">
               <div className="flex flex-col xl:flex-row justify-between items-center lg:mr-6">
                 <img src={game.img} alt={game.name} className="h-[84px]" />
@@ -51,9 +54,13 @@ const GameDetails = ({ modalIsOpen, closeModal, game }) => {
               <p className="font-monckeberg mb-4">ABOUT GAME:</p>
               <p className="font-adam text-white text-sm">{game.description}</p>
             </div>
-            <div>
+            <div className="mb-12">
               <h4 className="font-monckeberg mb-4">HOW TO PLAY:</h4>
               <p className="font-adam text-white text-sm">{game.controls}</p>
+            </div>
+            <div>
+              <p className="font-monckeberg mb-4">TOKENOMICS:</p>
+              <p className="font-adam text-white text-sm">{tokenomics}</p>
             </div>
           </div>
           {game.leaderboard && <LeaderBoardList game={game} />}
