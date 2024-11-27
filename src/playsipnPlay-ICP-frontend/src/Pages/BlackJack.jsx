@@ -48,7 +48,7 @@ const BlackJack = () => {
     setIsLoading(true);
     try {
       const res = await backendActor.get_user();
-      console.log(res)
+      console.log(res);
       if (!res.Ok) {
         navigate("/");
         toast.error("Please provide your email");
@@ -64,14 +64,14 @@ const BlackJack = () => {
           })
         );
 
-        localStorage.setItem("blackjackBalance", encryptedBalance);
+        localStorage.setItem("Balance", encryptedBalance);
 
-        // if (amnt === 0) {
-        //   navigate("/");
-        //   toast.error("Please top up your account");
-        // }
+        if (amnt === 0) {
+          navigate("/");
+          toast.error("Please top up your account");
+        }
       }
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     } finally {
       setIsLoading(false);

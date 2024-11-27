@@ -34,7 +34,7 @@ const RewardsLeaderboard = ({ topTen }) => {
                 type="number"
                 value={rewardTokens}
                 onChange={(e) => setrewardTokens(e.target.value)}
-                className="text-xs rounded-md px-2 py-1 ml-2 bg-stone-700 outline-none border-none focus:ring ring-[#EE3EC9] text-white min-w-16 md:w-32"
+                className="text-xs rounded-md px-2 py-1 ml-2 bg-stone-700 outline-none border-none ring-[#EE3EC9] focus:ring-[1px] text-white min-w-16 md:w-32 lg:w-64 placeholder:text-stone-300"
                 placeholder="Tokens to reward"
               />
               <span className="text-sm text-end">

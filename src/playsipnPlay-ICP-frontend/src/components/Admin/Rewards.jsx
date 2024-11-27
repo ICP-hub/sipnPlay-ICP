@@ -21,7 +21,7 @@ const Rewards = () => {
           Tetris
         </div>
       </div>
-      <div className="flex flex-col items-center flex-1">
+      <div className="flex flex-col items-center flex-1 mt-8 md:mt-0">
         <button
           onClick={() => setisResetModalOpen(true)}
           className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-500 mb-2 transition-colors duration-300"

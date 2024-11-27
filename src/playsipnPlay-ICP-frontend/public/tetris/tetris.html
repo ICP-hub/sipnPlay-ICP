@@ -15,6 +15,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
       html,
       body {
@@ -122,6 +123,27 @@
       var score = 0;
       var bestScore = 0;
       var isGamePaused = false;
+
+      const secretKey = "Abh67_#fbau-@y74_7A_0nm6je7";
+      function getBalanceFromLocalStorage() {
+        try {
+          const amnt = localStorage.getItem("Balance");
+
+          if (amnt === null) {
+            return -1;
+          }
+          // Decrypt the amount
+          const decryptedBytes = CryptoJS.AES.decrypt(amnt, secretKey);
+          const decryptedAmnt = decryptedBytes.toString(CryptoJS.enc.Utf8);
+          const balance = parseFloat(decryptedAmnt);
+          return isNaN(balance) ? -1 : balance;
+        } catch (error) {
+          console.error("Error retrieving balance:", error);
+          return -1;
+        }
+      }
+      const balance = getBalanceFromLocalStorage();
+      console.log("Parsed balance:", balance);
 
       function togglePause() {
         if (!gameOver) {
@@ -372,23 +394,23 @@
       let gameStarted = false;
       let gameOver = false;
 
-      // function startGame() {
-      //   if (!gameStarted) {
-      //     gameStarted = true;
-      //     gameOver = false;
-      //     score = 0;
-      //     tetromino = getNextTetromino(); // Get the first tetromino
-      //     rAF = requestAnimationFrame(loop); // Start the game loop
-      //   }
-      // }
+      function startGame() {
+        if (!gameStarted) {
+          gameStarted = true;
+          gameOver = false;
+          score = 0;
+          tetromino = getNextTetromino(); // Get the first tetromino
+          rAF = requestAnimationFrame(loop); // Start the game loop
+        }
+      }
 
-      // function displayStartScreen() {
-      //   context.fillStyle = "white";
-      //   context.font = "36px monospace";
-      //   context.textAlign = "center";
-      //   context.textBaseline = "middle";
-      //   context.fillText("CLICK TO PLAY", canvas.width / 2, canvas.height / 2);
-      // }
+      function displayStartScreen() {
+        context.fillStyle = "white";
+        context.font = "36px monospace";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText("CLICK TO PLAY", canvas.width / 2, canvas.height / 2);
+      }
 
       // game loop
       function loop() {
@@ -454,10 +476,6 @@
         }
       });
 
-      // Pause on button click
-      var pauseButton = document.getElementById("pause");
-      pauseButton.addEventListener("click", togglePause);
-
       // listen to keyboard events to move the active tetromino
       document.addEventListener("keydown", function (e) {
         if (gameOver) return;
@@ -500,6 +518,9 @@
       const rotateBlock = document.getElementById("rotate-block");
       const right = document.getElementById("move-right");
       const down = document.getElementById("move-down");
+      // Pause on button click
+      var pauseButton = document.getElementById("pause");
+      pauseButton.addEventListener("click", togglePause);
 
       rotateBlock.addEventListener("click", function () {
         const matrix = rotate(tetromino.matrix);
@@ -533,15 +554,8 @@
       });
 
       // start the game
-      context.fillStyle = "white";
-      context.font = "36px monospace";
-      context.textAlign = "center";
-      context.textBaseline = "middle";
-      context.fillText("CLICK TO PLAY", canvas.width / 2, canvas.height / 2);
-
-      document.addEventListener("click", () => {
-        rAF = requestAnimationFrame(loop);
-      });
+      displayStartScreen();
+      document.addEventListener("click", startGame);
     </script>
   </body>
 </html>

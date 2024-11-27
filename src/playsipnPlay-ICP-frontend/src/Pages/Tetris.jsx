@@ -23,6 +23,7 @@ const Tetris = () => {
 
   const getBalance = async () => {
     let balance = await backendActor.get_caller_balance();
+    console.log(balance);
     let metaData = null;
     await ledgerActor
       .icrc1_metadata()
@@ -34,9 +35,10 @@ const Tetris = () => {
       });
 
     let amnt = parseFloat(
-      Number(balance) *
+      Number(balance.Ok) *
         Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
     );
+    console.log("gftvgbgyrffvg", amnt);
     dispatch(updateBalance({ balance: amnt }));
     return amnt;
   };
@@ -55,16 +57,16 @@ const Tetris = () => {
         dispatch(
           addUserData({
             id: principal.toString(),
-            email: res.ok.email,
+            email: res.Ok.email,
             balance: amnt,
           })
         );
 
-        localStorage.setItem("blackjackBalance", encryptedBalance);
+        localStorage.setItem("Balance", encryptedBalance);
         console.log("balance recieved", amnt);
       }
-    } catch {
-      console.log("getDetails Error");
+    } catch (err) {
+      console.log("getDetails Error", err.message);
     } finally {
       setIsLoading(false);
     }
@@ -88,7 +90,7 @@ const Tetris = () => {
       navigate("/");
       toast.error("You are not logged in! ");
     } else {
-      // getDetails();
+      getDetails();
     }
   }, []);
 
@@ -102,11 +104,11 @@ const Tetris = () => {
     window.addEventListener("message", handleScore);
     return () => {
       window.removeEventListener("message", handleScore);
-    };    
+    };
   }, []);
 
   useEffect(() => {
-    console.log("UPDATED BALANCE", userData.balance); 
+    console.log("UPDATED BALANCE", userData.balance);
   }, [userData.balance]);
 
   return (
