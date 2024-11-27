@@ -308,7 +308,10 @@
         gameOver = true;
         console.log(score);
 
-        window.parent.postMessage({ type: "save_score", score: score }, "*");
+        window.parent.postMessage(
+          { type: "save_score", score: score * 10 },
+          "*"
+        );
 
         context.fillStyle = "black";
         context.globalAlpha = 0.75;
