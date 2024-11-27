@@ -7,6 +7,7 @@ import { ImCross } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "../../../../sipnPlay-ICP-frontend/src/utils/useDisableScroll";
 import LeaderBoardList from "../LeaderboardList/LeaderboardList";
+
 const GameDetails = ({ modalIsOpen, closeModal, game, tokenomics }) => {
   const navigate = useNavigate();
   useDisableScroll(modalIsOpen);
@@ -25,7 +26,7 @@ const GameDetails = ({ modalIsOpen, closeModal, game, tokenomics }) => {
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
-        className="bg-black w-[90%] text-white h-[87%] lg:grid-cols-2 border border-[#696969] rounded-xl px-8 py-4 lg:px-16 lg:py-8 overflow-hidden"
+        className="bg-black w-[90%] text-white h-[87%] lg:grid-cols-2 border border-[#696969] rounded-xl px-8 py-4 lg:px-16 lg:py-8 overflow-hidden font-semibold"
       >
         <div className="flex justify-between items-center">
           <img
@@ -41,7 +42,7 @@ const GameDetails = ({ modalIsOpen, closeModal, game, tokenomics }) => {
           }  gap-4 md:gap-8 mt-8 overflow-y-auto max-h-[70vh]`}
         >
           <div className="lg:pe-14 overflow-y-auto max-h-[70vh] pb-12 border-white">
-            <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center justify-between mb-10 ">
               <div className="flex flex-col xl:flex-row justify-between items-center lg:mr-6">
                 <img src={game.img} alt={game.name} className="h-[84px]" />
                 <h3 className="font-monckeberg text-xl">{game.name}</h3>
@@ -51,12 +52,19 @@ const GameDetails = ({ modalIsOpen, closeModal, game, tokenomics }) => {
               </AnimationButton>
             </div>
             <div className="mb-12">
-              <p className="font-monckeberg mb-4">ABOUT GAME:</p>
-              <p className="font-adam text-white text-sm">{game.description}</p>
-            </div>
-            <div className="mb-12">
               <h4 className="font-monckeberg mb-4">HOW TO PLAY:</h4>
               <p className="font-adam text-white text-sm">{game.controls}</p>
+            </div>
+            <div className="mb-12">
+              <p className="font-monckeberg mb-4">ABOUT GAME:</p>
+              <ol className="font-adam text-white text-sm">
+                {game.description.map((item, i) => (
+                  <li key={i}>
+                    <span>{i}) </span>
+                    {item}
+                  </li>
+                ))}
+              </ol>
             </div>
             <div>
               <p className="font-monckeberg mb-4">TOKENOMICS:</p>
