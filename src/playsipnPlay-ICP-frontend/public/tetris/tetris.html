@@ -120,11 +120,13 @@
       // get a random integer between the range of [min,max]
       // @see https://stackoverflow.com/a/1527820/2124254
 
+      const secretKey = "Abh67_#fbau-@y74_7A_0nm6je7";
       var score = 0;
-      var bestScore = 0;
+      var best = localStorage.getItem("BestScore");
+      var decryptedBestScore = CryptoJS.AES.decrypt(best, secretKey);
+      var bestScore = decryptedBestScore.toString(CryptoJS.enc.Utf8);
       var isGamePaused = false;
 
-      const secretKey = "Abh67_#fbau-@y74_7A_0nm6je7";
       function getBalanceFromLocalStorage() {
         try {
           const amnt = localStorage.getItem("Balance");
@@ -190,6 +192,7 @@
         context.textAlign = "left";
         context.fillText("Score: " + score, 10, 30);
         context.fillText("Best: " + bestScore, 10, 60);
+        context.fillText("TSIP: " + balance, 230, 30);
       }
       function getRandomInt(min, max) {
         min = Math.ceil(min);

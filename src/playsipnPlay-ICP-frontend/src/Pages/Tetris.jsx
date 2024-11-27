@@ -15,6 +15,7 @@ function encryptData(data, key) {
 
 const Tetris = () => {
   const [score, setScore] = useState(0);
+  const [bestScore, setBestScore] = useState(10);
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -62,6 +63,8 @@ const Tetris = () => {
           })
         );
 
+        const best = encryptData(bestScore.toString(), secretKey);
+        localStorage.setItem("BestScore", best);
         localStorage.setItem("Balance", encryptedBalance);
         console.log("balance recieved", amnt);
       }
