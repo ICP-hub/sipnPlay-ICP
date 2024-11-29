@@ -6,6 +6,7 @@ use std::cell::RefCell;
 use std::borrow::Cow;
 
 use crate::types::*;
+use crate::api_update::start_tetris_leaderboard_update;
 
 // Define Memory Types
 pub type Memory = VirtualMemory<DefaultMemoryImpl>;
@@ -15,6 +16,7 @@ pub type MessageDataMap = StableBTreeMap<String, MessageData, Memory>;
 pub type WaitlistDataMap = StableBTreeMap<String, WaitlistData, Memory>;
 pub type TetrisDataMap = StableBTreeMap<String, TetrisData, Memory>;
 pub type TetrisLeaderboadDataMap =  StableBTreeMap<String, TetrisLeaderboardData, Memory>;
+pub struct SortedLeaderboard(pub Vec<TetrisLeaderboardData>);
 
 // Memory IDs for stable storage
 const USER_DATA_MEMORY_ID: MemoryId = MemoryId::new(0);
@@ -38,6 +40,7 @@ thread_local! {
             waitlist_data: WaitlistDataMap::init(mm.borrow().get(WAITLIST_DATA_MEMORY_ID)),
             tetris_leaderboard_data: TetrisLeaderboadDataMap::init(mm.borrow().get(TETRIS_LEADERBOARD_DATA_MEMORY_ID)),
             tetris_data: TetrisDataMap::init(mm.borrow().get(TETRIS_DATA_MEMORY_ID)),
+            sorted_leaderboard: SortedLeaderboard(Vec::new())
         })
     );
 }
@@ -49,7 +52,8 @@ pub struct State {
     pub message_data: MessageDataMap,
     pub waitlist_data: WaitlistDataMap,
     pub tetris_leaderboard_data: TetrisLeaderboadDataMap,
-    pub tetris_data: TetrisDataMap
+    pub tetris_data: TetrisDataMap,
+    pub sorted_leaderboard: SortedLeaderboard
 }
 
 // State Initialization
@@ -63,6 +67,12 @@ fn init() {
         state.waitlist_data = init_waitlist_data_map();
         state.tetris_leaderboard_data = init_tetris_leaderboard_data_map();
         state.tetris_data = init_tetris_data_map();
+        state.sorted_leaderboard = init_sorted_leaderboard();
+    });
+
+    // Start Tetris Leaderboard Update Call
+    ic_cdk::spawn(async {
+        start_tetris_leaderboard_update().await;
     });
 }
 
@@ -89,6 +99,11 @@ pub fn init_tetris_leaderboard_data_map() -> TetrisLeaderboadDataMap {
 
 pub fn init_tetris_data_map() -> TetrisDataMap {
     TetrisDataMap::init(get_tetris_data_memory())
+}
+
+// Initialize the sorted leaderboard in the state
+pub fn init_sorted_leaderboard() -> SortedLeaderboard {
+    SortedLeaderboard(Vec::new())
 }
 
 // Memory accessors
@@ -199,4 +214,18 @@ impl Storable for TetrisData {
     }
 
     const BOUND: ic_stable_structures::storable::Bound = ic_stable_structures::storable::Bound::Unbounded;
+}
+
+// Implement Storable for SortedLeaderboard
+impl Storable for SortedLeaderboard {
+    fn to_bytes(&self) -> Cow<[u8]> {
+        Cow::Owned(Encode!(&self.0).unwrap()) // Serialize inner Vec
+    }
+
+    fn from_bytes(bytes: Cow<[u8]>) -> Self {
+        SortedLeaderboard(Decode!(bytes.as_ref(), Vec<TetrisLeaderboardData>).unwrap()) // Deserialize into Vec
+    }
+
+    const BOUND: ic_stable_structures::storable::Bound =
+        ic_stable_structures::storable::Bound::Unbounded;
 }

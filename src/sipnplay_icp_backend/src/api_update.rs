@@ -1,6 +1,8 @@
 use candid::{Nat, Principal};
 use ic_cdk::api::time;
 use ic_cdk::{api::call::CallResult, call, caller, update};
+use ic_cdk_timers::set_timer_interval;
+use std::time::Duration;
 use ic_ledger_types::TransferResult;
 use icrc_ledger_types::icrc1::transfer::TransferArg;
 use icrc_ledger_types::{icrc1::account::Account, icrc2::transfer_from::TransferFromArgs};
@@ -425,81 +427,84 @@ async fn join_waitlist(name: String, email: String, icp_address: String) -> Resu
 // Functions of Tetris LeaderBoard:
 
 // Function to Start the game and transfer the tokens to the users
-// #[update]
-// async fn tetris_game_start() -> Result<String, String> {
-//     use num_traits::ToPrimitive;
-//     let caller_principal = caller();
+#[update]
+async fn tetris_game_start() -> Result<String, String> {
+    use num_traits::ToPrimitive;
+    let caller_principal = caller();
 
-//     // Check if the user exists in `user_data`
-//     let user_exists = STATE.with(|state| {
-//         let state = state.borrow();
-//         state.user_data.contains_key(&caller_principal)
-//     });
+    // Check if the user exists in `user_data`
+    let user_exists = STATE.with(|state| {
+        let state = state.borrow();
+        state.user_data.contains_key(&caller_principal)
+    });
 
-//     if !user_exists {
-//         return Err("User not found".to_string());
-//     }
+    if !user_exists {
+        return Err("User not found".to_string());
+    }
 
-//     // Fetch backend canister ID from the environment variable
-//     let backend_canister_id_str = option_env!("CANISTER_ID_SIPNPLAY_ICP_BACKEND")
-//         .ok_or("Backend canister ID not found in environment variables")?;
+    // Fetch backend canister ID from the environment variable
+    let backend_canister_id_str = option_env!("CANISTER_ID_SIPNPLAY_ICP_BACKEND")
+        .ok_or("Backend canister ID not found in environment variables")?;
 
-//     let backend_canister_id = Principal::from_text(backend_canister_id_str)
-//         .map_err(|_| "Invalid backend canister ID".to_string())?;
+    let backend_canister_id = Principal::from_text(backend_canister_id_str)
+        .map_err(|_| "Invalid backend canister ID".to_string())?;
 
-//     let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
-//         .ok_or("Ledger canister ID not found in environment variables")?;
+    let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
+        .ok_or("Ledger canister ID not found in environment variables")?;
 
-//     let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
-//         .map_err(|_| "Invalid backend canister ID".to_string())?;
+    let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
+        .map_err(|_| "Invalid backend canister ID".to_string())?;
 
-//     // Create transfer arguments
-//     let transfer_args = TransferFromArgs {
-//         spender_subaccount: None,
-//         from: Account {
-//             owner: caller_principal,
-//             subaccount: None,
-//         },
-//         to: Account {
-//             owner: backend_canister_id,
-//             subaccount: None,
-//         },
-//         amount: Nat::from(30), // Transfer 30 tokens
-//         fee: None,
-//         memo: None,
-//         created_at_time: None,
-//     };
+    // Create transfer arguments
+    let transfer_args = TransferFromArgs {
+        spender_subaccount: None,
+        from: Account {
+            owner: caller_principal,
+            subaccount: None,
+        },
+        to: Account {
+            owner: backend_canister_id,
+            subaccount: None,
+        },
+        amount: Nat::from(30u64), // Transfer 30 tokens
+        fee: None,
+        memo: None,
+        created_at_time: None,
+    };
 
-//     // Perform the inter-canister call to transfer money
-//     let response: CallResult<(TransferFromResult,)> =
-//         call(ledger_canister_id, "icrc2_transfer_from", (transfer_args,)).await;
+    // Clone the amount field before the `call` consumes `transfer_args`
+    let transfer_amount = transfer_args.amount.clone(); 
 
-//     match response {
-//         Ok((TransferFromResult::Ok(_block_index),)) => {
-//             // Add (caller, amount) to `blackjack_bet` map
-//             STATE.with(|state| {
-//                 let mut state = state.borrow_mut();
-//                 state.tetris_data.insert(
-//                     caller_principal.to_text(),
-//                     TetrisData {
-//                         id: caller_principal,                          // Use Principal ID
-//                         amount: transfer_args.amount.0.to_u64().unwrap(), // Convert Nat to u64
-//                     },
-//                 );
-//             });
-//             Ok(format!(
-//                 "Points deducted successfully: {}",
-//                 transfer_args.amount.to_string()
-//             ))
-//         }
-//         Ok((TransferFromResult::Err(error),)) => Err(format!("Ledger transfer error: {:?}", error)),
-//         Err((code, message)) => Err(format!("Failed to call ledger: {:?} - {}", code, message)),
-//     }
-// }
+    // Perform the inter-canister call to transfer money
+    let response: CallResult<(TransferFromResult,)> =
+        call(ledger_canister_id, "icrc2_transfer_from", (transfer_args,)).await;
+
+    match response {
+        Ok((TransferFromResult::Ok(_block_index),)) => {
+            // Add (caller, amount) to `tetris_data` map
+            STATE.with(|state| {
+                let mut state = state.borrow_mut();
+                state.tetris_data.insert(
+                    caller_principal.to_text(),
+                    TetrisData {
+                        id: caller_principal,                          // Use Principal ID
+                        amount: transfer_amount.0.to_u64().unwrap(), // Convert Nat to u64
+                    },
+                );
+            });
+            Ok(format!(
+                "Points deducted successfully: {}",
+                transfer_amount.to_string()
+            ))
+        }
+        Ok((TransferFromResult::Err(error),)) => Err(format!("Ledger transfer error: {:?}", error)),
+        Err((code, message)) => Err(format!("Failed to call ledger: {:?} - {}", code, message)),
+    }
+}
 
 // Approach 2 Insert the score when user exits then firstly remove the previous entry and then add new entry
 #[update] 
-fn tetris_game_over(input_score: u32) -> Result<(), String> {
+fn tetris_game_over(input_score: u32) -> Result<String, String> {
     // Only approved callers can add scores
     if !is_authenticated() {
         return Err("You are not authenticated".to_string());
@@ -544,5 +549,91 @@ fn tetris_game_over(input_score: u32) -> Result<(), String> {
         }
     });
 
+    Ok("Score added successfully".to_string())
+}
+
+// Reset the Tetris Leaderboard
+#[update]
+fn tetris_game_reset() -> Result<(), String> {
+   
+    // Check if the caller is approved
+    if !is_approved() {
+        return Err("You are not approved".to_string());
+    }
+
+    // Clear the leaderboard
+    STATE.with(|state| {
+        let mut state = state.borrow_mut();
+        state.tetris_leaderboard_data.clear_new();
+        state.sorted_leaderboard.0.clear();
+    });
+
     Ok(())
 }
+
+// Function provide the sorted data where firstly sort the data and store it into the vector & then clear all the BTreeMap and then store the data into it.
+#[ic_cdk::update]
+pub async fn get_crown_job_leaderboard() -> Result<String, String> {
+    // Retrieve the leaderboard data and sort it
+    let mut leaderboard = STATE.with(|state| {
+        state
+            .borrow()
+            .tetris_leaderboard_data
+            .iter()
+            .map(|(_, data)| data.clone()) // Collect all leaderboard data
+            .collect::<Vec<_>>()
+    });
+    ic_cdk::println!("Leaderboard data: {:#?}", leaderboard);
+
+    // Sort the leaderboard by points in descending order
+    leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
+
+    ic_cdk::println!("Sorted leaderboard data: {:#?}", leaderboard);
+
+    // Check if the leaderboard is empty after sorting
+    if leaderboard.is_empty() {
+        return Err("No leaderboard data found".to_string());
+    }
+
+    // Clear the Vector sorted leaderboard
+    let sorted_leaderboard = STATE.with(|state| {
+        let mut state = state.borrow_mut();
+        state.sorted_leaderboard.0.clear();
+    });
+
+    ic_cdk::println!("Cleared leaderboard data: {:#?}",sorted_leaderboard );
+
+    // Insert the sorted leaderboard data into the Vector
+    let sorted_leaderboard = STATE.with(|state| {
+        let mut state = state.borrow_mut();
+        state.sorted_leaderboard.0.extend(leaderboard);
+    }); 
+
+    ic_cdk::println!("Inserted leaderboard data: {:#?}", sorted_leaderboard);
+
+    if !STATE.with(|state| state.borrow().sorted_leaderboard.0.is_empty()) {
+        Ok("Leaderboard data has been sorted and updated successfully.".to_string())     
+    }else{
+        Err("Leaderboard data has not been sorted and updated successfully.".to_string())
+    }
+
+}
+
+// Add the Crown Jibob/JobSchedular which will run every 30 minutes and Provide the Sorted Data to the Leaderboard..
+#[ic_cdk::update]
+pub async fn start_tetris_leaderboard_update() {
+    set_timer_interval(Duration::from_secs(1*60), || {
+        // Use ic_cdk::spawn to call the async function
+        ic_cdk::println!("Starting Tetris Leaderboard Update");
+        ic_cdk::println!("Starting Tetris Leaderboard Update");
+        ic_cdk::spawn(async {
+            match get_crown_job_leaderboard().await {
+                Ok(message) => ic_cdk::println!("{}", message),
+                Err(error) => ic_cdk::println!("Error: {}", error),
+            }
+        });  
+    });
+}
+
+
+

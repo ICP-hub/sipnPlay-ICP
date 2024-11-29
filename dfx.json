@@ -18,7 +18,8 @@
       "candid": "src/sipnplay_icp_backend/sipnplay_icp_backend.did",
       "package": "sipnplay_icp_backend",
       "type": "rust",
-      "optimize":"cycles"
+      "optimize":"cycles",
+      "heartbeat": "30s" 
     },
     "test_sipnplay": {
       "type": "custom",

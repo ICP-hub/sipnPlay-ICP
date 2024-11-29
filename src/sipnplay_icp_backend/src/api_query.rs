@@ -2,6 +2,7 @@ use candid::{Nat, Principal};
 use ic_cdk::{caller, query};
 use num_traits::ToPrimitive;
 
+
 use crate::{state_handler::STATE, types::{MessageData, PaginatedResult, UserCreationInput}, BlackjackData, WaitlistData, TetrisLeaderboardData};
 
 const APPROVED_PRINCIPALS: &[&str] = &[
@@ -171,41 +172,35 @@ fn get_waitlist(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<Waitlis
 // Get the Tetris LeaderBoard Details All users with logged in user rank.
 #[ic_cdk::query]
 pub fn get_tetris_leaderboard() -> (Result<Vec<TetrisLeaderboardData>, String>, Nat) {
-    // Check if the caller is approved
-    if !is_authenticated() {
-        return (Err("You are not authenticated".to_string()), Nat::from(0u32));
-    }
-
-    // Retrieve the entire leaderboard data
-    let mut leaderboard = STATE.with(|state| {
+    // Access the state and clone the leaderboard data
+    let leaderboard = STATE.with(|state| {
         state
             .borrow()
-            .tetris_leaderboard_data
+            .sorted_leaderboard
+            .0
             .iter()
-            .map(|(_, data)| data.clone()) // Collect all leaderboard data
+            .cloned() // `cloned` simplifies cloning each element
             .collect::<Vec<_>>()
     });
 
-    // // Sort the leaderboard by score in descending order
-    leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
-
+    // Check if the leaderboard is empty
     if leaderboard.is_empty() {
-        return (Err("No leaderboard data found".to_string()), Nat::from(0u32));
+        return (Err("Leaderboard is empty".to_string()), Nat::from(0u32));
     }
 
     // Get the logged-in Principal
     let principal = caller();
-    let mut user_rank = Nat::from(0u32); // Initialize with 0 by default
+    let mut user_rank = Nat::from(0u32); // Default to 0 if the user is not in the leaderboard
 
-    // Find the index of the logged-in user in the leaderboard
+    // Find the rank of the logged-in user
     if let Some(index) = leaderboard.iter().position(|data| data.owner == principal) {
-        user_rank = Nat::from(index as u32 + 1); // Index + 1 for rank (1-based indexing)
+        user_rank = Nat::from(index as u32 + 1); // 1-based rank
         println!("Logged-in user found at rank {}", user_rank);
     } else {
         println!("Logged-in user not found in the leaderboard");
     }
 
-    // Return the sorted leaderboard along with the user rank
+    // Return the leaderboard and user rank
     (Ok(leaderboard), user_rank)
 }
 
@@ -231,21 +226,59 @@ pub fn get_logged_in_user_leaderboard() -> Result<TetrisLeaderboardData, String>
     }
 }
 
-// Get the Principals
+// Get the User High Score
 #[ic_cdk::query]
-pub fn get_principals() -> Vec<String> {
-    STATE.with(|state| {
+pub fn get_high_score() -> Result<String, String> {
+    // Get the Principal
+    let princial = caller();
+
+    // Retrieve the high score
+    let high_score = STATE.with(|state| {
         state
             .borrow()
-            .user_data
-            .iter() // Use iter to iterate over key-value pairs
-            .map(|(principal, _)| principal.to_text()) // Extract and convert the keys to strings
-            .collect()
-    })
+            .tetris_leaderboard_data
+            .get(&princial.to_text())
+            .map(|data| data.high_score.to_string())
+    });
+
+    // Return the high score or an error message
+    match high_score {
+        Some(high_score) => Ok(high_score),
+        None => Err("No high score found".to_string()),
+    }
 }
 
+// Get the Top 10 Players
 #[ic_cdk::query]
+pub fn get_top_ten_players() -> Result<Vec<TetrisLeaderboardData>, String> {
+
+    // Check the Approval request raised on Admin Authority
+    if !is_approved() {
+        return Err("You are not approved".to_string());
+    }
+    
+    let mut leaderboard = STATE.with(|state| {
+        state
+            .borrow()
+            .tetris_leaderboard_data
+            .iter()
+            .map(|(_, data)| data.clone()) // Collect all leaderboard data
+            .collect::<Vec<_>>()
+    });
+
+    // Sort the leaderboard by points in descending order
+    leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
+
+    if leaderboard.len() > 10 {
+        leaderboard = (&leaderboard[0..10]).to_vec();
+    }
+
+    Ok(leaderboard)
+}
+    
+
 // Get Current Principal
+#[ic_cdk::query]
 pub fn get_current_principal() -> String {
     // Return the principal as a string
     caller().to_text()  // No semicolon here, so it returns the value

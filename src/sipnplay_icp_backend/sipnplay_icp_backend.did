@@ -44,11 +44,13 @@ service : () -> {
   get_backend_balance : () -> (Result_1);
   get_blackjack_bet : () -> (Result_2) query;
   get_caller_balance : () -> (Result_1);
+  get_crown_job_leaderboard : () -> (Result);
   get_current_principal : () -> (text) query;
+  get_high_score : () -> (Result) query;
   get_logged_in_user_leaderboard : () -> (Result_3) query;
   get_messages : (nat, nat) -> (Result_4) query;
-  get_principals : () -> (vec text) query;
   get_tetris_leaderboard : () -> (Result_5, nat) query;
+  get_top_ten_players : () -> (Result_5) query;
   get_user : () -> (Result_6) query;
   get_waitlist : (nat, nat) -> (Result_7) query;
   icrc2_transfer_from : (principal, principal, principal, nat) -> (Result_1);
@@ -56,6 +58,9 @@ service : () -> {
   is_authenticated : () -> (bool) query;
   join_waitlist : (text, text, text) -> (Result);
   send_message : (text, text, text) -> (Result);
-  tetris_game_over : (nat32) -> (Result_8);
+  start_tetris_leaderboard_update : () -> ();
+  tetris_game_over : (nat32) -> (Result);
+  tetris_game_reset : () -> (Result_8);
+  tetris_game_start : () -> (Result);
   withdraw_money_from_default : (nat) -> (Result);
 }
