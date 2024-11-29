@@ -1,10 +1,9 @@
 import React from "react";
 import logo from "../../assets/images/logo.png";
 import blackJackLogo from "../../assets/images/blackjack.png";
-import EBoolLogo from "../../assets/images/8bool.png";
+import tetrisLogo from "../../assets/images/tetris.png";
 import gamepadLogo from "../../assets/images/gamepadLoader.gif";
 import Modal from "react-modal";
-// import DotLoader from "./DotLoader";
 import styles from "./LoadingPopup.module.css";
 
 const LoadingPopUp = ({ gameName, taskName }) => {
@@ -13,8 +12,8 @@ const LoadingPopUp = ({ gameName, taskName }) => {
     case "blackjack":
       gameImage = blackJackLogo;
       break;
-    case "BallPool":
-      gameImage = EBoolLogo;
+    case "tetris":
+      gameImage = tetrisLogo;
       break;
     default:
       gameImage = logo;

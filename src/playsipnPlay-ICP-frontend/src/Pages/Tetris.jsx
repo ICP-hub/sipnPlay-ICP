@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateBalance, addUserData } from "../utils/redux/userSlice";
 import CryptoJS from "crypto-js";
 import LoadingWindow from "../components/Loaders/LoadingWindow";
+import LoadingPopUp from "../components/Loaders/LoadingPopUp";
+import { transferApprove } from "../utils/transApprove";
 
 const secretKey = "Abh67_#fbau-@y74_7A_0nm6je7";
 
@@ -15,10 +17,12 @@ function encryptData(data, key) {
 
 const Tetris = () => {
   const [score, setScore] = useState(0);
-  const [bestScore, setBestScore] = useState(10);
+  const [bestScore, setBestScore] = useState('');
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [taskName, setTaskName] = useState("");
+  const [isPopUpLoading, setIsPopupLoading] = useState(false);
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
 
@@ -37,9 +41,8 @@ const Tetris = () => {
 
     let amnt = parseFloat(
       Number(balance.Ok) *
-        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+      Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
     );
-    console.log("gftvgbgyrffvg", amnt);
     dispatch(updateBalance({ balance: amnt }));
     return amnt;
   };
@@ -52,6 +55,27 @@ const Tetris = () => {
         navigate("/");
         toast.error("Please provide your email");
       } else {
+        const transferRes = await transferApprove(
+          backendActor,
+          ledgerActor,
+          30,
+          false
+        );
+        console.log("tetris game start transfer", transferRes);
+
+        const afterApproval = await backendActor.tetris_game_start();
+
+        console.log("afterApproval ",afterApproval);
+        
+
+        const userHighScore = await backendActor.get_high_score();
+        console.log("user high score", userHighScore);
+        if (userHighScore.Err) {
+          toast.success("Welcome user!")
+        }else{
+          setBestScore(userHighScore.Ok)
+        }
+       
         const amnt = await getBalance();
         const amntString = amnt.toString();
         const encryptedBalance = encryptData(amntString, secretKey);
@@ -62,11 +86,9 @@ const Tetris = () => {
             balance: amnt,
           })
         );
-
-        const best = encryptData(bestScore.toString(), secretKey);
+        const best = encryptData(bestScore, secretKey);
         localStorage.setItem("BestScore", best);
         localStorage.setItem("Balance", encryptedBalance);
-        console.log("balance recieved", amnt);
       }
     } catch (err) {
       console.log("getDetails Error", err.message);
@@ -98,10 +120,18 @@ const Tetris = () => {
   }, []);
 
   useEffect(() => {
-    const handleScore = (event) => {
+    const handleScore = async (event) => {
       if (event.data?.type === "save_score") {
         setScore(event.data.score);
-        backendActor.tetris_game_over(event.data.score);
+        setTaskName("Saving score ...")
+        setIsPopupLoading(true);
+        const resp = await backendActor.tetris_game_over(event.data.score);
+        if (resp.Ok) {
+          toast.success("Score saved successfully");
+        } else {
+          toast.error("Some error occured");
+        }
+        setIsPopupLoading(false);
       }
     };
     window.addEventListener("message", handleScore);
@@ -116,10 +146,13 @@ const Tetris = () => {
 
   return (
     <div>
-      {false ? (
-        <LoadingWindow gameName="Tetris" />
+      {isLoading ? (
+        <LoadingWindow gameName="tetris" />
       ) : (
         <div>
+           {isPopUpLoading && (
+            <LoadingPopUp gameName="tetris" taskName={taskName} />
+          )}
           <iframe
             title="Tetris Game"
             src="tetris/tetris.html"

@@ -2,8 +2,7 @@ import React from "react";
 import logo from "../../assets/images/logo.png";
 import bgImage from "../../assets/images/waitlistBg.png";
 import blackJackLogo from "../../assets/images/blackjack.png";
-import EBoolLogo from "../../assets/images/8bool.png";
-// import DotLoader from "./DotLoader";
+import tetrisLogo from "../../assets/images/tetris.png";
 import styles from "./LoadingWindow.module.css";
 
 const LoadingWindow = ({ gameName }) => {
@@ -12,8 +11,8 @@ const LoadingWindow = ({ gameName }) => {
     case "blackjack":
       gameImage = blackJackLogo;
       break;
-    case "BallPool":
-      gameImage = EBoolLogo;
+    case "tetris":
+      gameImage = tetrisLogo;
       break;
     default:
       gameImage = logo;

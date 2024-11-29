@@ -163,7 +163,8 @@ const BlackJack = () => {
           const res = await transferApprove(
             backendActor,
             ledgerActor,
-            event.data.bet
+            event.data.bet,
+            true
           );
           console.log(res);
           if (res.err) {

@@ -85,38 +85,38 @@ pub fn create_user(email: String) -> String {
     })
 }
 
-#[update]
-async fn icrc2_transfer_from(
-    ledger_id: Principal,     // Ledger canister ID as a Principal
-    transfer_from: Principal, // Sender's Principal
-    transfer_to: Principal,   // Recipient's Principal
-    amount: Nat,              // Amount to transfer
-) -> Result<Nat, String> {
-    let transfer_args = TransferFromArgs {
-        spender_subaccount: None,
-        from: Account {
-            owner: transfer_from,
-            subaccount: None,
-        },
-        to: Account {
-            owner: transfer_to,
-            subaccount: None,
-        },
-        amount,
-        fee: None,
-        memo: None,
-        created_at_time: None,
-    };
+// #[update]
+// async fn icrc2_transfer_from(
+//     ledger_id: Principal,     // Ledger canister ID as a Principal
+//     transfer_from: Principal, // Sender's Principal
+//     transfer_to: Principal,   // Recipient's Principal
+//     amount: Nat,              // Amount to transfer
+// ) -> Result<Nat, String> {
+//     let transfer_args = TransferFromArgs {
+//         spender_subaccount: None,
+//         from: Account {
+//             owner: transfer_from,
+//             subaccount: None,
+//         },
+//         to: Account {
+//             owner: transfer_to,
+//             subaccount: None,
+//         },
+//         amount,
+//         fee: None,
+//         memo: None,
+//         created_at_time: None,
+//     };
 
-    let response: CallResult<(TransferFromResult,)> =
-        call(ledger_id, "icrc2_transfer_from", (transfer_args,)).await;
+//     let response: CallResult<(TransferFromResult,)> =
+//         call(ledger_id, "icrc2_transfer_from", (transfer_args,)).await;
 
-    match response {
-        Ok((TransferFromResult::Ok(block_index),)) => Ok(block_index),
-        Ok((TransferFromResult::Err(error),)) => Err(format!("Ledger transfer error: {:?}", error)),
-        Err((code, message)) => Err(format!("Failed to call ledger: {:?} - {}", code, message)),
-    }
-}
+//     match response {
+//         Ok((TransferFromResult::Ok(block_index),)) => Ok(block_index),
+//         Ok((TransferFromResult::Err(error),)) => Err(format!("Ledger transfer error: {:?}", error)),
+//         Err((code, message)) => Err(format!("Failed to call ledger: {:?} - {}", code, message)),
+//     }
+// }
 
 #[update]
 async fn deduct_money(amount: Nat) -> Result<String, String> {
@@ -466,7 +466,7 @@ async fn tetris_game_start() -> Result<String, String> {
             owner: backend_canister_id,
             subaccount: None,
         },
-        amount: Nat::from(30u64), // Transfer 30 tokens
+        amount: Nat::from(3000000000u64), // Transfer 30 tokens
         fee: None,
         memo: None,
         created_at_time: None,

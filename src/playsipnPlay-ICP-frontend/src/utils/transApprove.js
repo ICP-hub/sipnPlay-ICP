@@ -29,12 +29,14 @@ const getBalance = async (backendActor) => {
 export const transferApprove = async (
   backendActor,
   ledgerActor,
-  sendAmount
+  sendAmount,
+  transfer
 ) => {
   let metaData = null;
   try {
     const metadataResponse = await ledgerActor.icrc1_metadata();
     metaData = formatTokenMetaData(metadataResponse);
+    console.log("MetaData ",parseInt(metaData?.["icrc1:decimals"]))
 
     const amnt = parseInt(
       Number(sendAmount) * Math.pow(10, parseInt(metaData?.["icrc1:decimals"]))
@@ -58,13 +60,17 @@ export const transferApprove = async (
       };
 
       const approvalResponse = await ledgerActor.icrc2_approve(transaction);
-      console.log("approval response",approvalResponse);
-      
+      console.log("approval response", approvalResponse);
+
 
       if (approvalResponse?.Err) {
         return approvalResponse;
       } else {
-        return await afterPaymentFlow(backendActor, amnt);
+        if (transfer === true) {
+          return await afterPaymentFlow(backendActor, amnt);
+        } else {
+          return "Payment Approved successfully";
+        }
       }
     } else {
       console.log("balance is less : ", amnt, sendAmount);

@@ -106,7 +106,6 @@ export const useAuthClient = (options = defaultOptions) => {
                 setPrincipal(principal);
                 setIsAuthenticated(true);
                 console.log(principal)
-                alert("hello ", principal)
               } catch (err) {
                 alert(err)
               }

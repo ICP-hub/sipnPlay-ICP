@@ -57,7 +57,8 @@ const Resources = () => {
       const res = await transferApprove(
         backendActor,
         ledgerActor,
-        addAmntToBackend
+        addAmntToBackend,
+        true
       );
 
       if (res.Err) {
