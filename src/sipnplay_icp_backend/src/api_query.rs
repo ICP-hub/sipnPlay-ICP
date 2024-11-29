@@ -2,8 +2,11 @@ use candid::{Nat, Principal};
 use ic_cdk::{caller, query};
 use num_traits::ToPrimitive;
 
-
-use crate::{state_handler::STATE, types::{MessageData, PaginatedResult, UserCreationInput}, BlackjackData, WaitlistData, TetrisLeaderboardData};
+use crate::{
+    state_handler::STATE,
+    types::{MessageData, PaginatedResult, UserCreationInput},
+    BlackjackData, TetrisLeaderboardData, WaitlistData,
+};
 
 const APPROVED_PRINCIPALS: &[&str] = &[
     "oxj2h-r6fbj-hqtcn-fv7ye-yneeb-ca3se-c6s42-imvp7-juu33-ovnix-mae", // Paras
@@ -15,11 +18,10 @@ const APPROVED_PRINCIPALS: &[&str] = &[
     "2vxsx-fae",
 ];
 
-
 // Function to check if the caller is approved
 #[ic_cdk::query]
 pub fn is_approved() -> bool {
-    let caller_principal = caller(); 
+    let caller_principal = caller();
     APPROVED_PRINCIPALS
         .iter()
         .any(|&approved| Principal::from_text(approved).unwrap() == caller_principal)
@@ -70,8 +72,14 @@ fn get_messages(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<Message
     }
 
     // Convert `Nat` to `usize`
-    let chunk_size_usize = chunk_size.0.to_usize().ok_or("Chunk size is too large for usize")?;
-    let page_no_usize = page_no.0.to_usize().ok_or("Page number is too large for usize")?;
+    let chunk_size_usize = chunk_size
+        .0
+        .to_usize()
+        .ok_or("Chunk size is too large for usize")?;
+    let page_no_usize = page_no
+        .0
+        .to_usize()
+        .ok_or("Page number is too large for usize")?;
 
     // Calculate total pages
     let total_pages = (entries.len() + chunk_size_usize - 1) / chunk_size_usize;
@@ -143,8 +151,14 @@ fn get_waitlist(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<Waitlis
     }
 
     // Convert `Nat` to `usize` using `ToPrimitive`
-    let chunk_size_usize = chunk_size.0.to_usize().ok_or("Chunk size is too large for usize")?;
-    let page_no_usize = page_no.0.to_usize().ok_or("Page number is too large for usize")?;
+    let chunk_size_usize = chunk_size
+        .0
+        .to_usize()
+        .ok_or("Chunk size is too large for usize")?;
+    let page_no_usize = page_no
+        .0
+        .to_usize()
+        .ok_or("Page number is too large for usize")?;
 
     // Calculate total pages
     let total_pages = (entries.len() + chunk_size_usize - 1) / chunk_size_usize;
@@ -204,7 +218,7 @@ pub fn get_tetris_leaderboard() -> (Result<Vec<TetrisLeaderboardData>, String>, 
     (Ok(leaderboard), user_rank)
 }
 
-// Get the Logged-in User LeaderBoard Details 
+// Get the Logged-in User LeaderBoard Details
 #[ic_cdk::query]
 pub fn get_logged_in_user_leaderboard() -> Result<TetrisLeaderboardData, String> {
     let principal = caller();
@@ -251,12 +265,11 @@ pub fn get_high_score() -> Result<String, String> {
 // Get the Top 10 Players
 #[ic_cdk::query]
 pub fn get_top_ten_players() -> Result<Vec<TetrisLeaderboardData>, String> {
-
     // Check the Approval request raised on Admin Authority
     if !is_approved() {
         return Err("You are not approved".to_string());
     }
-    
+
     let mut leaderboard = STATE.with(|state| {
         state
             .borrow()
@@ -275,11 +288,10 @@ pub fn get_top_ten_players() -> Result<Vec<TetrisLeaderboardData>, String> {
 
     Ok(leaderboard)
 }
-    
 
 // Get Current Principal
 #[ic_cdk::query]
 pub fn get_current_principal() -> String {
     // Return the principal as a string
-    caller().to_text()  // No semicolon here, so it returns the value
+    caller().to_text() // No semicolon here, so it returns the value
 }

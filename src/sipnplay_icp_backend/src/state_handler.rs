@@ -1,12 +1,12 @@
-use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
-use ic_stable_structures::{DefaultMemoryImpl, Storable};
-use ic_stable_structures::StableBTreeMap;
 use candid::{Decode, Encode, Principal};
-use std::cell::RefCell;
+use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
+use ic_stable_structures::StableBTreeMap;
+use ic_stable_structures::{DefaultMemoryImpl, Storable};
 use std::borrow::Cow;
+use std::cell::RefCell;
 
-use crate::types::*;
 use crate::api_update::start_tetris_leaderboard_update;
+use crate::types::*;
 
 // Define Memory Types
 pub type Memory = VirtualMemory<DefaultMemoryImpl>;
@@ -15,7 +15,7 @@ pub type UserDataMap = StableBTreeMap<Principal, UserCreationInput, Memory>;
 pub type MessageDataMap = StableBTreeMap<String, MessageData, Memory>;
 pub type WaitlistDataMap = StableBTreeMap<String, WaitlistData, Memory>;
 pub type TetrisDataMap = StableBTreeMap<String, TetrisData, Memory>;
-pub type TetrisLeaderboadDataMap =  StableBTreeMap<String, TetrisLeaderboardData, Memory>;
+pub type TetrisLeaderboadDataMap = StableBTreeMap<String, TetrisLeaderboardData, Memory>;
 pub struct SortedLeaderboard(pub Vec<TetrisLeaderboardData>);
 
 // Memory IDs for stable storage
@@ -53,7 +53,7 @@ pub struct State {
     pub waitlist_data: WaitlistDataMap,
     pub tetris_leaderboard_data: TetrisLeaderboadDataMap,
     pub tetris_data: TetrisDataMap,
-    pub sorted_leaderboard: SortedLeaderboard
+    pub sorted_leaderboard: SortedLeaderboard,
 }
 
 // State Initialization
@@ -150,7 +150,8 @@ impl Storable for BlackjackData {
         Decode!(bytes.as_ref(), Self).unwrap()
     }
 
-    const BOUND: ic_stable_structures::storable::Bound = ic_stable_structures::storable::Bound::Unbounded;
+    const BOUND: ic_stable_structures::storable::Bound =
+        ic_stable_structures::storable::Bound::Unbounded;
 }
 
 // Implement Storable for UserCreationInput
@@ -163,7 +164,8 @@ impl Storable for UserCreationInput {
         Decode!(bytes.as_ref(), Self).unwrap()
     }
 
-    const BOUND: ic_stable_structures::storable::Bound = ic_stable_structures::storable::Bound::Unbounded;
+    const BOUND: ic_stable_structures::storable::Bound =
+        ic_stable_structures::storable::Bound::Unbounded;
 }
 
 // Implement Storable for MessageData
@@ -176,7 +178,8 @@ impl Storable for MessageData {
         Decode!(bytes.as_ref(), Self).unwrap()
     }
 
-    const BOUND: ic_stable_structures::storable::Bound = ic_stable_structures::storable::Bound::Unbounded;
+    const BOUND: ic_stable_structures::storable::Bound =
+        ic_stable_structures::storable::Bound::Unbounded;
 }
 
 // Implement Storable for WaitlistData
@@ -189,7 +192,8 @@ impl Storable for WaitlistData {
         Decode!(bytes.as_ref(), Self).unwrap()
     }
 
-    const BOUND: ic_stable_structures::storable::Bound = ic_stable_structures::storable::Bound::Unbounded;
+    const BOUND: ic_stable_structures::storable::Bound =
+        ic_stable_structures::storable::Bound::Unbounded;
 }
 
 // Implement Storable for TetrisLeaderboard
@@ -201,7 +205,8 @@ impl Storable for TetrisLeaderboardData {
         Decode!(bytes.as_ref(), Self).unwrap()
     }
 
-    const BOUND: ic_stable_structures::storable::Bound = ic_stable_structures::storable::Bound::Unbounded;
+    const BOUND: ic_stable_structures::storable::Bound =
+        ic_stable_structures::storable::Bound::Unbounded;
 }
 
 // Implement Storable for TetrisData
@@ -213,7 +218,8 @@ impl Storable for TetrisData {
         Decode!(bytes.as_ref(), Self).unwrap()
     }
 
-    const BOUND: ic_stable_structures::storable::Bound = ic_stable_structures::storable::Bound::Unbounded;
+    const BOUND: ic_stable_structures::storable::Bound =
+        ic_stable_structures::storable::Bound::Unbounded;
 }
 
 // Implement Storable for SortedLeaderboard
@@ -223,7 +229,8 @@ impl Storable for SortedLeaderboard {
     }
 
     fn from_bytes(bytes: Cow<[u8]>) -> Self {
-        SortedLeaderboard(Decode!(bytes.as_ref(), Vec<TetrisLeaderboardData>).unwrap()) // Deserialize into Vec
+        SortedLeaderboard(Decode!(bytes.as_ref(), Vec<TetrisLeaderboardData>).unwrap())
+        // Deserialize into Vec
     }
 
     const BOUND: ic_stable_structures::storable::Bound =

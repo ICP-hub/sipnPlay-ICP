@@ -2,15 +2,18 @@ use candid::{Nat, Principal};
 use ic_cdk::api::time;
 use ic_cdk::{api::call::CallResult, call, caller, update};
 use ic_cdk_timers::set_timer_interval;
-use std::time::Duration;
 use ic_ledger_types::TransferResult;
 use icrc_ledger_types::icrc1::transfer::TransferArg;
 use icrc_ledger_types::{icrc1::account::Account, icrc2::transfer_from::TransferFromArgs};
+use std::time::Duration;
 
 use crate::api_query::{is_approved, is_authenticated};
 use crate::state_handler::{mutate_state, read_state};
 use crate::{state_handler::STATE, types::BalanceOfArgs, UserCreationInput};
-use crate::{BlackjackData, MessageData, TetrisData, TetrisLeaderboardData, TransferFromResult, WaitlistData};
+use crate::{
+    BlackjackData, MessageData, RewardedPlayers, TetrisData, TetrisLeaderboardData,
+    TransferFromResult, WaitlistData,
+};
 
 #[update]
 pub async fn get_caller_balance() -> Result<u128, String> {
@@ -473,7 +476,7 @@ async fn tetris_game_start() -> Result<String, String> {
     };
 
     // Clone the amount field before the `call` consumes `transfer_args`
-    let transfer_amount = transfer_args.amount.clone(); 
+    let transfer_amount = transfer_args.amount.clone();
 
     // Perform the inter-canister call to transfer money
     let response: CallResult<(TransferFromResult,)> =
@@ -487,7 +490,7 @@ async fn tetris_game_start() -> Result<String, String> {
                 state.tetris_data.insert(
                     caller_principal.to_text(),
                     TetrisData {
-                        id: caller_principal,                          // Use Principal ID
+                        id: caller_principal,                        // Use Principal ID
                         amount: transfer_amount.0.to_u64().unwrap(), // Convert Nat to u64
                     },
                 );
@@ -503,7 +506,7 @@ async fn tetris_game_start() -> Result<String, String> {
 }
 
 // Approach 2 Insert the score when user exits then firstly remove the previous entry and then add new entry
-#[update] 
+#[update]
 fn tetris_game_over(input_score: u32) -> Result<String, String> {
     // Only approved callers can add scores
     if !is_authenticated() {
@@ -515,8 +518,8 @@ fn tetris_game_over(input_score: u32) -> Result<String, String> {
 
     // Update or add the player's score
     STATE.with(|state| {
-        let mut state = state.borrow_mut();  // Mutably borrow the state
-        let leaderboard = &mut state.tetris_leaderboard_data;  // Get mutable reference to the leaderboard
+        let mut state = state.borrow_mut(); // Mutably borrow the state
+        let leaderboard = &mut state.tetris_leaderboard_data; // Get mutable reference to the leaderboard
 
         // Check if the player already exists in the leaderboard
         if leaderboard.contains_key(&player_id.to_text()) {
@@ -527,10 +530,10 @@ fn tetris_game_over(input_score: u32) -> Result<String, String> {
             let high_score = player_data.high_score;
             if input_score > high_score {
                 player_data.high_score = input_score;
-            }else{
+            } else {
                 player_data.high_score = high_score;
             }
-            
+
             // Add points
             player_data.points += input_score;
 
@@ -543,7 +546,7 @@ fn tetris_game_over(input_score: u32) -> Result<String, String> {
                 TetrisLeaderboardData {
                     owner: player_id,
                     high_score: input_score,
-                    points: input_score
+                    points: input_score,
                 },
             );
         }
@@ -555,7 +558,6 @@ fn tetris_game_over(input_score: u32) -> Result<String, String> {
 // Reset the Tetris Leaderboard
 #[update]
 fn tetris_game_reset() -> Result<(), String> {
-   
     // Check if the caller is approved
     if !is_approved() {
         return Err("You are not approved".to_string());
@@ -571,6 +573,68 @@ fn tetris_game_reset() -> Result<(), String> {
     Ok(())
 }
 
+// Function for Destribution of the points to top ten players
+#[ic_cdk::update]
+pub async fn reward_distributionre(
+    rewarded_players: Vec<RewardedPlayers>,
+) -> Result<String, String> {
+    // Check if the caller is approved
+    if !is_approved() {
+        return Err("You are not approved".to_string());
+    }
+
+    let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
+        .ok_or("Backend canister ID not found in environment variables")?;
+
+    let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
+        .map_err(|_| "Invalid backend canister ID".to_string())?;
+
+    // Define the Result Vector to store the responses
+    let mut results = Vec::new();
+
+    // Distribute the rewards all rewarded players one by one
+    for rewarded_player in rewarded_players {
+        // Create transfer arguments for every player
+        let transfer_args = TransferArg {
+            to: Account {
+                owner: rewarded_player.owner, // Transfer to the caller
+                subaccount: None,
+            },
+            fee: None,                                                 // Optional fee
+            memo: None,                                                // Optional memo
+            from_subaccount: None,                                     // Default subaccount
+            created_at_time: None,                                     // No timestamp
+            amount: Nat::from(rewarded_player.amount * 1000000000u64), // Transfer amount
+        };
+
+        // Perform the inter-canister call to transfer tokens for each and every player
+        let response: CallResult<(TransferResult,)> =
+            ic_cdk::api::call::call(ledger_canister_id, "icrc1_transfer", (transfer_args,)).await;
+
+        match response {
+            Ok((TransferResult::Ok(_),)) => {
+                results.push(Ok("Rewards distributed successful".to_string()));
+            }
+            Ok((TransferResult::Err(err),)) => {
+                results.push(Err(format!("Rewards distribution failed: {}", err)));
+            }
+            Err(err) => {
+                let (code, msg) = err;
+                results.push(Err(format!(
+                    "Inter-canister call failed with code {:#?} and message: {}",
+                    code, msg
+                )));
+            }
+        }
+    }
+
+    // Return the results
+    if results.iter().all(|result| result.is_ok()) {
+        Ok("Rewards distributed successfully".to_string())
+    } else {
+        Err("Rewards distribution failed".to_string())
+    }
+}
 // Function provide the sorted data where firstly sort the data and store it into the vector & then clear all the BTreeMap and then store the data into it.
 #[ic_cdk::update]
 pub async fn get_crown_job_leaderboard() -> Result<String, String> {
@@ -583,7 +647,6 @@ pub async fn get_crown_job_leaderboard() -> Result<String, String> {
             .map(|(_, data)| data.clone()) // Collect all leaderboard data
             .collect::<Vec<_>>()
     });
-    ic_cdk::println!("Leaderboard data: {:#?}", leaderboard);
 
     // Sort the leaderboard by points in descending order
     leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
@@ -596,44 +659,37 @@ pub async fn get_crown_job_leaderboard() -> Result<String, String> {
     }
 
     // Clear the Vector sorted leaderboard
-    let sorted_leaderboard = STATE.with(|state| {
+    STATE.with(|state| {
         let mut state = state.borrow_mut();
         state.sorted_leaderboard.0.clear();
     });
-
-    ic_cdk::println!("Cleared leaderboard data: {:#?}",sorted_leaderboard );
 
     // Insert the sorted leaderboard data into the Vector
     let sorted_leaderboard = STATE.with(|state| {
         let mut state = state.borrow_mut();
         state.sorted_leaderboard.0.extend(leaderboard);
-    }); 
+    });
 
     ic_cdk::println!("Inserted leaderboard data: {:#?}", sorted_leaderboard);
 
     if !STATE.with(|state| state.borrow().sorted_leaderboard.0.is_empty()) {
-        Ok("Leaderboard data has been sorted and updated successfully.".to_string())     
-    }else{
+        Ok("Leaderboard data has been sorted and updated successfully.".to_string())
+    } else {
         Err("Leaderboard data has not been sorted and updated successfully.".to_string())
     }
-
 }
 
 // Add the Crown Jibob/JobSchedular which will run every 30 minutes and Provide the Sorted Data to the Leaderboard..
 #[ic_cdk::update]
 pub async fn start_tetris_leaderboard_update() {
-    set_timer_interval(Duration::from_secs(1*60), || {
+    set_timer_interval(Duration::from_secs(1 * 60), || {
         // Use ic_cdk::spawn to call the async function
-        ic_cdk::println!("Starting Tetris Leaderboard Update");
         ic_cdk::println!("Starting Tetris Leaderboard Update");
         ic_cdk::spawn(async {
             match get_crown_job_leaderboard().await {
                 Ok(message) => ic_cdk::println!("{}", message),
                 Err(error) => ic_cdk::println!("Error: {}", error),
             }
-        });  
+        });
     });
 }
-
-
-

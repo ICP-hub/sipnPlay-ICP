@@ -24,6 +24,7 @@ type Result_5 = variant { Ok : vec TetrisLeaderboardData; Err : text };
 type Result_6 = variant { Ok : UserCreationInput; Err : text };
 type Result_7 = variant { Ok : PaginatedResult_1; Err : text };
 type Result_8 = variant { Ok; Err : text };
+type RewardedPlayers = record { owner : principal; amount : nat64 };
 type TetrisLeaderboardData = record {
   high_score : nat32;
   owner : principal;
@@ -56,6 +57,7 @@ service : () -> {
   is_approved : () -> (bool) query;
   is_authenticated : () -> (bool) query;
   join_waitlist : (text, text, text) -> (Result);
+  reward_distributionre : (vec RewardedPlayers) -> (Result);
   send_message : (text, text, text) -> (Result);
   start_tetris_leaderboard_update : () -> ();
   tetris_game_over : (nat32) -> (Result);

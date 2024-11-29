@@ -1,12 +1,11 @@
-use ic_cdk::export_candid;
 use candid::Nat;
-use candid::Principal;
+use ic_cdk::export_candid;
 
 use crate::types::*;
 
-mod api_update;
-mod types;
 mod api_query;
+mod api_update;
 mod state_handler;
+mod types;
 
 export_candid!();
