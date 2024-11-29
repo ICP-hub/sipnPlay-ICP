@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import useDisableScroll from "../../../../sipnPlay-ICP-frontend/src/utils/useDisableScroll";
 
 const Register = ({ setIsRegisterDone, modalIsOpen, setIsOpen }) => {
-  const { backendActor, principal } = useAuth();
+  const { backendActor } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
 
   function closeModal() {

@@ -1,15 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ImCross } from "react-icons/im";
 import Modal from "react-modal";
 import RewardsLeaderboard from "./RewardsLeaderboard";
 import AdminRewardModal from "../Modals/AdminRewardModal";
+import { useAuth } from "../../utils/useAuthClient";
 
 const Rewards = () => {
   const [activeLink, setActiveLink] = useState("tetris");
+  const { backendActor } = useAuth();
   const [isResetModalOpen, setisResetModalOpen] = useState(false);
   const [isRewardModalOpen, setisRewardModalOpen] = useState(false);
-  const [isResetting, setisResetting] = useState(false);
-  const [isRewarding, setisRewarding] = useState(false);
+  const [topTen, setTopTen] = useState([]);
+
+  useEffect(() => {
+    const getTetrisPlayers = async () => {
+      const topTenUsers = await backendActor.get_top_ten_players();
+      setTopTen(topTenUsers.Ok);
+    }
+    if(activeLink === "tetris"){
+      getTetrisPlayers();
+    }
+  }, []);
 
   function handleLinkClick(section) {
     setActiveLink(section);
@@ -39,49 +50,18 @@ const Rewards = () => {
           description={
             "Are you sure you want to reset the Leaderboard? This action CANNOT be undone!"
           }
-          primaryBtnText={"Reset"}
-          isInProcess={isResetting}
+          primaryBtnText="Reset"
           btnColour={"red"}
         />
         <div className="w-3/4">
           <RewardsLeaderboard
-            topTen={[
-              {
-                principal: "b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5",
-                points: 100,
-              },
-              {
-                principal: "iuewfiw-wefhwe-fhejfq-dwedfcs",
-                points: 100,
-              },
-              {
-                principal: "eifhsif-21no1jb4i12-12h1kj4141",
-                points: 100,
-              },
-              {
-                principal: "fwijeohfw-wefhwooeif-13rfjkwenfo1",
-                points: 100,
-              },
-              {
-                principal: "sarayu-prodduturu",
-                points: 100,
-              },
-              {
-                principal: "arayu-prodduturu",
-                points: 100,
-              },
-              {
-                principal: "rayu-prodduturu",
-                points: 100,
-              },
-            ]}
+            topTen={topTen}
           />
         </div>
         <button
           onClick={() => setisRewardModalOpen(true)}
-          className={`px-4 py-2 bg-green-600 hover:bg-green-500 transition-colors duration-300 text-white rounded-md cursor-pointer ${
-            isRewarding && "opacity-50 hover:cursor-not-allowed"
-          }`}
+          className={`px-4 py-2 bg-green-600 hover:bg-green-500 transition-colors duration-300 text-white rounded-md cursor-pointer ${isRewarding && "opacity-50 hover:cursor-not-allowed"
+            }`}
         >
           Reward Users
         </button>
@@ -92,8 +72,7 @@ const Rewards = () => {
           description={
             "Are you sure you want to transfer tokens to the respective principals?"
           }
-          primaryBtnText={"Reward"}
-          isInProcess={isRewarding}
+          primaryBtnText="Reward"
           btnColour={"green"}
         />
       </div>

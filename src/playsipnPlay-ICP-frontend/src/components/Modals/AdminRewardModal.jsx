@@ -1,16 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { ImCross } from "react-icons/im";
 import Modal from "react-modal";
-
+import { useAuth } from "../../utils/useAuthClient";
 const AdminRewardModal = ({
   isOpen,
   closeModal,
   header,
   description,
   primaryBtnText,
-  isInProcess,
   btnColour,
 }) => {
+  const { backendActor } = useAuth();
+  const [isInProcess, setIsInProcess] = useState(false);
+
+  const handleBtnClick = async () => {
+    try {
+      setIsInProcess(true);
+      if (primaryBtnText === "Reset") {
+        const setResp = await backendActor.reset_leaderboard();
+        console.log(setResp);
+      }
+      if (primaryBtnText == "Reward") {
+
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsInProcess(false);
+    }
+  }
+
+
   return (
     <Modal
       isOpen={isOpen}
@@ -37,9 +57,9 @@ const AdminRewardModal = ({
             Cancel
           </button>
           <button
-            className={`px-4 py-2 bg-${btnColour.toLowerCase()}-600 hover:bg-${btnColour.toLowerCase()}-500 transition-colors duration-300 text-white rounded-md cursor-pointer ${
-              isInProcess && "opacity-50 hover:cursor-not-allowed"
-            }`}
+            className={`px-4 py-2 bg-${btnColour.toLowerCase()}-600 hover:bg-${btnColour.toLowerCase()}-500 transition-colors duration-300 text-white rounded-md cursor-pointer ${isInProcess && "opacity-50 hover:cursor-not-allowed"
+              }`}
+            onClick={handleBtnClick}
           >
             {isInProcess ? "Processing..." : primaryBtnText}
           </button>
