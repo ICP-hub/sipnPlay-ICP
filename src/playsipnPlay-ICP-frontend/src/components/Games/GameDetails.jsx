@@ -71,7 +71,9 @@ const GameDetails = ({ modalIsOpen, closeModal, game, tokenomics }) => {
               <p className="font-adam text-white text-sm">{tokenomics}</p>
             </div>
           </div>
-          {game.leaderboard && <LeaderBoardList game={game} />}
+          {game.leaderboard && (
+            <LeaderBoardList game={game} isGameOver={false} />
+          )}
         </div>
       </div>
     </Modal>

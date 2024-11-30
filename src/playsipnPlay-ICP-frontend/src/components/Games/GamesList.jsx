@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import blackjackLogo from "../../assets/images/blackjack.png";
-import tetrisLogo from "../../assets/images/tetris.webp";
+import tetrisLogo from "../../assets/images/tetris.png";
 import Game from "./Game";
 import GamesNav from "./GamesNav";
 import { useFetching } from "../../utils/fetchingContext";

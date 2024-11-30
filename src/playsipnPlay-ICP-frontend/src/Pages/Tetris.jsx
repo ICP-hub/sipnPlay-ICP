@@ -8,7 +8,7 @@ import CryptoJS from "crypto-js";
 import LoadingWindow from "../components/Loaders/LoadingWindow";
 import LoadingPopUp from "../components/Loaders/LoadingPopUp";
 import { transferApprove } from "../utils/transApprove";
-
+import GameOverLeaderBoard from "../components/Modals/GameOverLeaderBoard";
 const secretKey = "Abh67_#fbau-@y74_7A_0nm6je7";
 
 function encryptData(data, key) {
@@ -18,6 +18,7 @@ function encryptData(data, key) {
 const Tetris = () => {
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const dispatch = useDispatch();
+  const [isGameOver, setIsGameOver] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [taskName, setTaskName] = useState("");
   const [isPopUpLoading, setIsPopupLoading] = useState(false);
@@ -39,7 +40,7 @@ const Tetris = () => {
 
     let amnt = parseFloat(
       Number(balance.Ok) *
-      Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
     );
     dispatch(updateBalance({ balance: amnt }));
     return amnt;
@@ -62,16 +63,14 @@ const Tetris = () => {
         console.log("approval", approveResp);
         if (approveResp.Ok) {
           const afterApproval = await backendActor.tetris_game_start();
-          console.log("After approval", afterApproval)
+          console.log("After approval", afterApproval);
           if (afterApproval.Ok) {
             toast.success("Points deducted successfully");
-          }
-          else {
+          } else {
             // navigate("/");
-            toast.error("An error occurred during the payment process.")
+            toast.error("An error occurred during the payment process.");
           }
         }
-
 
         const userHighScore = await backendActor.get_high_score();
         console.log("user high score", parseInt(userHighScore.Ok));
@@ -96,7 +95,6 @@ const Tetris = () => {
             balance: amnt,
           })
         );
-
       }
     } catch (err) {
       console.log("getDetails Error", err.message);
@@ -130,12 +128,12 @@ const Tetris = () => {
   useEffect(() => {
     const handleScore = async (event) => {
       if (event.data?.type === "save_score") {
-        setTaskName("Saving score ...")
+        setTaskName("Saving score ...");
         setIsPopupLoading(true);
         const resp = await backendActor.tetris_game_over(event.data.score);
         if (resp.Ok) {
           toast.success("Score saved successfully");
-
+          setIsGameOver(true);
         } else {
           toast.error("Some error occured");
         }
@@ -154,6 +152,7 @@ const Tetris = () => {
 
   return (
     <div>
+      {true && <GameOverLeaderBoard gameName="tetris" isGameOver={true} />}
       {isLoading ? (
         <LoadingWindow gameName="tetris" />
       ) : (
