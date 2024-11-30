@@ -1,21 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import userProfilePic from "../../assets/images/DefaultUserPic.svg";
+import { Principal } from "@dfinity/principal";
 
 const RewardsLeaderboard = ({ topTen, rewardTokens, setrewardTokens }) => {
-  const [userRank, setUserRank] = useState(0);
-  
-  const handleUpdateTokens = (index, newValue) => {
+  const handleUpdateTokens = (index, newValue, principal) => {
     try {
       const updatedTokens = [...rewardTokens];
-      updatedTokens[index] = newValue;
+      updatedTokens[index] = {
+        ...updatedTokens[index],
+        owner : Principal.fromText(principal),
+        amount: Number(newValue), 
+      };
       setrewardTokens(updatedTokens);
     } catch (error) {
       console.error("Error updating tokens:", error);
     }
-  }
+  };
+
   return (
     <ul>
-      {topTen.map((user, index) => {
+      {topTen.length>0 && topTen.map((user, index) => {
         let borderClass = "border-2 border-[#ee3ec9]"; // Default border color for 4th place and beyond
 
         if (index === 0) {
@@ -36,13 +40,13 @@ const RewardsLeaderboard = ({ topTen, rewardTokens, setrewardTokens }) => {
                   className="h-4 md:h-8 rounded-full md:mr-4"
                 />
                 <p className="text-xs sm:text-sm text-start w-[100px] md:w-[202px] truncate">
-                  {user.principal}
+                  {user.owner.toText()}
                 </p>
               </div>
               <input
                 type="number"
-                value={rewardTokens}
-                onChange={(e) => handleUpdateTokens(index,e.target.value)}
+                
+                onChange={(e) => handleUpdateTokens(index,e.target.value, user.owner.toText())}
                 className="text-xs rounded-md px-2 py-1 ml-2 bg-stone-700 outline-none border-none ring-[#EE3EC9] focus:ring-[1px] text-white min-w-16 md:w-32 lg:w-64 placeholder:text-stone-300"
                 placeholder="Tokens to reward"
               />

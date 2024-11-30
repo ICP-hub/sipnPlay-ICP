@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ImCross } from "react-icons/im";
 import Modal from "react-modal";
 import { useAuth } from "../../utils/useAuthClient";
+import toast from "react-hot-toast";
 const AdminRewardModal = ({
   isOpen,
   closeModal,
@@ -9,8 +10,10 @@ const AdminRewardModal = ({
   description,
   primaryBtnText,
   btnColour,
-  rewardTokens=[]
+  rewardTokens=[],
+  getTetrisPlayers
 }) => {
+  console.log("reward tokens array object",rewardTokens);
   const { backendActor } = useAuth();
   const [isInProcess, setIsInProcess] = useState(false);
 
@@ -18,11 +21,21 @@ const AdminRewardModal = ({
     try {
       setIsInProcess(true);
       if (primaryBtnText === "Reset") {
-        const setResp = await backendActor.reset_leaderboard();
-        console.log(setResp);
+        const setResp = await backendActor.tetris_game_reset();
+        if(setResp.Ok){
+          toast.success("Reset successful");
+          getTetrisPlayers();
+        }else{
+          toast.error("Some error occured");
+        }
       }
       if (primaryBtnText == "Reward") {
-        const setResp = await backendActor.reward_leaderboard(rewardTokens);
+        const setResp = await backendActor.reward_distributionre(rewardTokens);
+        if(setResp.Err){
+          toast.error(setResp.Err);
+        }else{
+          toast.success("distributed successfully");
+        }
         console.log(setResp);
       }
     } catch (err) {

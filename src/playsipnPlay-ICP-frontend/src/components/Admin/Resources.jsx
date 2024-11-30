@@ -34,14 +34,17 @@ const Resources = () => {
         Number(removeAmntFromBackend) *
         Math.pow(10, parseInt(metaData?.["icrc1:decimals"]))
       );
-      const response = await backendActor.withdrawMoneyFromDefault(
+      const response = await backendActor.withdraw_money_from_default(
         parseInt(amnt)
       );
-      if (response.ok) {
+      if (response.Ok) {
         setRemoveAmntFromBackend(0);
         fetchAdminBalance();
         fetchDefaultBalance();
         toast.success("Tokens Withdrawn");
+      }else{
+        toast.error(response.Err);
+        console.log(response.Err)
       }
     } catch (err) {
       console.log(err.message);
@@ -60,6 +63,7 @@ const Resources = () => {
         addAmntToBackend,
         true
       );
+      console.log("add money", res)
 
       if (res.Err) {
         console.log(res.Err);
@@ -91,7 +95,7 @@ const Resources = () => {
             console.log(err);
           });
         let amnt = parseFloat(
-          Number(response) *
+          Number(response.Ok) *
           Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
         );
         setAdminBalance(amnt);
@@ -118,7 +122,7 @@ const Resources = () => {
             console.log(err);
           });
         let amnt = parseFloat(
-          Number(response) *
+          Number(response.Ok) *
           Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
         );
         setDefaultBalance(amnt);

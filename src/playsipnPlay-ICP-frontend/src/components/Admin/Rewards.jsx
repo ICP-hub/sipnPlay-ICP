@@ -11,14 +11,16 @@ const Rewards = () => {
   const [isResetModalOpen, setisResetModalOpen] = useState(false);
   const [isRewardModalOpen, setisRewardModalOpen] = useState(false);
   const [topTen, setTopTen] = useState([]);
-  const [rewardTokens, setrewardTokens] = useState(Array[topTen.length].fill(0));
+  const [rewardTokens, setrewardTokens] = useState(
+    Array.from({ length: topTen.length }, () => ({ principal: "", amount: 0 }))
+  );
 
+  const getTetrisPlayers = async () => {
+    const topTenUsers = await backendActor.get_top_ten_players();
+    setTopTen(topTenUsers.Ok);
+  }
   useEffect(() => {
-    const getTetrisPlayers = async () => {
-      const topTenUsers = await backendActor.get_top_ten_players();
-      setTopTen(topTenUsers.Ok);
-    }
-    if(activeLink === "tetris"){
+    if (activeLink === "tetris") {
       getTetrisPlayers();
     }
   }, []);
@@ -53,6 +55,7 @@ const Rewards = () => {
           }
           primaryBtnText="Reset"
           btnColour={"red"}
+          getTetrisPlayers={getTetrisPlayers}
         />
         <div className="w-3/4">
           <RewardsLeaderboard
@@ -63,15 +66,14 @@ const Rewards = () => {
         </div>
         <button
           onClick={() => setisRewardModalOpen(true)}
-          className={`px-4 py-2 bg-green-600 hover:bg-green-500 transition-colors duration-300 text-white rounded-md cursor-pointer ${isRewarding && "opacity-50 hover:cursor-not-allowed"
-            }`}
+          className={`px-4 py-2 bg-green-600 hover:bg-green-500 transition-colors duration-300 text-white rounded-md cursor-pointer`}
         >
           Reward Users
         </button>
         <AdminRewardModal
           isOpen={isRewardModalOpen}
           closeModal={() => setisRewardModalOpen(false)}
-          header={"Reward Users?"}
+          header={"Reward Users"}
           description={
             "Are you sure you want to transfer tokens to the respective principals?"
           }

@@ -1,9 +1,12 @@
 import { Principal } from "@dfinity/principal";
+import toast from "react-hot-toast";
 
 const afterPaymentFlow = async (backendActor, amount) => {
   try {
     const res = await backendActor.deduct_money(amount);
-    console.log(res);
+    if(res.Err){
+      toast.error(res.Err);
+    }
     return res;
   } catch (error) {
     console.error("Error in afterPaymentFlow:", error);
@@ -36,7 +39,6 @@ export const transferApprove = async (
   try {
     const metadataResponse = await ledgerActor.icrc1_metadata();
     metaData = formatTokenMetaData(metadataResponse);
-    console.log("MetaData ",parseInt(metaData?.["icrc1:decimals"]))
 
     const amnt = parseInt(
       Number(sendAmount) * Math.pow(10, parseInt(metaData?.["icrc1:decimals"]))
@@ -60,8 +62,6 @@ export const transferApprove = async (
       };
 
       const approvalResponse = await ledgerActor.icrc2_approve(transaction);
-      console.log("approval response", approvalResponse);
-
 
       if (approvalResponse?.Err) {
         return approvalResponse;
@@ -69,7 +69,7 @@ export const transferApprove = async (
         if (transfer === true) {
           return await afterPaymentFlow(backendActor, amnt);
         } else {
-          return "Payment Approved successfully";
+          return approvalResponse;
         }
       }
     } else {

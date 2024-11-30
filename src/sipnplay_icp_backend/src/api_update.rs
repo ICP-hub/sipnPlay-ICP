@@ -557,7 +557,7 @@ fn tetris_game_over(input_score: u32) -> Result<String, String> {
 
 // Reset the Tetris Leaderboard
 #[update]
-fn tetris_game_reset() -> Result<(), String> {
+fn tetris_game_reset() -> Result<String, String> {
     // Check if the caller is approved
     if !is_approved() {
         return Err("You are not approved".to_string());
@@ -570,7 +570,7 @@ fn tetris_game_reset() -> Result<(), String> {
         state.sorted_leaderboard.0.clear();
     });
 
-    Ok(())
+    Ok("reset successful".to_string())
 }
 
 // Function for Destribution of the points to top ten players
@@ -630,9 +630,17 @@ pub async fn reward_distributionre(
 
     // Return the results
     if results.iter().all(|result| result.is_ok()) {
-        Ok("Rewards distributed successfully".to_string())
+        Ok("All rewards distributed successfully".to_string())
     } else {
-        Err("Rewards distribution failed".to_string())
+        // Collect all error messages into a single string
+        let error_messages: Vec<String> = results
+            .into_iter()
+            .filter_map(|result| result.err())
+            .collect();
+        Err(format!(
+            "Some rewards distribution failed. Errors: {}",
+            error_messages.join(", ")
+        ))
     }
 }
 // Function provide the sorted data where firstly sort the data and store it into the vector & then clear all the BTreeMap and then store the data into it.
