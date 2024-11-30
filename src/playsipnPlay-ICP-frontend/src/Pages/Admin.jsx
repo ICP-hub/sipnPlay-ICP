@@ -70,8 +70,9 @@ const AdminPanel = () => {
       if (isAuthenticated) {
         let isApproved = false;
         try {
-          isApproved = await backendActor.is_approved();
           console.log("isaprroveddd", principal);
+          isApproved = await backendActor.is_approved();
+          
         } catch (error) {
           console.error("Error checking approval status:", error);
         } finally {

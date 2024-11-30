@@ -9,6 +9,7 @@ const AdminRewardModal = ({
   description,
   primaryBtnText,
   btnColour,
+  rewardTokens=[]
 }) => {
   const { backendActor } = useAuth();
   const [isInProcess, setIsInProcess] = useState(false);
@@ -21,7 +22,8 @@ const AdminRewardModal = ({
         console.log(setResp);
       }
       if (primaryBtnText == "Reward") {
-
+        const setResp = await backendActor.reward_leaderboard(rewardTokens);
+        console.log(setResp);
       }
     } catch (err) {
       console.log(err);

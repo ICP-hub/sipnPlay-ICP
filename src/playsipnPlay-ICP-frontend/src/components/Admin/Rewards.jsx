@@ -11,6 +11,7 @@ const Rewards = () => {
   const [isResetModalOpen, setisResetModalOpen] = useState(false);
   const [isRewardModalOpen, setisRewardModalOpen] = useState(false);
   const [topTen, setTopTen] = useState([]);
+  const [rewardTokens, setrewardTokens] = useState(Array[topTen.length].fill(0));
 
   useEffect(() => {
     const getTetrisPlayers = async () => {
@@ -56,6 +57,8 @@ const Rewards = () => {
         <div className="w-3/4">
           <RewardsLeaderboard
             topTen={topTen}
+            rewardTokens={rewardTokens}
+            setrewardTokens={setrewardTokens}
           />
         </div>
         <button
@@ -74,6 +77,8 @@ const Rewards = () => {
           }
           primaryBtnText="Reward"
           btnColour={"green"}
+          rewardTokens={rewardTokens}
+
         />
       </div>
     </div>

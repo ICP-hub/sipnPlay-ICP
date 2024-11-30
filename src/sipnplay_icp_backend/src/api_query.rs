@@ -15,7 +15,7 @@ const APPROVED_PRINCIPALS: &[&str] = &[
     "hc4gt-vtazq-2beqs-7lv5p-4nezq-wl3hs-fojqx-2iwtc-mpxx6-ggswf-7ae", // Tushar Jain's II
     "e2fhy-7j47j-rjnk3-clcfh-2qv3m-pwr46-lkavg-tdb5b-vo4bg-m2dqx-sqe",
     "2nh3q-od732-potbk-gs2yh-nkqyt-i4xtt-fs73b-iirbu-ows4f-glqf5-qae", // Somiya Behera
-    "2vxsx-fae",
+    "57sj2-6uilb-7r5ib-xxfdu-24nn5-ievyg-w3xp2-j5hpq-5esuf-pslkd-fae",
 ];
 
 // Function to check if the caller is approved

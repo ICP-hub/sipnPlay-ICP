@@ -1,9 +1,18 @@
 import React, { useState } from "react";
 import userProfilePic from "../../assets/images/DefaultUserPic.svg";
 
-const RewardsLeaderboard = ({ topTen }) => {
+const RewardsLeaderboard = ({ topTen, rewardTokens, setrewardTokens }) => {
   const [userRank, setUserRank] = useState(0);
-  const [rewardTokens, setrewardTokens] = useState("");
+  
+  const handleUpdateTokens = (index, newValue) => {
+    try {
+      const updatedTokens = [...rewardTokens];
+      updatedTokens[index] = newValue;
+      setrewardTokens(updatedTokens);
+    } catch (error) {
+      console.error("Error updating tokens:", error);
+    }
+  }
   return (
     <ul>
       {topTen.map((user, index) => {
@@ -33,7 +42,7 @@ const RewardsLeaderboard = ({ topTen }) => {
               <input
                 type="number"
                 value={rewardTokens}
-                onChange={(e) => setrewardTokens(e.target.value)}
+                onChange={(e) => handleUpdateTokens(index,e.target.value)}
                 className="text-xs rounded-md px-2 py-1 ml-2 bg-stone-700 outline-none border-none ring-[#EE3EC9] focus:ring-[1px] text-white min-w-16 md:w-32 lg:w-64 placeholder:text-stone-300"
                 placeholder="Tokens to reward"
               />
