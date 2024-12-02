@@ -28,14 +28,8 @@ const Resources = () => {
     let metaData = null;
     setIsWithdrawing(true);
     try {
-      const metadataResponse = await ledgerActor.icrc1_metadata();
-      metaData = formatTokenMetaData(metadataResponse);
-      const amnt = parseInt(
-        Number(removeAmntFromBackend) *
-        Math.pow(10, parseInt(metaData?.["icrc1:decimals"]))
-      );
       const response = await backendActor.withdraw_money_from_default(
-        parseInt(amnt)
+        parseInt(removeAmntFromBackend)
       );
       if (response.Ok) {
         setRemoveAmntFromBackend(0);

@@ -43,3 +43,7 @@ record {
      };
  }
 })"
+
+dfx deps pull
+
+dfx deps deploy

@@ -3,7 +3,7 @@ use ic_cdk::api::time;
 use ic_cdk::{api::call::CallResult, call, caller, update};
 use ic_cdk_timers::set_timer_interval;
 use ic_ledger_types::TransferResult;
-use icrc_ledger_types::icrc1::transfer::TransferArg;
+use icrc_ledger_types::icrc1::transfer::{NumTokens, TransferArg};
 use icrc_ledger_types::{icrc1::account::Account, icrc2::transfer_from::TransferFromArgs};
 use std::time::Duration;
 
@@ -193,56 +193,48 @@ async fn deduct_money(amount: Nat) -> Result<String, String> {
     }
 }
 
+
+
 #[update]
-async fn withdraw_money_from_default(amount: Nat) -> Result<String, String> {
+pub async fn withdraw_money_from_default(amount: u64) -> Result<Nat, String> {
     use ic_cdk::caller;
 
-    // Get the caller's principal
-    let caller_principal = caller();
-
-    // Check if the caller is approved
-    if !is_approved() {
-        return Err("You are not approved".to_string());
-    }
-
+    let user_principal = caller();
     let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
-        .ok_or("Backend canister ID not found in environment variables")?;
+        .ok_or("Ledger canister ID not found in environment variables")?;
 
     let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
-        .map_err(|_| "Invalid backend canister ID".to_string())?;
+        .map_err(|_| "Invalid ledger canister ID".to_string())?;
 
-    // Create transfer arguments
-    let transfer_args = TransferArg {
+    // Convert the amount to NumTokens (ensure NumTokens supports your scale)
+    let amount_as_u64 = amount * 100_000_000; // Adjust for token precision
+    let amount_tokens = NumTokens::from(amount_as_u64);
+    ic_cdk::println!("{}", amount_tokens);
+    let args = TransferArg {
+        from_subaccount: None, // Omitted by default
         to: Account {
-            owner: caller_principal, // Transfer to the caller
+            owner: user_principal,
             subaccount: None,
         },
-        fee: None,              // Optional fee
-        memo: None,             // Optional memo
-        from_subaccount: None,  // Default subaccount
-        created_at_time: None,  // No timestamp
-        amount: amount.clone(), // Transfer amount
+        fee: None, // Default
+        memo: None, // Default
+        created_at_time: None, // Default
+        amount: amount_tokens,
     };
 
-    // Perform the inter-canister call to transfer tokens
-    let response: CallResult<(TransferResult,)> =
-        ic_cdk::api::call::call(ledger_canister_id, "icrc1_transfer", (transfer_args,)).await;
+    // Make the call
+    let (result,): (Result<Nat, String>,) = ic_cdk::call(
+        ledger_canister_id,
+        "icrc1_transfer",
+        (args,),
+    )
+    .await
+    .map_err(|e| format!("Transfer failed: {:?}", e))?;
 
-    match response {
-        // Successful transfer
-        Ok((TransferResult::Ok(block_index),)) => Ok(format!(
-            "Tokens withdrawn from backend successfully: Block Index: {}",
-            block_index
-        )),
-        // Transfer failed with a specific error
-        Ok((TransferResult::Err(error),)) => Err(error.to_string()),
-        // Inter-canister call failed
-        Err((code, message)) => Err(format!(
-            "Failed to call ledger canister: Code: {:?}, Message: {}",
-            code, message
-        )),
-    }
+    // Handle response
+    result.map_err(|err| format!("Transfer failed: {:?}", err))
 }
+
 
 #[update]
 async fn game_lost() -> Result<String, String> {
@@ -577,7 +569,7 @@ fn tetris_game_reset() -> Result<String, String> {
 #[ic_cdk::update]
 pub async fn reward_distributionre(
     rewarded_players: Vec<RewardedPlayers>,
-) -> Result<String, String> {
+) -> Result<Nat, String> {
     // Check if the caller is approved
     if !is_approved() {
         return Err("You are not approved".to_string());
@@ -589,60 +581,65 @@ pub async fn reward_distributionre(
     let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
         .map_err(|_| "Invalid backend canister ID".to_string())?;
 
-    // Define the Result Vector to store the responses
-    let mut results = Vec::new();
+    // Keep track of successful transfers and errors
+    let mut total_rewards_transferred = Nat::from(0u64);
+ // Track total successfully transferred rewards
+    let mut error_messages = Vec::new();
 
-    // Distribute the rewards all rewarded players one by one
+    // Distribute the rewards to all rewarded players one by one
     for rewarded_player in rewarded_players {
-        // Create transfer arguments for every player
+        // Create transfer arguments for each player
+        let amount_as_u64 = rewarded_player.amount * 100_000_000; // Adjust for token precision
+        let amount_tokens = NumTokens::from(amount_as_u64);
         let transfer_args = TransferArg {
             to: Account {
-                owner: rewarded_player.owner, // Transfer to the caller
+                owner: rewarded_player.owner,
                 subaccount: None,
             },
-            fee: None,                                                 // Optional fee
-            memo: None,                                                // Optional memo
-            from_subaccount: None,                                     // Default subaccount
-            created_at_time: None,                                     // No timestamp
-            amount: Nat::from(rewarded_player.amount * 1000000000u64), // Transfer amount
+            fee: None,
+            memo: None,
+            from_subaccount: None,
+            created_at_time: None,
+            amount: amount_tokens,
         };
 
-        // Perform the inter-canister call to transfer tokens for each and every player
-        let response: CallResult<(TransferResult,)> =
-            ic_cdk::api::call::call(ledger_canister_id, "icrc1_transfer", (transfer_args,)).await;
-
-        match response {
-            Ok((TransferResult::Ok(_),)) => {
-                results.push(Ok("Rewards distributed successful".to_string()));
+        // Perform the inter-canister call to transfer tokens
+        match ic_cdk::call::<_, (Result<Nat, String>,)>(
+            ledger_canister_id,
+            "icrc1_transfer",
+            (transfer_args,),
+        )
+        .await
+        {
+            Ok((Ok(amount_transferred),)) => {
+                total_rewards_transferred += amount_transferred;
             }
-            Ok((TransferResult::Err(err),)) => {
-                results.push(Err(format!("Rewards distribution failed: {}", err)));
+            Ok((Err(err_message),)) => {
+                error_messages.push(format!(
+                    "Failed for player {}: {}",
+                    rewarded_player.owner, err_message
+                ));
             }
             Err(err) => {
-                let (code, msg) = err;
-                results.push(Err(format!(
-                    "Inter-canister call failed with code {:#?} and message: {}",
-                    code, msg
-                )));
+                error_messages.push(format!(
+                    "Inter-canister call failed for player {}: {:?}",
+                    rewarded_player.owner, err
+                ));
             }
         }
     }
 
-    // Return the results
-    if results.iter().all(|result| result.is_ok()) {
-        Ok("All rewards distributed successfully".to_string())
+    // Final result based on whether there were errors
+    if error_messages.is_empty() {
+        Ok(total_rewards_transferred) // All transfers succeeded
     } else {
-        // Collect all error messages into a single string
-        let error_messages: Vec<String> = results
-            .into_iter()
-            .filter_map(|result| result.err())
-            .collect();
         Err(format!(
             "Some rewards distribution failed. Errors: {}",
             error_messages.join(", ")
         ))
     }
 }
+
 // Function provide the sorted data where firstly sort the data and store it into the vector & then clear all the BTreeMap and then store the data into it.
 #[ic_cdk::update]
 pub async fn get_crown_job_leaderboard() -> Result<String, String> {
