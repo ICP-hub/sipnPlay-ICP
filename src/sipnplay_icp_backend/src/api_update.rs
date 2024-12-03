@@ -7,6 +7,12 @@ use icrc_ledger_types::icrc1::transfer::{NumTokens, TransferArg};
 use icrc_ledger_types::{icrc1::account::Account, icrc2::transfer_from::TransferFromArgs};
 use std::time::Duration;
 
+use aes::Aes128; // AES-128 (16-byte key)
+use block_modes::{BlockMode, Ecb};
+use block_modes::block_padding::Pkcs7;
+use base64::{decode};
+use std::str;
+
 use crate::api_query::{is_approved, is_authenticated};
 use crate::state_handler::{mutate_state, read_state};
 use crate::{state_handler::STATE, types::BalanceOfArgs, UserCreationInput};
@@ -14,6 +20,22 @@ use crate::{
     BlackjackData, MessageData, RewardedPlayers, TetrisData, TetrisLeaderboardData,
     TransferFromResult, WaitlistData,
 };
+
+// Your secret key must be 16 bytes long for AES-128, so ensure it's exactly 16 bytes.
+const SECRET_KEY: &[u8] = b"vgsi7uhIHKL2b2GK"; // 16-byte secret key for AES-128
+
+type Aes128Ecb = Ecb<Aes128, Pkcs7>;
+
+// Decrypt function
+fn decrypt_score(encrypted_score: String) -> String {
+    let encrypted_data = decode(&encrypted_score).expect("Failed to decode base64");
+
+    // Decrypt using AES ECB mode
+    let cipher = Aes128Ecb::new_from_slices(SECRET_KEY, Default::default()).unwrap();
+    let decrypted_data = cipher.decrypt_vec(&encrypted_data).expect("Decryption failed");
+
+    str::from_utf8(&decrypted_data).expect("Invalid UTF-8").to_string()
+}
 
 #[update]
 pub async fn get_caller_balance() -> Result<u128, String> {
@@ -499,12 +521,26 @@ async fn tetris_game_start() -> Result<String, String> {
 
 // Approach 2 Insert the score when user exits then firstly remove the previous entry and then add new entry
 #[update]
-fn tetris_game_over(input_score: u32) -> Result<String, String> {
+fn tetris_game_over(encrypted_score: String) -> Result<String, String> {
+
+    ic_cdk::println!("tetris_game_over");
+    ic_cdk::println!("Encrypted Score : {}", encrypted_score);
+
+    let decrypted_score = decrypt_score(encrypted_score);
+    ic_cdk::println!("Decrypted: {}", decrypted_score);
+    
+    // Parse the decrypted score
+    let input_score = match decrypted_score.parse::<u32>() {
+        Ok(score) => score,
+        Err(e) => return Err(format!("Error parsing decrypted score: {}", e)),
+    };
+
+    ic_cdk::println!("Input Score : {}", input_score);
+    
     // Only approved callers can add scores
     if !is_authenticated() {
         return Err("You are not authenticated".to_string());
     }
-
     // Use the caller's Principal as the player ID
     let player_id = ic_cdk::caller();
 
@@ -685,16 +721,7 @@ pub async fn get_crown_job_leaderboard() -> Result<String, String> {
 }
 
 // Add the Crown Jibob/JobSchedular which will run every 30 minutes and Provide the Sorted Data to the Leaderboard..
-#[ic_cdk::update]
-pub async fn start_tetris_leaderboard_update() {
-    set_timer_interval(Duration::from_secs(1 * 60), || {
-        // Use ic_cdk::spawn to call the async function
-        ic_cdk::println!("Starting Tetris Leaderboard Update");
-        ic_cdk::spawn(async {
-            match get_crown_job_leaderboard().await {
-                Ok(message) => ic_cdk::println!("{}", message),
-                Err(error) => ic_cdk::println!("Error: {}", error),
-            }
-        });
-    });
+#[ic_cdk_macros::heartbeat]
+async fn canister_heartbeat() {
+    get_crown_job_leaderboard().await;
 }

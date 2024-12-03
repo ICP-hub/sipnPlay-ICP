@@ -9,7 +9,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-serde = { version = "1.0.160", features = ["derive"] }  
+serde = { version = "1.0", features = ["derive"] }
 candid = "0.10"
 ic-cdk = "0.16.0"
 ic-cdk-timers = "0.7" # Feel free to remove this dependency if you don't need timers\
@@ -21,6 +21,9 @@ dotenv = "0.15.0"
 ic-stable-structures = "0.6.5"
 num-traits = "0.2.19"
 num-bigint = "0.4.6"
-
-
+aes = "0.7"
+block-modes = "0.8"  # Correct crate name
+base64 = "0.21"
+serde_yaml = "0.8"
+heartbeat = "0.0.1"
 

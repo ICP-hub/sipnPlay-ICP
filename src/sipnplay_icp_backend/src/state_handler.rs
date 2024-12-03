@@ -5,7 +5,6 @@ use ic_stable_structures::{DefaultMemoryImpl, Storable};
 use std::borrow::Cow;
 use std::cell::RefCell;
 
-use crate::api_update::start_tetris_leaderboard_update;
 use crate::types::*;
 
 // Define Memory Types
@@ -68,11 +67,6 @@ fn init() {
         state.tetris_leaderboard_data = init_tetris_leaderboard_data_map();
         state.tetris_data = init_tetris_data_map();
         state.sorted_leaderboard = init_sorted_leaderboard();
-    });
-
-    // Start Tetris Leaderboard Update Call
-    ic_cdk::spawn(async {
-        start_tetris_leaderboard_update().await;
     });
 }
 

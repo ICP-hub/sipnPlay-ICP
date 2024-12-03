@@ -59,7 +59,7 @@ service : () -> {
   reward_distributionre : (vec RewardedPlayers) -> (Result_1);
   send_message : (text, text, text) -> (Result);
   start_tetris_leaderboard_update : () -> ();
-  tetris_game_over : (nat32) -> (Result);
+  tetris_game_over : (text) -> (Result);
   tetris_game_reset : () -> (Result);
   tetris_game_start : () -> (Result);
   withdraw_money_from_default : (nat64) -> (Result_1);
