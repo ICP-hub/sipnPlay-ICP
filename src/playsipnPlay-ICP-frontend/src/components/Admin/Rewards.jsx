@@ -51,7 +51,7 @@ const Rewards = () => {
           closeModal={() => setisResetModalOpen(false)}
           header={"Reset Leaderboard?"}
           description={
-            "Are you sure you want to reset the Leaderboard? This action CANNOT be undone!"
+            "Are you sure you  want to reset the Leaderboard? This action CANNOT be undone!"
           }
           primaryBtnText="Reset"
           btnColour={"red"}
