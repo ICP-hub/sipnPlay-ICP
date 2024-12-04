@@ -188,14 +188,17 @@ fn get_waitlist(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<Waitlis
 #[ic_cdk::query]
 pub fn get_tetris_leaderboard() -> (Result<Vec<TetrisLeaderboardData>, String>, Nat) {
     // Access the state and clone the leaderboard data
-    let leaderboard = STATE.with(|state| {
+    let leaderboard: Vec<TetrisLeaderboardData> = STATE.with(|state| {
         state
             .borrow()
-            .sorted_leaderboard
-            .0
+            .sorted_leaderboard_data
             .iter()
-            .cloned() // `cloned` simplifies cloning each element
-            .collect::<Vec<_>>()
+            .map(|data| TetrisLeaderboardData {
+                owner: data.owner.clone(),
+                points: data.points,
+                high_score: data.high_score,
+            })
+            .collect() 
     });
 
     // Check if the leaderboard is empty

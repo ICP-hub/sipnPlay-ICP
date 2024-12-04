@@ -16,6 +16,9 @@
 # secondary env file
 **/src/utils/config.js
 
+
+**/src/config.rs
+
 # rust
 target/
 

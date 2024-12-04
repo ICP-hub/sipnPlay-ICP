@@ -6,7 +6,6 @@ use ic_ledger_types::TransferResult;
 use icrc_ledger_types::icrc1::transfer::{NumTokens, TransferArg};
 use icrc_ledger_types::{icrc1::account::Account, icrc2::transfer_from::TransferFromArgs};
 use std::time::Duration;
-
 use aes::Aes128; // AES-128 (16-byte key)
 use block_modes::{BlockMode, Ecb};
 use block_modes::block_padding::Pkcs7;
@@ -18,7 +17,7 @@ use crate::state_handler::{mutate_state, read_state};
 use crate::{state_handler::STATE, types::BalanceOfArgs, UserCreationInput};
 use crate::{
     BlackjackData, MessageData, RewardedPlayers, TetrisData, TetrisLeaderboardData,
-    TransferFromResult, WaitlistData,
+    TransferFromResult, WaitlistData, SortedLeaderboardData,
 };
 
 // Your secret key must be 16 bytes long for AES-128, so ensure it's exactly 16 bytes.
@@ -595,7 +594,8 @@ fn tetris_game_reset() -> Result<String, String> {
     STATE.with(|state| {
         let mut state = state.borrow_mut();
         state.tetris_leaderboard_data.clear_new();
-        state.sorted_leaderboard.0.clear();
+       // Clear all elements from the StableVec manually by popping each one
+        while state.sorted_leaderboard_data.pop().is_some() {}
     });
 
     Ok("reset successful".to_string())
@@ -676,52 +676,57 @@ pub async fn reward_distributionre(
     }
 }
 
-// Function provide the sorted data where firstly sort the data and store it into the vector & then clear all the BTreeMap and then store the data into it.
-#[ic_cdk::update]
-pub async fn get_crown_job_leaderboard() -> Result<String, String> {
-    // Retrieve the leaderboard data and sort it
+
+// Function to get the Crown Job Leaderboard
+pub async fn get_crown_job_leaderboard() {
+    // Retrieve the leaderboard data from the BTreeMap
     let mut leaderboard = STATE.with(|state| {
         state
             .borrow()
             .tetris_leaderboard_data
             .iter()
-            .map(|(_, data)| data.clone()) // Collect all leaderboard data
+            .map(|(_, data)| data.clone())
             .collect::<Vec<_>>()
     });
 
     // Sort the leaderboard by points in descending order
     leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
-
     ic_cdk::println!("Sorted leaderboard data: {:#?}", leaderboard);
 
-    // Check if the leaderboard is empty after sorting
-    if leaderboard.is_empty() {
-        return Err("No leaderboard data found".to_string());
-    }
-
-    // Clear the Vector sorted leaderboard
+    // Clear all elements from the StableVec manually by popping each one
     STATE.with(|state| {
-        let mut state = state.borrow_mut();
-        state.sorted_leaderboard.0.clear();
+        let state = state.borrow_mut();
+        while state.sorted_leaderboard_data.pop().is_some() {}
     });
 
-    // Insert the sorted leaderboard data into the Vector
-    let sorted_leaderboard = STATE.with(|state| {
-        let mut state = state.borrow_mut();
-        state.sorted_leaderboard.0.extend(leaderboard);
+    // Insert sorted data into the StableVec
+    STATE.with(|state| {
+        let state = state.borrow_mut();
+        for data in leaderboard {
+            // Convert TetrisLeaderboardData to SortedLeaderboardData, if needed
+            let sorted_data = SortedLeaderboardData {
+                owner: data.owner,
+                high_score: data.high_score,
+                points: data.points,
+            };
+
+            state
+                .sorted_leaderboard_data
+                .push(&sorted_data)
+                .expect("Failed to push data into StableVec");
+        }
     });
 
-    ic_cdk::println!("Inserted leaderboard data: {:#?}", sorted_leaderboard);
-
-    if !STATE.with(|state| state.borrow().sorted_leaderboard.0.is_empty()) {
-        Ok("Leaderboard data has been sorted and updated successfully.".to_string())
-    } else {
-        Err("Leaderboard data has not been sorted and updated successfully.".to_string())
-    }
+    ic_cdk::println!("Inserted sorted leaderboard data into StableVec.");
 }
 
 // Add the Crown Jibob/JobSchedular which will run every 30 minutes and Provide the Sorted Data to the Leaderboard..
-#[ic_cdk_macros::heartbeat]
-async fn canister_heartbeat() {
-    get_crown_job_leaderboard().await;
+#[ic_cdk::post_upgrade]
+pub async fn start_tetris_leaderboard_update() {
+    set_timer_interval(Duration::from_secs(60), || {
+        ic_cdk::spawn(async {
+            // This callback will run every minute (60 seconds).
+            get_crown_job_leaderboard().await;
+        });
+    });
 }

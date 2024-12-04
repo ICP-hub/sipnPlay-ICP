@@ -44,7 +44,6 @@ service : () -> {
   get_backend_balance : () -> (Result_1);
   get_blackjack_bet : () -> (Result_2) query;
   get_caller_balance : () -> (Result_1);
-  get_crown_job_leaderboard : () -> (Result);
   get_current_principal : () -> (text) query;
   get_high_score : () -> (Result) query;
   get_logged_in_user_leaderboard : () -> (Result_3) query;
@@ -58,7 +57,6 @@ service : () -> {
   join_waitlist : (text, text, text) -> (Result);
   reward_distributionre : (vec RewardedPlayers) -> (Result_1);
   send_message : (text, text, text) -> (Result);
-  start_tetris_leaderboard_update : () -> ();
   tetris_game_over : (text) -> (Result);
   tetris_game_reset : () -> (Result);
   tetris_game_start : () -> (Result);

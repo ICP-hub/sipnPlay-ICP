@@ -25,5 +25,5 @@ aes = "0.7"
 block-modes = "0.8"  # Correct crate name
 base64 = "0.21"
 serde_yaml = "0.8"
-heartbeat = "0.0.1"
-
+ic-cdk-macros = "0.17.0"
+serde_cbor = "0.11"

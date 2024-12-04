@@ -8,12 +8,6 @@ pub struct BalanceOfArgs {
     pub subaccount: Option<Vec<u8>>,
 }
 
-#[derive(CandidType, Deserialize, Serialize, Debug, Clone)]
-pub struct BlackjackData {
-    pub id: Principal,
-    pub amount: u64,
-}
-
 // UserCreationInput struct
 #[derive(CandidType, Deserialize, Serialize, Debug, Clone)]
 pub struct UserCreationInput {
@@ -21,28 +15,16 @@ pub struct UserCreationInput {
     pub email: String,
 }
 
-// MessageData struct
-#[derive(CandidType, Deserialize, Serialize, Debug, Clone)]
-pub struct MessageData {
-    pub date: i64,
-    pub name: String,
-    pub email: String,
-    pub message: String,
-}
-
-// WaitlistData struct
-#[derive(CandidType, Deserialize, Serialize, Debug, Clone)]
-pub struct WaitlistData {
-    pub date: i64,
-    pub name: String,
-    pub email: String,
-    pub icp_address: String,
-}
-
 #[derive(CandidType, Deserialize, Debug)]
 pub enum TransferFromResult {
     Ok(Nat),
     Err(TransferFromError),
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, CandidType)]
+pub struct BlackjackData {
+    pub id: Principal,
+    pub amount: u64,
 }
 
 #[derive(Debug, Clone, CandidType, Serialize, Deserialize)]
@@ -68,6 +50,24 @@ pub struct TransferAccount {
     pub subaccount: Option<Vec<u8>>,
 }
 
+// MessageData struct
+#[derive(CandidType, Deserialize, Serialize, Debug, Clone)]
+pub struct MessageData {
+    pub date: i64,
+    pub name: String,
+    pub email: String,
+    pub message: String,
+}
+
+// WaitlistData struct
+#[derive(CandidType, Deserialize, Serialize, Debug, Clone)]
+pub struct WaitlistData {
+    pub date: i64,
+    pub name: String,
+    pub email: String,
+    pub icp_address: String,
+}
+
 // Tetris LeaderBoard Structure..
 
 // TetrisData struct
@@ -78,12 +78,21 @@ pub struct TetrisData {
 }
 
 // Tetris Leaderboard struct
-#[derive(CandidType, Deserialize, Clone, Debug)]
+#[derive(CandidType, Deserialize, Serialize, Clone, Debug)]
 pub struct TetrisLeaderboardData {
     pub owner: Principal,
     pub high_score: u32,
     pub points: u32,
 }
+
+// Sorted Leaderboard struct
+#[derive(CandidType, Deserialize, Serialize, Clone, Debug)]
+pub struct SortedLeaderboardData {
+    pub owner: Principal,
+    pub high_score: u32,
+    pub points: u32,
+}
+
 
 #[derive(CandidType, Deserialize, Clone, Debug)]
 pub struct RewardedPlayers {
