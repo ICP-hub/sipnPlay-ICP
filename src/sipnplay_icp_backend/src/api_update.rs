@@ -20,8 +20,11 @@ use crate::{
     TransferFromResult, WaitlistData, SortedLeaderboardData,
 };
 
+use crate::config::SECURE_SECRET_KEY;
+
 // Your secret key must be 16 bytes long for AES-128, so ensure it's exactly 16 bytes.
-const SECRET_KEY: &[u8] = b"vgsi7uhIHKL2b2GK"; // 16-byte secret key for AES-128
+const SECRET_KEY: &[u8] = SECURE_SECRET_KEY; // 16-byte secret key for AES-128
+// const SECRET_KEY: &[u8] = SECRET_KEY;
 
 type Aes128Ecb = Ecb<Aes128, Pkcs7>;
 
