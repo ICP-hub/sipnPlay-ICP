@@ -62,6 +62,22 @@ const LeaderBoardList = ({ game, isGameOver }) => {
           isGameOver ? "border-none" : "md:border-l-2 border-white md:ps-16"
         } overflow-y-auto max-h-[70vh]`}
       >
+        <div className="absolute left-12 -top-4 ">
+        {isGameOver && (
+          <div className="flex mt-12 items-end justify-center">
+            <div></div>
+            <AnimationButton>
+              <div
+                className="cursor-pointer flex items-center text-[12px] md:text-[17px] font-adam gap-4 justify-center"
+                onClick={() => navigate("/")}
+              >
+                <AiFillHome size={21} />Back to home
+              </div>
+            </AnimationButton>
+          </div>
+        )}
+
+        </div>
         <h3 className="text-center mx-[9%] mb-4 font-monckeberg text-xl">
           Leaderboard
         </h3>
@@ -201,19 +217,6 @@ const LeaderBoardList = ({ game, isGameOver }) => {
             </>
           </ul>
         </div>
-        {isGameOver && (
-          <div className="flex mt-12 items-end justify-center">
-            <div></div>
-            <AnimationButton>
-              <div
-                className="cursor-pointer flex justify-center"
-                onClick={() => navigate("/")}
-              >
-                <AiFillHome size={32} />
-              </div>
-            </AnimationButton>
-          </div>
-        )}
       </div>
     </>
   );

@@ -156,6 +156,7 @@ const Tetris = () => {
           // Send the encrypted score to the backend
           const resp = await backendActor.tetris_game_over(encryptedScore);
           if (resp.Ok) {
+            setIsGameOver(true);
             toast.success("Score saved successfully");
           } else {
             toast.error("Some error occurred");
@@ -178,9 +179,11 @@ const Tetris = () => {
     console.log("UPDATED BALANCE", userData.balance);
   }, [userData.balance]);
 
+  const gameName1 = {name:"Tetris"};
+
   return (
     <div>
-      {isGameOver && <GameOverLeaderBoard gameName="tetris" isGameOver={true} />}
+      {isGameOver && <GameOverLeaderBoard gameName={gameName1} isGameOver={true} />}
       {isLoading ? (
         <LoadingWindow gameName="tetris" />
       ) : (

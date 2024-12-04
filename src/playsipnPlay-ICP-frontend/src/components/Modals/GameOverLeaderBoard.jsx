@@ -17,9 +17,9 @@ const GameOverLeaderBoard = ({ gameName, isGameOver }) => {
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
-        className="bg-black w-[90%] text-white h-[87%] lg:grid-cols-2 border border-[#696969] rounded-xl px-8 py-4 lg:px-16 lg:py-8 overflow-hidden font-semibold"
+        className="bg-black relative w-[90%] text-white h-[87%] lg:grid-cols-2 border border-[#696969] rounded-xl px-8 py-4 lg:px-16 lg:py-8 overflow-hidden font-semibold"
       >
-        <LeaderBoardList game={gameName} isGameOver={isGameOver} />
+      <div className="mx-auto w-[60%]">  <LeaderBoardList game={gameName} isGameOver={isGameOver} /></div>
       </div>
     </Modal>
   );
