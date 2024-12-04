@@ -87,6 +87,9 @@ const Tetris = () => {
             navigate("/");
             toast.error("An error occurred during the payment process.");
           }
+        }else{
+          navigate("/");
+          toast.error("Low balance error")
         }
 
         const userHighScore = await backendActor.get_high_score();

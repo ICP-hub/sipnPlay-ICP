@@ -97,8 +97,8 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                 />
                 {tetrisLeaderboard.length >= 2 && tetrisLeaderboard[1] ? (
                   <>
-                    <p className="font-adam font-[600]">
-                      {tetrisLeaderboard[1].owner.toText().slice(0, 5)}
+                    <p className="font-adam font-[600] mx-auto truncate max-w-[90px]">
+                      {tetrisLeaderboard[1].owner.toText()}
                     </p>
                     <p className="font-adam">
                       {tetrisLeaderboard[1].points} pts
@@ -121,8 +121,8 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                   />
                   {tetrisLeaderboard.length >= 1 && tetrisLeaderboard[0] ? (
                     <>
-                      <p className="font-adam mt-8 font-[600]">
-                        {tetrisLeaderboard[0].owner.toText().slice(0, 5)}
+                      <p className="font-adam mt-8 font-[600] mx-auto truncate max-w-[90px]">
+                        {tetrisLeaderboard[0].owner.toText()}
                       </p>
                       <p className="font-adam">
                         {tetrisLeaderboard[0].points} pts
@@ -141,8 +141,8 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                 />
                 {tetrisLeaderboard.length >= 3 && tetrisLeaderboard[2] ? (
                   <>
-                    <p className="font-adam font-[600]">
-                      {tetrisLeaderboard[2].owner.toText().slice(0, 5)}
+                    <p className="font-adam font-[600] mx-auto truncate max-w-[90px]">
+                      {tetrisLeaderboard[2].owner.toText()}
                     </p>
                     <p className="font-adam">
                       {tetrisLeaderboard[2].points} pts
@@ -169,12 +169,11 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                   <img
                     src={userProfilePic}
                     alt={tetrisLeaderboard[userRank - 1].owner
-                      .toText()
-                      .slice(0, 5)}
+                      .toText()}
                     className="h-8 rounded-full mr-2"
                   />
-                  <span className="text-sm">
-                    {tetrisLeaderboard[userRank - 1].owner.toText().slice(0, 5)}
+                  <span className="text-sm truncate max-w-[165px] md:max-w-[239px]">
+                    {tetrisLeaderboard[userRank - 1].owner.toText()}
                   </span>
                 </div>
                 <span className="text-sm text-end">
@@ -196,18 +195,18 @@ const LeaderBoardList = ({ game, isGameOver }) => {
 
                 return (
                   <li
-                    key={JSON.stringify(user.owner.toText().slice(0, 5))}
+                    key={JSON.stringify(user.owner.toText())}
                     className={`flex items-center justify-between p-4 my-4 ${borderClass}`}
                   >
                     <div className="flex items-center">
                       <span className="text-sm mr-2"># {index + 1}</span>
                       <img
                         src={userProfilePic}
-                        alt={JSON.stringify(user.owner.toText().slice(0, 5))}
+                        alt={JSON.stringify(user.owner.toText())}
                         className="h-8 rounded-full mr-2"
                       />
-                      <span className="text-sm">
-                        {user.owner.toText().slice(0, 5)}
+                      <span className="text-sm truncate max-w-[165px] md:max-w-[239px]">
+                        {user.owner.toText()}
                       </span>
                     </div>
                     <span className="text-sm text-end">{user.points} pts.</span>
