@@ -10,11 +10,10 @@ use crate::{
 
 const APPROVED_PRINCIPALS: &[&str] = &[
     "oxj2h-r6fbj-hqtcn-fv7ye-yneeb-ca3se-c6s42-imvp7-juu33-ovnix-mae", // Paras
+    "wbrxn-i57lw-zrazv-y3lr6-vh4od-cqtc2-kvz6z-54vwx-og5bv-54j2r-jae", //Paras ii
     "42l52-e6bwv-2353f-idnxh-5f42y-catp6-j2yxn-msivr-ljpu2-ifqsy-dqe", // Ankur
     "n5ytn-hebsc-fbio3-ll5ed-ermti-6kvdk-sjp4d-pofnb-66xhd-gpj4t-3qe", // Tushar Jain's Plug
     "hc4gt-vtazq-2beqs-7lv5p-4nezq-wl3hs-fojqx-2iwtc-mpxx6-ggswf-7ae", // Tushar Jain's II
-    "6kpye-x43e6-y36pz-ofrbv-qrg4k-3kcbq-5vcvr-n7ubw-5ojjh-brx2i-bqe", // default identity
-    "e2fhy-7j47j-rjnk3-clcfh-2qv3m-pwr46-lkavg-tdb5b-vo4bg-m2dqx-sqe",
     "2nh3q-od732-potbk-gs2yh-nkqyt-i4xtt-fs73b-iirbu-ows4f-glqf5-qae", // Somiya Behera
     "57sj2-6uilb-7r5ib-xxfdu-24nn5-ievyg-w3xp2-j5hpq-5esuf-pslkd-fae", //Toshak 
 ];

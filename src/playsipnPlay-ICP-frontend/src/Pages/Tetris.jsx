@@ -84,7 +84,7 @@ const Tetris = () => {
           if (afterApproval.Ok) {
             toast.success("Points deducted successfully");
           } else {
-            // navigate("/");
+            navigate("/");
             toast.error("An error occurred during the payment process.");
           }
         }
@@ -147,7 +147,7 @@ const Tetris = () => {
     const handleScore = async (event) => {
       if (event.data?.type === "save_score") {
         setScore(event.data.score);
-        setTaskName("Saving score...");
+        setTaskName("Saving score");
         setIsPopupLoading(true);
 
         try {

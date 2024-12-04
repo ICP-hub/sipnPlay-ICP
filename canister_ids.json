@@ -2,11 +2,11 @@
   "playsipnPlay-ICP-frontend": {
     "ic": "r4s25-liaaa-aaaap-qhxma-cai"
   },
-  "sipnplay_icp_backend": {
-    "ic": "ent7t-2yaaa-aaaap-qhtcq-cai"
-  },
   "sipnPlay-ICP-frontend": {
     "ic": "tlnsj-qqaaa-aaaap-qhp2q-cai"
+  },
+  "sipnplay_icp_backend": {
+    "ic": "rjrbu-ryaaa-aaaap-qplna-cai"
   },
   "test_sipnplay": {
     "ic": "cjpyu-kqaaa-aaaap-qhyfq-cai"
