@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import blackjackLogo from "../../assets/images/blackjack.png";
 import tetrisLogo from "../../assets/images/tetris.png";
+import bubbleLogo from "../../assets/images/bubble.png";
 import Game from "./Game";
 import GamesNav from "./GamesNav";
 import { useFetching } from "../../utils/fetchingContext";
@@ -34,6 +35,27 @@ const games = [
     link: "tetris",
     name: "Tetris",
     img: tetrisLogo,
+    description: [
+      `The goal of Tetris is to arrange falling shapes (called "tetrominoes") into complete lines without gaps. Completed lines disappear, earning the player points.`,
+      `Tetrominoes fall from the top of the screen. Players can move and rotate them to fit them into place as they descend.`,
+      `When a row of blocks is filled completely with no gaps, it disappears, and the player earns points. Multiple rows can be cleared at once.`,
+      `The game ends when the stack of blocks reaches the top of the screen, leaving no room for new tetrominoes to fall.`,
+      `Players earn points for clearing lines. Clearing more lines at once (such as clearing two or four lines simultaneously) results in higher scores.`,
+      `Successful players must plan ahead, rotate tetrominoes to fit the gaps, and stack pieces efficiently to prevent the blocks from piling up too high.`,
+      `Players can move tetrominoes left, right, or down, and rotate them to fit into the available space.`,
+      `The game randomly selects which tetromino will fall next, adding an element of unpredictability and requiring players to adapt quickly.`,
+      `Unlike many games, Tetris does not involve combat but focuses on spatial reasoning and quick decision-making.`,
+    ],
+    controls:
+      "Press the directional keys to move the active tetromino. Rotate the active tetromino by pressing the up arrow key. Speed up the falling tetromino by pressing the down arrow key. Press the escape key to pause the game. For phones or tablets, the directional arrow buttons can be pressed to move the active tetromino, the rotate button can be pressed to rotate the active tetromino, the speed up button can be pressed to speed up the falling tetromino, and the pause button can be pressed to pause the game.",
+    leaderboard: true,
+    tokenomics:
+      "Players are required to pay a one-time fee of 30 TSIP tokens everytime they start the game. Once the game is over, the player receives points (which is 10 times their score) based on their in-game performance. Additionally, the player's rank on the leaderboard is determined by the number of points they have, with higher points securing higher rankings. Players earn TSIP tokens as rewards based on their position in the leaderboard, incentivizing skillful gameplay and competition for top spots.",
+  },
+  {
+    link: "infinity-bubble",
+    name: "Infinity Bubble",
+    img: bubbleLogo,
     description: [
       `The goal of Tetris is to arrange falling shapes (called "tetrominoes") into complete lines without gaps. Completed lines disappear, earning the player points.`,
       `Tetrominoes fall from the top of the screen. Players can move and rotate them to fit them into place as they descend.`,

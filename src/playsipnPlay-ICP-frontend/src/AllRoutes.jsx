@@ -7,6 +7,7 @@ import PrivateLayout from "./Layout/PrivateLayout";
 import AdminPanel from "./Pages/Admin";
 import TetrisGame from "./Pages/Tetris";
 import NotFound from "./Pages/NotFound";
+import InfinityBubble from "./Pages/InfinityBubble";
 
 function AllRoutes() {
   return (
@@ -23,6 +24,7 @@ function AllRoutes() {
         <Route path="/blackjack" element={<BlackJack />} />
         <Route path="/tetris" element={<TetrisGame />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/infinity-bubble" element={<InfinityBubble />} />
         <Route
           path="/*"
           element={
