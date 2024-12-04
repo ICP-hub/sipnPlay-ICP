@@ -173,7 +173,7 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                     className="h-8 rounded-full mr-2"
                   />
                   <span className="text-sm truncate max-w-[165px] md:max-w-[239px]">
-                    {tetrisLeaderboard[userRank - 1].owner.toText()}
+                    You
                   </span>
                 </div>
                 <span className="text-sm text-end">

@@ -10,31 +10,22 @@ import LoadingPopUp from "../components/Loaders/LoadingPopUp";
 import { transferApprove } from "../utils/transApprove";
 import GameOverLeaderBoard from "../components/Modals/GameOverLeaderBoard";
 import config from '../utils/config';
-const secretKey = "Abh67_#fbau-@y74_7A_0nm6je7";
 
-function encryptData(data, key) {
-  return CryptoJS.AES.encrypt(data, key).toString();
-}
-
-// Get the encryption key
 const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
 
 // Function to encrypt the score
-function encryptScore(data) {
+async function encryptScore (data) {
   // Ensure data is converted to string before encryption
   const encrypted = CryptoJS.AES.encrypt(data.toString(), CryptoJS.enc.Utf8.parse(ENCRYPTION_KEY), {
     mode: CryptoJS.mode.ECB,
     padding: CryptoJS.pad.Pkcs7
   });
-
-  // Convert encrypted data to Base64 string
   return encrypted.toString();
 }
 
 const Tetris = () => {
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const dispatch = useDispatch();
-  const [score, setScore] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [taskName, setTaskName] = useState("");
@@ -77,10 +68,8 @@ const Tetris = () => {
           30,
           false
         );
-        console.log("approval", approveResp);
         if (approveResp.Ok) {
           const afterApproval = await backendActor.tetris_game_start();
-          console.log("After approval", afterApproval);
           if (afterApproval.Ok) {
             toast.success("Points deducted successfully");
           } else {
@@ -93,20 +82,15 @@ const Tetris = () => {
         }
 
         const userHighScore = await backendActor.get_high_score();
-        console.log("user high score", parseInt(userHighScore.Ok));
         if (userHighScore.Err) {
           toast.success("Welcome user!");
-          const best = encryptData("0", secretKey);
-          localStorage.setItem("BestScore", best);
+          localStorage.setItem("BestScore", "0");
         } else {
-          const best = encryptData(userHighScore.Ok || 0, secretKey);
-          localStorage.setItem("BestScore", best);
+          localStorage.setItem("BestScore", userHighScore.Ok.toString());
         }
 
         const amnt = await getBalance();
-        const amntString = amnt.toString();
-        const encryptedBalance = encryptData(amntString, secretKey);
-        localStorage.setItem("Balance", encryptedBalance);
+        localStorage.setItem("Balance", amnt);
 
         dispatch(
           addUserData({
@@ -149,14 +133,11 @@ const Tetris = () => {
     // The handleScore function
     const handleScore = async (event) => {
       if (event.data?.type === "save_score") {
-        setScore(event.data.score);
         setTaskName("Saving score");
         setIsPopupLoading(true);
 
         try {
-          // Encrypt the score using the key
-          const encryptedScore = encryptScore(event.data.score);
-          // Send the encrypted score to the backend
+          const encryptedScore = await encryptScore(event.data.score);
           const resp = await backendActor.tetris_game_over(encryptedScore);
           if (resp.Ok) {
             setIsGameOver(true);
