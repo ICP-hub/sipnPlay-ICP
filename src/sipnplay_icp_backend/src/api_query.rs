@@ -4,8 +4,8 @@ use num_traits::ToPrimitive;
 
 use crate::{
     state_handler::STATE,
-    types::{MessageData, PaginatedResult, UserCreationInput},
-    BlackjackData, TetrisLeaderboardData, WaitlistData,
+    types::{MessageData, PaginatedResult, UserCreationInput, SortedLeaderboardData},
+    BlackjackData, LeaderboardData, WaitlistData
 };
 
 const APPROVED_PRINCIPALS: &[&str] = &[
@@ -172,7 +172,7 @@ fn get_waitlist(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<Waitlis
 
     let paginated_data = entries[start_index..end_index]
         .iter()
-        .map(|(_, data)| data.clone())
+        .map(|(_, data)| data.clone().into())
         .collect::<Vec<_>>();
 
     // Return the paginated result
@@ -185,19 +185,27 @@ fn get_waitlist(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<Waitlis
 
 // Get the Tetris LeaderBoard Details All users with logged in user rank.
 #[ic_cdk::query]
-pub fn get_tetris_leaderboard() -> (Result<Vec<TetrisLeaderboardData>, String>, Nat) {
+pub fn get_leaderboard(game_name: String) -> (Result<Vec<SortedLeaderboardData>, String>, Nat) {
+    ic_cdk::println!("Game Name: {}", game_name);
     // Access the state and clone the leaderboard data
-    let leaderboard: Vec<TetrisLeaderboardData> = STATE.with(|state| {
-        state
-            .borrow()
-            .sorted_leaderboard_data
-            .iter()
-            .map(|data| TetrisLeaderboardData {
-                owner: data.owner.clone(),
-                points: data.points,
-                high_score: data.high_score,
-            })
-            .collect() 
+    let leaderboard: Vec<SortedLeaderboardData> = STATE.with(|state| {
+        if game_name == "Tetris" {
+            state
+                .borrow()
+                .tetris_sorted_leaderboard_data
+                .iter()
+                .map(|data| data.clone().into())
+                .collect()
+        } else if game_name == "Infinity Bubble" {
+           state
+                .borrow()
+                .infinity_bubble_sorted_leaderboard_data
+                .iter()
+                .map(|data| data.clone().into())
+                .collect()
+        } else {
+            Vec::new()
+        }
     });
 
     // Check if the leaderboard is empty
@@ -223,18 +231,28 @@ pub fn get_tetris_leaderboard() -> (Result<Vec<TetrisLeaderboardData>, String>, 
 
 // Get the Logged-in User LeaderBoard Details
 #[ic_cdk::query]
-pub fn get_logged_in_user_leaderboard() -> Result<TetrisLeaderboardData, String> {
+pub fn get_logged_in_user_leaderboard(game_name: String) -> Result<LeaderboardData, String> {
     let principal = caller();
 
     // Retrieve the leaderboard data for the logged-in user
     let leaderboard = STATE.with(|state| {
-        state
-            .borrow()
-            .tetris_leaderboard_data
-            .get(&principal.to_text())
-            .map(|data| data.clone()) // Use map to clone the data if it exists
+        if game_name == "Tetris" {
+            state
+                .borrow()
+                .tetris_leaderboard_data
+                .get(&principal.to_text())
+                .map(|data| data.clone()) // Use map to clone the data if it exists
+        } else if game_name == "Infinity Bubble" {
+            state
+                .borrow()
+                .infinity_bubble_leaderboard_data
+                .get(&principal.to_text())
+                .map(|data| data.clone()) // Use map to clone the data if it exists
+        } else {
+            None
+        }
     });
-
+    
     // Return the result or an error message
     if let Some(data) = leaderboard {
         Ok(data) // Return the leaderboard data if it exists
@@ -245,17 +263,27 @@ pub fn get_logged_in_user_leaderboard() -> Result<TetrisLeaderboardData, String>
 
 // Get the User High Score
 #[ic_cdk::query]
-pub fn get_high_score() -> Result<String, String> {
+pub fn get_high_score(game_name: String) -> Result<String, String> {
     // Get the Principal
     let princial = caller();
 
     // Retrieve the high score
-    let high_score = STATE.with(|state| {
+    let high_score: Option<String> = STATE.with(|state| {
+        if game_name == "Tetris" {
         state
             .borrow()
             .tetris_leaderboard_data
             .get(&princial.to_text())
             .map(|data| data.high_score.to_string())
+        } else if game_name == "Infinity Bubble" {
+        state
+            .borrow()
+            .infinity_bubble_leaderboard_data
+            .get(&princial.to_text())
+            .map(|data| data.high_score.to_string())
+        } else {
+            None
+        }
     });
 
     // Return the high score or an error message
@@ -267,20 +295,35 @@ pub fn get_high_score() -> Result<String, String> {
 
 // Get the Top 10 Players
 #[ic_cdk::query]
-pub fn get_top_ten_players() -> Result<Vec<TetrisLeaderboardData>, String> {
+pub fn get_top_ten_players(game_name: String) -> Result<Vec<LeaderboardData>, String> {
     // Check the Approval request raised on Admin Authority
     if !is_approved() {
         return Err("You are not approved".to_string());
     }
 
     let mut leaderboard = STATE.with(|state| {
-        state
-            .borrow()
-            .tetris_leaderboard_data
-            .iter()
-            .map(|(_, data)| data.clone()) // Collect all leaderboard data
-            .collect::<Vec<_>>()
+        if game_name == "Tetris" {
+            state
+                .borrow()
+                .tetris_leaderboard_data
+                .iter()
+                .map(|(_, data)| data.clone()) // Collect all leaderboard data
+                .collect::<Vec<_>>()
+        } else if game_name == "Infinity Bubble" {
+            state
+                .borrow()
+                .infinity_bubble_leaderboard_data
+                .iter()
+                .map(|(_, data)| data.clone()) // Collect all leaderboard data
+                .collect::<Vec<_>>()
+        } else {
+            Vec::new()
+        }
     });
+
+    if leaderboard.len() == 0 {
+        return Err("No data found".to_string());
+    }
 
     // Sort the leaderboard by points in descending order
     leaderboard.sort_by(|a, b| b.points.cmp(&a.points));

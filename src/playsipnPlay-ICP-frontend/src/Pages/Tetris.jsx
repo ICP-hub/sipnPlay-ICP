@@ -69,7 +69,7 @@ const Tetris = () => {
           false
         );
         if (approveResp.Ok) {
-          const afterApproval = await backendActor.tetris_game_start();
+          const afterApproval = await backendActor.game_start("Tetris");
           if (afterApproval.Ok) {
             toast.success("Points deducted successfully");
           } else {
@@ -77,11 +77,10 @@ const Tetris = () => {
             toast.error("An error occurred during the payment process.");
           }
         }else{
-          navigate("/");
+          // navigate("/");
           toast.error("Low balance error")
         }
-
-        const userHighScore = await backendActor.get_high_score();
+        const userHighScore = await backendActor.get_high_score("Tetris");
         if (userHighScore.Err) {
           toast.success("Welcome user!");
           localStorage.setItem("BestScore", "0");
@@ -138,7 +137,7 @@ const Tetris = () => {
 
         try {
           const encryptedScore = await encryptScore(event.data.score);
-          const resp = await backendActor.tetris_game_over(encryptedScore);
+          const resp = await backendActor.game_over("Tetris", encryptedScore);
           if (resp.Ok) {
             setIsGameOver(true);
             toast.success("Score saved successfully");

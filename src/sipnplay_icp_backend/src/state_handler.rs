@@ -4,7 +4,7 @@ use ic_stable_structures::{DefaultMemoryImpl, Storable, StableBTreeMap, StableVe
 use std::borrow::Cow;
 use std::cell::RefCell;
 
-use crate::types::*;
+use crate::types::{*};
 use crate::api_update::start_tetris_leaderboard_update;
 
 // Define Memory Types
@@ -14,8 +14,11 @@ pub type UserDataMap = StableBTreeMap<Principal, UserCreationInput, Memory>;
 pub type MessageDataMap = StableBTreeMap<String, MessageData, Memory>;
 pub type WaitlistDataMap = StableBTreeMap<String, WaitlistData, Memory>;
 pub type TetrisDataMap = StableBTreeMap<String, TetrisData, Memory>;
-pub type TetrisLeaderboardDataMap = StableBTreeMap<String, TetrisLeaderboardData, Memory>;
-pub type SortedLeaderboardDataMap = StableVec<SortedLeaderboardData, Memory>;
+pub type TetrisLeaderboardDataMap = StableBTreeMap<String, LeaderboardData, Memory>;
+pub type TetrisSortedLeaderboardDataMap = StableVec<SortedLeaderboardData, Memory>;
+pub type InfinityBubbleDataMap = StableBTreeMap<Principal, InfinityBubbleData, Memory>;
+pub type InfinityBubbleLeaderboardDataMap = StableBTreeMap<String, LeaderboardData, Memory>;
+pub type InfinityBubbleSortedLeaderboardDataMap = StableVec<SortedLeaderboardData, Memory>;
 
 // Memory IDs for stable storage
 const USER_DATA_MEMORY_ID: MemoryId = MemoryId::new(0);
@@ -25,6 +28,9 @@ const WAITLIST_DATA_MEMORY_ID: MemoryId = MemoryId::new(3);
 const TETRIS_LEADERBOARD_DATA_MEMORY_ID: MemoryId = MemoryId::new(4);
 const TETRIS_DATA_MEMORY_ID: MemoryId = MemoryId::new(5);
 const SORTED_LEADERBOARD_MEMORY_ID: MemoryId = MemoryId::new(6);
+const INFINITY_BUBBLE_DATA_MEMORY_ID: MemoryId = MemoryId::new(7);
+const INFINITY_BUBBLE_LEADERBOARD_DATA_MEMORY_ID: MemoryId = MemoryId::new(8);
+const INFINITY_BUBBLE_SORTED_LEADERBOARD_DATA_MEMORY_ID: MemoryId = MemoryId::new(9);
 
 // Thread-local memory manager
 thread_local! {
@@ -40,10 +46,14 @@ thread_local! {
             waitlist_data: WaitlistDataMap::init(mm.borrow().get(WAITLIST_DATA_MEMORY_ID)),
             tetris_leaderboard_data: TetrisLeaderboardDataMap::init(mm.borrow().get(TETRIS_LEADERBOARD_DATA_MEMORY_ID)),
             tetris_data: TetrisDataMap::init(mm.borrow().get(TETRIS_DATA_MEMORY_ID)),
-            sorted_leaderboard_data: SortedLeaderboardDataMap::init(mm.borrow().get(SORTED_LEADERBOARD_MEMORY_ID)).unwrap(),
+            tetris_sorted_leaderboard_data: TetrisSortedLeaderboardDataMap::init(mm.borrow().get(SORTED_LEADERBOARD_MEMORY_ID)).unwrap(),
+            infinity_bubble_data: InfinityBubbleDataMap::init(mm.borrow().get(INFINITY_BUBBLE_DATA_MEMORY_ID)),
+            infinity_bubble_leaderboard_data: InfinityBubbleLeaderboardDataMap::init(mm.borrow().get(INFINITY_BUBBLE_LEADERBOARD_DATA_MEMORY_ID)),
+            infinity_bubble_sorted_leaderboard_data: InfinityBubbleSortedLeaderboardDataMap::init(mm.borrow().get(INFINITY_BUBBLE_SORTED_LEADERBOARD_DATA_MEMORY_ID)).unwrap(),
         })
     );
 }
+
 
 // State to manage all maps
 pub struct State {
@@ -53,7 +63,10 @@ pub struct State {
     pub waitlist_data: WaitlistDataMap,
     pub tetris_leaderboard_data: TetrisLeaderboardDataMap,
     pub tetris_data: TetrisDataMap,
-    pub sorted_leaderboard_data: SortedLeaderboardDataMap,
+    pub tetris_sorted_leaderboard_data: TetrisSortedLeaderboardDataMap,
+    pub infinity_bubble_data: InfinityBubbleDataMap,
+    pub infinity_bubble_leaderboard_data: InfinityBubbleLeaderboardDataMap,
+    pub infinity_bubble_sorted_leaderboard_data: InfinityBubbleSortedLeaderboardDataMap,
 }
 
 // State Initialization
@@ -67,10 +80,13 @@ fn init() {
         state.waitlist_data = init_waitlist_data_map();
         state.tetris_leaderboard_data = init_tetris_leaderboard_data_map();
         state.tetris_data = init_tetris_data_map();
-        state.sorted_leaderboard_data = init_sorted_leaderboard();
+        state.tetris_sorted_leaderboard_data = init_sorted_leaderboard();
+        state.infinity_bubble_data = init_infinity_bubble_data_map();
+        state.infinity_bubble_leaderboard_data = init_infinity_bubble_leaderboard_data_map();
+        state.infinity_bubble_sorted_leaderboard_data = init_infinity_bubble_sorted_leaderboard_data_map();
     });
 
-    ic_cdk::print("State initialized successfully!");
+    ic_cdk::print("Tetris Leaderboard initialized successfully!");
     // Start Tetris Leaderboard Update Call
     ic_cdk::spawn(async {
         start_tetris_leaderboard_update().await;
@@ -101,11 +117,25 @@ pub fn init_tetris_leaderboard_data_map() -> TetrisLeaderboardDataMap {
 pub fn init_tetris_data_map() -> TetrisDataMap {
     TetrisDataMap::init(get_tetris_data_memory())
 }
-
 // Initialize the sorted leaderboard in the state
-pub fn init_sorted_leaderboard() -> SortedLeaderboardDataMap {
-    SortedLeaderboardDataMap::init(get_sorted_leaderboard_memory()).unwrap()
+pub fn init_sorted_leaderboard() -> TetrisSortedLeaderboardDataMap {
+    TetrisSortedLeaderboardDataMap::init(get_sorted_leaderboard_memory()).unwrap()
 }
+
+// Initialize the infinity bubble leaderboard in the state
+pub fn init_infinity_bubble_data_map() -> InfinityBubbleDataMap {
+    InfinityBubbleDataMap::init(get_infinity_bubble_data_memory())
+}
+
+pub fn init_infinity_bubble_leaderboard_data_map() -> InfinityBubbleLeaderboardDataMap {
+    InfinityBubbleLeaderboardDataMap::init(get_infinity_bubble_leaderboard_data_memory())
+}
+
+pub fn init_infinity_bubble_sorted_leaderboard_data_map() -> InfinityBubbleSortedLeaderboardDataMap {
+    InfinityBubbleSortedLeaderboardDataMap::init(get_infinity_bubble_sorted_leaderboard_data_memory()).unwrap()
+}
+
+
 // Memory accessors
 pub fn get_user_data_memory() -> Memory {
     MEMORY_MANAGER.with(|m| m.borrow().get(USER_DATA_MEMORY_ID))
@@ -133,6 +163,18 @@ pub fn get_tetris_data_memory() -> Memory {
 
 pub fn get_sorted_leaderboard_memory() -> Memory {
     MEMORY_MANAGER.with(|m| m.borrow().get(SORTED_LEADERBOARD_MEMORY_ID))
+}
+
+pub fn get_infinity_bubble_data_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(INFINITY_BUBBLE_DATA_MEMORY_ID))
+}
+
+pub fn get_infinity_bubble_leaderboard_data_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(INFINITY_BUBBLE_LEADERBOARD_DATA_MEMORY_ID))
+}
+
+pub fn get_infinity_bubble_sorted_leaderboard_data_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(INFINITY_BUBBLE_SORTED_LEADERBOARD_DATA_MEMORY_ID))
 }
 
 // Helper functions for state read/mutation
@@ -215,15 +257,29 @@ impl Storable for TetrisData {
         ic_stable_structures::storable::Bound::Unbounded;
 }
 
-// Implement Storable for SortedLeaderboardData
-impl Storable for TetrisLeaderboardData {
+// Implement Storable for InfinityBubbleData
+impl Storable for InfinityBubbleData {
     fn to_bytes(&self) -> Cow<[u8]> {
         Cow::Owned(Encode!(self).unwrap())
     }
 
     fn from_bytes(bytes: Cow<[u8]>) -> Self {
         Decode!(bytes.as_ref(), Self).unwrap()
-    }    
+    }
+
+    const BOUND: ic_stable_structures::storable::Bound =
+        ic_stable_structures::storable::Bound::Unbounded;
+}
+
+// Implement Storable for LeaderboardData
+impl Storable for LeaderboardData {
+    fn to_bytes(&self) -> Cow<[u8]> {
+        Cow::Owned(Encode!(self).unwrap())
+    }
+
+    fn from_bytes(bytes: Cow<[u8]>) -> Self {
+        Decode!(bytes.as_ref(), Self).unwrap()
+    }
 
     const BOUND: ic_stable_structures::storable::Bound =
         ic_stable_structures::storable::Bound::Unbounded;

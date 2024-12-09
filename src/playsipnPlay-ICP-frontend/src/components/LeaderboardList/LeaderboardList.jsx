@@ -11,29 +11,27 @@ import { AiFillHome } from "react-icons/ai";
 const LeaderBoardList = ({ game, isGameOver }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { backendActor } = useAuth();
-  const [tetrisLeaderboard, setTetrisLeaderboard] = useState([]);
+  const [leaderboard, setLeaderboard] = useState([]);
   const [userRank, setUserRank] = useState(0);
   const navigate = useNavigate();
 
   const fetchLeaderboard = async (gameName) => {
     try {
+      console.log("Game Name", gameName);
       setIsLoading(true);
-      if (gameName === "Tetris") {
-        const [leaderboard, userRank] =
-          await backendActor.get_tetris_leaderboard();
-        console.log("Tetris Leaderboard: ", leaderboard);
+      const [leaderboard, userRank] =
+        await backendActor.get_leaderboard(gameName);
+        console.log("Leaderboard: ", leaderboard);
         console.log("User Rank: ", userRank.toString());
         if (leaderboard.Err) {
-          console.error("Error fetching Tetris Leaderboard", leaderboard.Err);
+          console.error("Error fetching Leaderboard", leaderboard.Err);
         } else {
           if (leaderboard.Ok) {
-            setTetrisLeaderboard(leaderboard.Ok);
+            setLeaderboard(leaderboard.Ok);
             setUserRank(Number(userRank.toString()));
           }
         }
-      } else {
-        return;
-      }
+     
     } catch (error) {
       console.error("Error fetching Tetris Leaderboard:", error);
       toast.error("Error fetching Tetris Leaderboard");
@@ -86,7 +84,7 @@ const LeaderBoardList = ({ game, isGameOver }) => {
           every 30 minutes.{" "}
         </p>
         <div className="flex justify-evenly">
-          {tetrisLeaderboard.length === 0 ? (
+          {leaderboard.length === 0 ? (
             <p>No users in the leaderboard yet.</p>
           ) : (
             <>
@@ -95,13 +93,13 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                   className="absolute rounded-full h-[60px] -top-8 left-[35%] border-[4px] border-gray-200"
                   src={userProfilePic}
                 />
-                {tetrisLeaderboard.length >= 2 && tetrisLeaderboard[1] ? (
+                {leaderboard.length >= 2 && leaderboard[1] ? (
                   <>
                     <p className="font-adam font-[600] mx-auto truncate max-w-[90px]">
-                      {tetrisLeaderboard[1].owner.toText()}
+                      {leaderboard[1].owner.toText()}
                     </p>
                     <p className="font-adam">
-                      {tetrisLeaderboard[1].points} pts
+                      {leaderboard[1].points} pts
                     </p>
                   </>
                 ) : (
@@ -119,13 +117,13 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                     className="absolute h-[90px] -top-28 left-[29%]"
                     src={Crown}
                   />
-                  {tetrisLeaderboard.length >= 1 && tetrisLeaderboard[0] ? (
+                  {leaderboard.length >= 1 && leaderboard[0] ? (
                     <>
                       <p className="font-adam mt-8 font-[600] mx-auto truncate max-w-[90px]">
-                        {tetrisLeaderboard[0].owner.toText()}
+                        {leaderboard[0].owner.toText()}
                       </p>
                       <p className="font-adam">
-                        {tetrisLeaderboard[0].points} pts
+                        {leaderboard[0].points} pts
                       </p>
                     </>
                   ) : (
@@ -139,13 +137,13 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                   className="absolute rounded-full h-[60px] -top-8 left-[35%] border-[4px] border-[#cd7f32] "
                   src={userProfilePic}
                 />
-                {tetrisLeaderboard.length >= 3 && tetrisLeaderboard[2] ? (
+                {leaderboard.length >= 3 && leaderboard[2] ? (
                   <>
                     <p className="font-adam font-[600] mx-auto truncate max-w-[90px]">
-                      {tetrisLeaderboard[2].owner.toText()}
+                      {leaderboard[2].owner.toText()}
                     </p>
                     <p className="font-adam">
-                      {tetrisLeaderboard[2].points} pts
+                      {leaderboard[2].points} pts
                     </p>
                   </>
                 ) : (
@@ -159,16 +157,16 @@ const LeaderBoardList = ({ game, isGameOver }) => {
           {" "}
           {/* Added scroll */}
           <ul>
-            {tetrisLeaderboard[userRank - 1] && (
+            {leaderboard[userRank - 1] && (
               <li
-                key={tetrisLeaderboard[userRank - 1].owner.toText().slice(0, 5)}
+                key={leaderboard[userRank - 1].owner.toText().slice(0, 5)}
                 className={`flex items-center bg-opacity-20 bg-white justify-between p-4 my-4 border-2 border-[#ee3ec9]`}
               >
                 <div className="flex items-center">
                   <span className="text-sm mr-2"># {userRank}</span>
                   <img
                     src={userProfilePic}
-                    alt={tetrisLeaderboard[userRank - 1].owner
+                    alt={leaderboard[userRank - 1].owner
                       .toText()}
                     className="h-8 rounded-full mr-2"
                   />
@@ -177,12 +175,12 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                   </span>
                 </div>
                 <span className="text-sm text-end">
-                  {tetrisLeaderboard[userRank - 1].points} pts.
+                  {leaderboard[userRank - 1].points} pts.
                 </span>
               </li>
             )}
             <>
-              {tetrisLeaderboard.map((user, index) => {
+              {leaderboard.map((user, index) => {
                 let borderClass = "border-2 border-[#ee3ec9]"; // Default border color for 4th place and beyond
 
                 if (index === 0) {

@@ -9,17 +9,17 @@ use std::time::Duration;
 use aes::Aes128; // AES-128 (16-byte key)
 use block_modes::{BlockMode, Ecb};
 use block_modes::block_padding::Pkcs7;
-use base64::{decode};
+use base64::engine::general_purpose;
+use base64::Engine;
 use std::str;
 
 use crate::api_query::{is_approved, is_authenticated};
 use crate::state_handler::{mutate_state, read_state};
 use crate::{state_handler::STATE, types::BalanceOfArgs, UserCreationInput};
 use crate::{
-    BlackjackData, MessageData, RewardedPlayers, TetrisData, TetrisLeaderboardData,
-    TransferFromResult, WaitlistData, SortedLeaderboardData,
+   BlackjackData, MessageData, TetrisData, LeaderboardData, WaitlistData, SortedLeaderboardData, RewardedPlayers,
+   InfinityBubbleData,TransferFromResult
 };
-
 use crate::config::SECURE_SECRET_KEY;
 
 // Your secret key must be 16 bytes long for AES-128, so ensure it's exactly 16 bytes.
@@ -30,8 +30,8 @@ type Aes128Ecb = Ecb<Aes128, Pkcs7>;
 
 // Decrypt function
 fn decrypt_score(encrypted_score: String) -> String {
-    let encrypted_data = decode(&encrypted_score).expect("Failed to decode base64");
-
+    // Decode the base64 string
+    let encrypted_data = general_purpose::STANDARD.decode(&encrypted_score).expect("Failed to decode base64");
     // Decrypt using AES ECB mode
     let cipher = Aes128Ecb::new_from_slices(SECRET_KEY, Default::default()).unwrap();
     let decrypted_data = cipher.decrypt_vec(&encrypted_data).expect("Decryption failed");
@@ -447,9 +447,18 @@ async fn join_waitlist(name: String, email: String, icp_address: String) -> Resu
 
 // Function to Start the game and transfer the tokens to the users
 #[update]
-async fn tetris_game_start() -> Result<String, String> {
+pub async fn game_start(game_name: String) -> Result<String, String> {
     use num_traits::ToPrimitive;
     let caller_principal = caller();
+
+    // Define the amount of tokens to transfer based on the game
+    let amount = if game_name == "Tetris" {
+        Nat::from(3000000000u64) // 30 tokens
+    } else if game_name == "Infinity Bubble" {
+        Nat::from(3000000000u64) // 30 tokens
+    } else {
+        Nat::from(0u64)
+    };
 
     // Check if the user exists in `user_data`
     let user_exists = STATE.with(|state| {
@@ -485,7 +494,7 @@ async fn tetris_game_start() -> Result<String, String> {
             owner: backend_canister_id,
             subaccount: None,
         },
-        amount: Nat::from(3000000000u64), // Transfer 30 tokens
+        amount: amount, // Transfer 30 tokens
         fee: None,
         memo: None,
         created_at_time: None,
@@ -501,16 +510,28 @@ async fn tetris_game_start() -> Result<String, String> {
     match response {
         Ok((TransferFromResult::Ok(_block_index),)) => {
             // Add (caller, amount) to `tetris_data` map
+
             STATE.with(|state| {
-                let mut state = state.borrow_mut();
-                state.tetris_data.insert(
-                    caller_principal.to_text(),
-                    TetrisData {
-                        id: caller_principal,                        // Use Principal ID
-                        amount: transfer_amount.0.to_u64().unwrap(), // Convert Nat to u64
-                    },
-                );
+                let mut state = state.borrow_mut();            
+                if game_name == "Tetris" {
+                    state.tetris_data.insert(
+                        caller_principal.to_text(),
+                        TetrisData {
+                            id: caller_principal,                        // Use Principal ID
+                            amount: transfer_amount.0.to_u64().unwrap(), // Convert Nat to u64
+                        },
+                    );
+                }else if game_name == "Infinity Bubble" {
+                    state.infinity_bubble_data.insert(
+                        caller_principal,
+                        InfinityBubbleData {
+                            id: caller_principal,                        // Use Principal ID
+                            amount: transfer_amount.0.to_u64().unwrap(), // Convert Nat to u64
+                        },
+                    );
+                }            
             });
+
             Ok(format!(
                 "Points deducted successfully: {}",
                 transfer_amount.to_string()
@@ -523,8 +544,7 @@ async fn tetris_game_start() -> Result<String, String> {
 
 // Approach 2 Insert the score when user exits then firstly remove the previous entry and then add new entry
 #[update]
-fn tetris_game_over(encrypted_score: String) -> Result<String, String> {
-
+pub async fn game_over(game_name: String, encrypted_score: String) -> Result<String, String> {
     ic_cdk::println!("tetris_game_over");
     ic_cdk::println!("Encrypted Score : {}", encrypted_score);
 
@@ -549,7 +569,15 @@ fn tetris_game_over(encrypted_score: String) -> Result<String, String> {
     // Update or add the player's score
     STATE.with(|state| {
         let mut state = state.borrow_mut(); // Mutably borrow the state
-        let leaderboard = &mut state.tetris_leaderboard_data; // Get mutable reference to the leaderboard
+
+        // check the game state.
+        let leaderboard = if game_name == "Tetris" {
+            &mut state.tetris_leaderboard_data
+        } else if game_name == "Infinity Bubble" {
+            &mut state.infinity_bubble_leaderboard_data
+        } else {
+            return Err("Invalid game name".to_string());
+        };
 
         // Check if the player already exists in the leaderboard
         if leaderboard.contains_key(&player_id.to_text()) {
@@ -573,21 +601,22 @@ fn tetris_game_over(encrypted_score: String) -> Result<String, String> {
             // If the player doesn't exist, add them with their score
             leaderboard.insert(
                 player_id.to_text(),
-                TetrisLeaderboardData {
+                LeaderboardData {
                     owner: player_id,
                     high_score: input_score,
                     points: input_score,
                 },
             );
         }
-    });
+        Ok(())
+    })?;
 
     Ok("Score added successfully".to_string())
 }
 
 // Reset the Tetris Leaderboard
 #[update]
-fn tetris_game_reset() -> Result<String, String> {
+pub async fn game_reset(game_name: String) -> Result<String, String> {
     // Check if the caller is approved
     if !is_approved() {
         return Err("You are not approved".to_string());
@@ -596,9 +625,13 @@ fn tetris_game_reset() -> Result<String, String> {
     // Clear the leaderboard
     STATE.with(|state| {
         let mut state = state.borrow_mut();
-        state.tetris_leaderboard_data.clear_new();
-       // Clear all elements from the StableVec manually by popping each one
-        while state.sorted_leaderboard_data.pop().is_some() {}
+        if game_name == "Tetris" {
+            state.tetris_leaderboard_data.clear_new();
+            while state.tetris_sorted_leaderboard_data.pop().is_some() {}
+        } else if game_name == "Infinity Bubble" {
+            state.infinity_bubble_leaderboard_data.clear_new();
+            while state.infinity_bubble_sorted_leaderboard_data.pop().is_some() {}
+        } 
     });
 
     Ok("reset successful".to_string())
@@ -679,11 +712,10 @@ pub async fn reward_distributionre(
     }
 }
 
-
 // Function to get the Crown Job Leaderboard
 pub async fn get_crown_job_leaderboard() {
     // Retrieve the leaderboard data from the BTreeMap
-    let mut leaderboard = STATE.with(|state| {
+    let mut tetris_leaderboard = STATE.with(|state| {
         state
             .borrow()
             .tetris_leaderboard_data
@@ -692,20 +724,39 @@ pub async fn get_crown_job_leaderboard() {
             .collect::<Vec<_>>()
     });
 
+    let mut infinity_bubble_leaderboard = STATE.with(|state| {
+        state
+            .borrow()
+            .infinity_bubble_leaderboard_data
+            .iter()
+            .map(|(_, data)| data.clone())
+            .collect::<Vec<_>>()
+    });
+
     // Sort the leaderboard by points in descending order
-    leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
-    ic_cdk::println!("Sorted leaderboard data: {:#?}", leaderboard);
+    tetris_leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
+    ic_cdk::println!("Sorted Tetris Leaderboard data: {:#?}", tetris_leaderboard);
+
+    infinity_bubble_leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
+    ic_cdk::println!("Sorted Infinity Bubble Leaderboard data: {:#?}", infinity_bubble_leaderboard);
 
     // Clear all elements from the StableVec manually by popping each one
     STATE.with(|state| {
         let state = state.borrow_mut();
-        while state.sorted_leaderboard_data.pop().is_some() {}
+        // while state.sorted_leaderboard_data.pop().is_some() {}
+        while let Some(_) = state.tetris_sorted_leaderboard_data.pop() {}
+    });
+
+    STATE.with(|state| {
+        let state = state.borrow_mut();
+        // while state.sorted_leaderboard_data.pop().is_some() {}
+        while let Some(_) = state.infinity_bubble_sorted_leaderboard_data.pop() {}
     });
 
     // Insert sorted data into the StableVec
     STATE.with(|state| {
         let state = state.borrow_mut();
-        for data in leaderboard {
+        for data in tetris_leaderboard {
             // Convert TetrisLeaderboardData to SortedLeaderboardData, if needed
             let sorted_data = SortedLeaderboardData {
                 owner: data.owner,
@@ -714,7 +765,24 @@ pub async fn get_crown_job_leaderboard() {
             };
 
             state
-                .sorted_leaderboard_data
+                .tetris_sorted_leaderboard_data
+                .push(&sorted_data)
+                .expect("Failed to push data into StableVec");
+        }
+    });
+  
+    STATE.with(|state| {
+        let state = state.borrow_mut();
+        for data in infinity_bubble_leaderboard {
+            // Convert TetrisLeaderboardData to SortedLeaderboardData, if needed
+            let sorted_data = SortedLeaderboardData {
+                owner: data.owner,
+                high_score: data.high_score,
+                points: data.points,
+            };
+
+            state
+                .infinity_bubble_sorted_leaderboard_data
                 .push(&sorted_data)
                 .expect("Failed to push data into StableVec");
         }
@@ -733,3 +801,36 @@ pub async fn start_tetris_leaderboard_update() {
         });
     });
 }
+
+
+// // Benchmark example
+// #[cfg(feature = "canbench-rs")]
+// mod benches {
+//     use super::*;
+//     use canbench_rs::bench;
+//     use ic_cdk::api::stable::StableMemory;
+//     use std::time::{Duration, Instant};
+
+//     #[bench]
+//     async fn bench_get_crown_job_leaderboard() {
+//         // Start benchmarking memory usage (approximating)
+//         let memory_before = STATE.with(|state| state.borrow().sorted_leaderboard_data.len());
+
+//         // Measure execution time
+//         let start_time = Instant::now();
+//         get_crown_job_leaderboard().await;
+//         let duration = start_time.elapsed();
+
+//         // Measure memory after
+//         let memory_after = STATE.with(|state| state.borrow().sorted_leaderboard_data.len());
+
+//         // Log results
+//         ic_cdk::println!("Benchmark completed.");
+//         ic_cdk::println!("Execution time: {:?}", duration);
+//         ic_cdk::println!(
+//             "Memory usage: {} items before, {} items after",
+//             memory_before,
+//             memory_after
+//         );
+//     }
+// }
