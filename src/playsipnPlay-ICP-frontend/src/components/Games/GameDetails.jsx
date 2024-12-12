@@ -45,7 +45,7 @@ const GameDetails = ({ modalIsOpen, closeModal, game, tokenomics }) => {
             <div className="flex items-center justify-between mb-10 ">
               <div className="flex flex-col xl:flex-row justify-between items-center lg:mr-6">
                 <img src={game.img} alt={game.name} className="h-[84px]" />
-                <h3 className="font-monckeberg text-xl">{game.name}</h3>
+                {/* <h3 className="font-monckeberg text-xl">{game.name}</h3> */}
               </div>
               <AnimationButton onClick={() => navigate(game.link)}>
                 <p className="font-adam">PLAY NOW</p>

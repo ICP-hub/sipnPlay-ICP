@@ -19,6 +19,10 @@
     <link rel="icon" type="image/png" href="icons/icon-256.png" />
 
     <link rel="stylesheet" href="style.css" />
+
+    <script>
+      console.log("build_v3");
+    </script>
   </head>
 
   <body>
@@ -49,6 +53,23 @@
       function sendScore(score) {
         console.log("ScoreUpdate..", score);
         window.parent.postMessage({ type: "save_score", score: score }, "*");
+      }
+
+      function gameLoadEvent() {
+        console.log("gameLoadEvent..");
+      }
+
+      function gameStartEvent() {
+        console.log("gameStartEvent..");
+        window.parent.postMessage({ type: "start_game" }, "*");
+      }
+
+      function gameOverEvent() {
+        console.log("gameOverEvent..");
+      }
+
+      function gameRestartEvent() {
+        console.log("gameRestartEvent..");
       }
     </script>
   </body>
