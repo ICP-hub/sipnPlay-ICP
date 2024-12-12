@@ -2,22 +2,31 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../utils/useAuthClient";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
-import { updateBalance, addUserData } from "../utils/redux/userSlice";
+import { useSelector } from "react-redux";
 import { transferApprove } from "../utils/transApprove";
 import CryptoJS from "crypto-js";
 import LoadingWindow from "../components/Loaders/LoadingWindow";
 import LoadingPopUp from "../components/Loaders/LoadingPopUp";
+import config from '../utils/config';
 
-const secretKey = "Abh67_#fbau-@y74_7A_0nm6je7";
+const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
+
+// Function to encrypt the score
+async function encryptScore(data) {
+  // Ensure data is converted to string before encryption
+  const encrypted = CryptoJS.AES.encrypt(data.toString(), CryptoJS.enc.Utf8.parse(ENCRYPTION_KEY), {
+    mode: CryptoJS.mode.ECB,
+    padding: CryptoJS.pad.Pkcs7
+  });
+  return encrypted.toString();
+}
 
 function encryptData(data, key) {
   return CryptoJS.AES.encrypt(data, key).toString();
 }
 
 const BlackJack = () => {
-  const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
-  const dispatch = useDispatch();
+  const { isAuthenticated, backendActor, ledgerActor } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isPopUpLoading, setIsPopUpLoading] = useState(false);
   const [taskName, setTaskName] = useState("");
@@ -38,9 +47,8 @@ const BlackJack = () => {
 
     let amnt = parseFloat(
       Number(balance.Ok) *
-        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+      Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
     );
-    dispatch(updateBalance({ balance: amnt }));
     return amnt;
   };
 
@@ -55,14 +63,7 @@ const BlackJack = () => {
       } else {
         const amnt = await getBalance();
         const amntString = amnt.toString();
-        const encryptedBalance = encryptData(amntString, secretKey);
-        dispatch(
-          addUserData({
-            id: principal.toString(),
-            email: res.Ok.email,
-            balance: amnt,
-          })
-        );
+        const encryptedBalance = encryptData(amntString, "Abh67_#fbau-@y74_7A_0nm6je7");
 
         localStorage.setItem("Balance", encryptedBalance);
 
@@ -89,10 +90,10 @@ const BlackJack = () => {
   };
 
   useEffect(() => {
-    if (!userData.id || !userData.email) {
+    if (!isAuthenticated) {
       toast.error("You are not logged in! ");
       navigate("/");
-    } else if (!isAuthenticated) {
+    } else if (!userData.id || !userData.email) {
       navigate("/");
       toast.error("You are not logged in! ");
     } else {
@@ -103,39 +104,25 @@ const BlackJack = () => {
   useEffect(() => {
     const handleScore = async (event) => {
       if (event.data.type === "save_score") {
+     
         try {
           const amnt = await getBalance();
-          console.log("Balance", amnt);
-          console.log("score", event.data.score);
-
-          if (event.data.score > Math.round(amnt * 10) / 10) {
+          console.log("event data score",event.data.score);
+          console.log("amount balance",amnt); 
+          if (Math.trunc(event.data.score) > Math.trunc(amnt)) {
             setTaskName("Adding points");
-            let metaData = null;
-            await ledgerActor
-              .icrc1_metadata()
-              .then((res) => {
-                metaData = formatTokenMetaData(res);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-
             const tokensWon =
-              (event.data.score - amnt) *
-              Math.pow(10, parseInt(metaData?.["icrc1:decimals"]));
+              event.data.score - amnt;
+            const encryptedScore = await encryptScore(tokensWon);
             console.log("Tokens won ", tokensWon);
             setIsPopUpLoading(true);
-            const response = await backendActor.add_money(parseInt(tokensWon));
-            dispatch(updateBalance({ balance: event.data.score }));
+            const response = await backendActor.add_money(encryptedScore);
             console.log(response);
-            if (response.ok) {
-              toast.success("Points added successfully");
+            if (response.Ok) {
+              toast.success("Tokens added successfully");
+            } else {
+              toast.error("Failed to add points");
             }
-          } else {
-            setTaskName("Halfway there... Hang tight!");
-            setIsPopUpLoading(true);
-            const response = await backendActor.game_lost();
-            console.log(response);
           }
         } catch (e) {
           console.log(e);
@@ -190,9 +177,6 @@ const BlackJack = () => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log("UPDATED BALANCE", userData.balance);
-  }, [userData.balance]);
 
   return (
     <div>

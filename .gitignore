@@ -7,7 +7,7 @@
 .DS_Store
 **/.DS_Store
 
-# dfx temporary files
+# dfx temporary filess
 .dfx/
 
 # generated files
@@ -16,8 +16,12 @@
 # secondary env file
 **/src/utils/config.js
 
-
+# generated files
 **/src/config.rs
+
+# canbench generated files
+.canbench/
+canbench.yml/
 
 # rust
 target/

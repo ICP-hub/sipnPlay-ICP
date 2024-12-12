@@ -5,7 +5,7 @@ use num_traits::ToPrimitive;
 use crate::{
     state_handler::STATE,
     types::{MessageData, PaginatedResult, UserCreationInput, SortedLeaderboardData},
-    BlackjackData, LeaderboardData, WaitlistData
+    LeaderboardData, WaitlistData
 };
 
 const APPROVED_PRINCIPALS: &[&str] = &[
@@ -102,27 +102,6 @@ fn get_messages(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<Message
         current_page: Nat::from(page_no_usize + 1),
         total_pages: Nat::from(total_pages),
     })
-}
-
-// Get the blackjack bet
-#[query]
-fn get_blackjack_bet() -> Result<BlackjackData, String> {
-    let caller_principal = caller();
-
-    // Access the blackjack_bet map and find the record for the caller
-    let bet_data = STATE.with(|state| {
-        state
-            .borrow()
-            .blackjack_bet
-            .get(&caller_principal)
-            .map(|data| data.clone()) // Use map to clone the data if it exists
-    });
-
-    // Return the result or an error message
-    match bet_data {
-        Some(data) => Ok(data),
-        None => Err("Caller not found in the blackjack bet record".to_string()),
-    }
 }
 
 // Get the waitlist

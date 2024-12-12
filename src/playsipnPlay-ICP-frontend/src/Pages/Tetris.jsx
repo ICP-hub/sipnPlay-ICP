@@ -71,7 +71,7 @@ const Tetris = () => {
         if (approveResp.Ok) {
           const afterApproval = await backendActor.game_start("Tetris");
           if (afterApproval.Ok) {
-            toast.success("Points deducted successfully");
+            toast.success("Tokens deducted successfully");
           } else {
             navigate("/");
             toast.error("An error occurred during the payment process.");
@@ -161,6 +161,21 @@ const Tetris = () => {
   useEffect(() => {
     console.log("UPDATED BALANCE", userData.balance);
   }, [userData.balance]);
+
+
+  useEffect(() => {
+    // Beforeunload handler
+    const handleBeforeUnload = (event) => {
+        event.preventDefault();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
 
   const gameName1 = {name:"Tetris"};
 

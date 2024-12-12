@@ -21,12 +21,6 @@ pub enum TransferFromResult {
     Err(TransferFromError),
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, CandidType)]
-pub struct BlackjackData {
-    pub id: Principal,
-    pub amount: u64,
-}
-
 #[derive(Debug, Clone, CandidType, Serialize, Deserialize)]
 pub struct PaginatedResult<T> {
     pub data: Vec<T>,

@@ -161,6 +161,19 @@ const InfinityBubble = () => {
     console.log("UPDATED BALANCE", userData.balance);
   }, [userData.balance]);
 
+  useEffect(() => {
+    // Beforeunload handler
+    const handleBeforeUnload = (event) => {
+        event.preventDefault();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
   const gameName1 = {name:"Infinity Bubble"};
 
   return (

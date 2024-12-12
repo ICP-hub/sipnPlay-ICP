@@ -14,10 +14,10 @@ use base64::Engine;
 use std::str;
 
 use crate::api_query::{is_approved, is_authenticated};
-use crate::state_handler::{mutate_state, read_state};
+use crate::state_handler::read_state;
 use crate::{state_handler::STATE, types::BalanceOfArgs, UserCreationInput};
 use crate::{
-   BlackjackData, MessageData, TetrisData, LeaderboardData, WaitlistData, SortedLeaderboardData, RewardedPlayers,
+    MessageData, TetrisData, LeaderboardData, WaitlistData, SortedLeaderboardData, RewardedPlayers,
    InfinityBubbleData,TransferFromResult
 };
 use crate::config::SECURE_SECRET_KEY;
@@ -147,7 +147,6 @@ pub fn create_user(email: String) -> String {
 
 #[update]
 async fn deduct_money(amount: Nat) -> Result<String, String> {
-    use num_traits::ToPrimitive;
     let caller_principal = caller();
 
     // Check if the user exists in `user_data`
@@ -197,18 +196,8 @@ async fn deduct_money(amount: Nat) -> Result<String, String> {
     match response {
         Ok((TransferFromResult::Ok(_block_index),)) => {
             // Add (caller, amount) to `blackjack_bet` map
-            STATE.with(|state| {
-                let mut state = state.borrow_mut();
-                state.blackjack_bet.insert(
-                    caller_principal,
-                    BlackjackData {
-                        id: caller_principal,                          // Use Principal ID
-                        amount: amount.0.to_u64().unwrap_or_default(), // Convert Nat to u64
-                    },
-                );
-            });
             Ok(format!(
-                "Points deducted successfully: {}",
+                "Tokens deducted successfully: {}",
                 amount.to_string()
             ))
         }
@@ -259,51 +248,21 @@ pub async fn withdraw_money_from_default(amount: u64) -> Result<Nat, String> {
     result.map_err(|err| format!("Transfer failed: {:?}", err))
 }
 
-
 #[update]
-async fn game_lost() -> Result<String, String> {
-    let caller_principal = caller();
+async fn add_money(encrypted_score: String) -> Result<String, String> {
+    ic_cdk::println!("Encrypted Score : {}", encrypted_score);
 
-    // Check if the caller exists in `user_data` map
-    let user_exists = STATE.with(|state| {
-        let state = state.borrow();
-        state.user_data.contains_key(&caller_principal)
-    });
+    let decrypted_score = decrypt_score(encrypted_score);
+    ic_cdk::println!("Decrypted: {}", decrypted_score);
+    
+    // Parse the decrypted score
+    let amount = match decrypted_score.parse::<u32>() {
+        Ok(amount) => amount,
+        Err(e) => return Err(format!("Error parsing decrypted score: {}", e)),
+    };
 
-    if !user_exists {
-        return Err("User not found".to_string());
-    }
+    ic_cdk::println!("Input Score : {}", amount);
 
-    // Check if the caller exists in `blackjack_bet` map
-    let bet_exists = STATE.with(|state| {
-        let state = state.borrow();
-        state.blackjack_bet.contains_key(&caller_principal)
-    });
-
-    if !bet_exists {
-        return Err("User not found in the bet record".to_string());
-    }
-
-    // Update the user's blackjack bet record to 0
-    STATE.with(|state| {
-        let mut state = state.borrow_mut();
-        state
-            .blackjack_bet
-            .insert(
-                caller_principal,
-                BlackjackData {
-                    id: caller_principal,
-                    amount: 0, // Reset the amount to 0
-                },
-            )
-            .expect("Failed to update bet record");
-    });
-
-    Ok("Bet Record updated successfully".to_string())
-}
-
-#[update]
-async fn add_money(amount: Nat) -> Result<String, String> {
     let caller_principal = caller();
 
     // Check if the caller exists in `user_data`
@@ -312,23 +271,10 @@ async fn add_money(amount: Nat) -> Result<String, String> {
         return Err("User not found".to_string());
     }
 
-    // Fetch the caller's blackjack bet data
-    let bet_data = read_state(|state| state.blackjack_bet.get(&caller_principal));
-
-    // Handle missing bet record
-    let bet_data = match bet_data {
-        Some(data) => data,
-        None => return Err("User not found in the bet record".to_string()),
-    };
-
-    // Ensure the amount is not more than 2.5 times the bet amount
-    let bet_amount = Nat::from(bet_data.amount);
-    let threshold = bet_amount.clone() * Nat::from(25u32) / Nat::from(10u32); // 2.5x threshold
-
-    if amount > threshold {
-        return Err("fraud".to_string());
-    }
-
+    // Multiple the bet_amount by 100_000_000 to adjust for token precision
+    let bet_amount = Nat::from(amount as u64) * Nat::from(100_000_000u64);
+    ic_cdk::println!("Bet Amount : {}", bet_amount);
+    
     let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
         .ok_or("Ledger canister ID not found in environment variables")?;
 
@@ -345,31 +291,21 @@ async fn add_money(amount: Nat) -> Result<String, String> {
         memo: None,             // Optional memo
         from_subaccount: None,  // Default subaccount
         created_at_time: None,  // No timestamp
-        amount: amount.clone(), // Transfer amount
+        amount: bet_amount, // Transfer the bet amount
     };
 
     // Perform the inter-canister call to transfer tokens
-    let response: CallResult<(TransferResult,)> =
+    let response: CallResult<(TransferFromResult,)> =
         ic_cdk::api::call::call(ledger_canister_id, "icrc1_transfer", (transfer_args,)).await;
 
     match response {
         // Successful transfer
-        Ok((TransferResult::Ok(_block_index),)) => {
-            // Reset the user's blackjack bet amount to 0
-            mutate_state(|state| {
-                state.blackjack_bet.insert(
-                    caller_principal,
-                    BlackjackData {
-                        id: caller_principal,
-                        amount: 0, // Reset amount to 0
-                    },
-                )
-            });
-
+        Ok((TransferFromResult::Ok(_block_index),)) => {
+            ic_cdk::println!("Transfer successful, block index: {}", _block_index);
             Ok(format!("Points added successfully: {}", amount.to_string()))
         }
         // Transfer failed with a specific error
-        Ok((TransferResult::Err(error),)) => Err(error.to_string()),
+        Ok((TransferFromResult::Err(error),)) => Err(error.to_string()),
         // Inter-canister call failed
         Err((code, message)) => Err(format!(
             "Failed to call ledger canister: Code: {:?}, Message: {}",
@@ -533,7 +469,7 @@ pub async fn game_start(game_name: String) -> Result<String, String> {
             });
 
             Ok(format!(
-                "Points deducted successfully: {}",
+                "Tokens deducted successfully: {}",
                 transfer_amount.to_string()
             ))
         }
