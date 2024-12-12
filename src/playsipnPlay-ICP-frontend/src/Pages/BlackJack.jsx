@@ -56,7 +56,6 @@ const BlackJack = () => {
     setIsLoading(true);
     try {
       const res = await backendActor.get_user();
-      console.log(res);
       if (!res.Ok) {
         navigate("/");
         toast.error("Please provide your email");
@@ -107,17 +106,13 @@ const BlackJack = () => {
      
         try {
           const amnt = await getBalance();
-          console.log("event data score",event.data.score);
-          console.log("amount balance",amnt); 
           if (Math.trunc(event.data.score) > Math.trunc(amnt)) {
             setTaskName("Adding points");
             const tokensWon =
               event.data.score - amnt;
             const encryptedScore = await encryptScore(tokensWon);
-            console.log("Tokens won ", tokensWon);
             setIsPopUpLoading(true);
             const response = await backendActor.add_money(encryptedScore);
-            console.log(response);
             if (response.Ok) {
               toast.success("Tokens added successfully");
             } else {
@@ -153,13 +148,12 @@ const BlackJack = () => {
             event.data.bet,
             true
           );
-          console.log(res);
-          if (res.err) {
-            toast.error("Payment Failed");
-            navigate("/");
-          } else {
+          if (res.Ok) {
             const amnt = await getBalance();
             toast.success(`Updated balance: $${Math.round(amnt)}`);
+          } else {
+            toast.error("Payment Failed");
+            navigate("/");
           }
         } catch (err) {
           console.log(err);
