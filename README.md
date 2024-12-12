@@ -4,6 +4,7 @@
 - sipnPlay-ICP-frontend: https://tlnsj-qqaaa-aaaap-qhp2q-cai.icp0.io/
 - sipnplay_icp_backend: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=ent7t-2yaaa-aaaap-qhtcq-cai
 - test-sipnplay ledger: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=cjpyu-kqaaa-aaaap-qhyfq-cai
+
 To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
 
 To learn more before you start working with `sipnPlay-ICP`, see the following documentation available online:
