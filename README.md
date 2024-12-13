@@ -4,6 +4,25 @@
 - sipnPlay-ICP-frontend: https://tlnsj-qqaaa-aaaap-qhp2q-cai.icp0.io/
 - sipnplay_icp_backend: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=ent7t-2yaaa-aaaap-qhtcq-cai
 - test-sipnplay ledger: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=cjpyu-kqaaa-aaaap-qhyfq-cai
+
+### Setting up environment veriables
+
+- For react frontend (src/playsipnPlay-ICP-frontend/src/utils/config.js):
+
+```bash
+const config = {
+  ENCRYPTION_KEY: "YOUR_SECRET_KEY"};
+
+export default config;
+```
+
+- For rust backend (src/sipnplay_icp_backend/src/config.rs):
+
+```bash
+#[allow(dead_code)]
+pub const SECURE_SECRET_KEY:   &[u8] = b"YOUR_SECRET_KEY";
+```
+
 To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
 
 To learn more before you start working with `sipnPlay-ICP`, see the following documentation available online:

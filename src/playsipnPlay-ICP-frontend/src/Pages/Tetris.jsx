@@ -13,9 +13,7 @@ import config from '../utils/config';
 
 const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
 
-// Function to encrypt the score
 async function encryptScore (data) {
-  // Ensure data is converted to string before encryption
   const encrypted = CryptoJS.AES.encrypt(data.toString(), CryptoJS.enc.Utf8.parse(ENCRYPTION_KEY), {
     mode: CryptoJS.mode.ECB,
     padding: CryptoJS.pad.Pkcs7
@@ -77,7 +75,7 @@ const Tetris = () => {
             toast.error("An error occurred during the payment process.");
           }
         }else{
-          // navigate("/");
+          navigate("/");
           toast.error("Low balance error")
         }
         const userHighScore = await backendActor.get_high_score("Tetris");

@@ -28,7 +28,7 @@ async function encryptScore(data) {
 }
 
 const InfinityBubble = () => {
-  const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
+  const { isAuthenticated, backendActor, ledgerActor } = useAuth();
   const [score, setScore] = useState(0);
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
@@ -37,27 +37,6 @@ const InfinityBubble = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [taskName, setTaskName] = useState("");
   const [isPopUpLoading, setIsPopupLoading] = useState(false);
-
-  const getBalance = async () => {
-    let balance = await backendActor.get_caller_balance();
-    console.log(balance);
-    let metaData = null;
-    await ledgerActor
-      .icrc1_metadata()
-      .then((res) => {
-        metaData = formatTokenMetaData(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    let amnt = parseFloat(
-      Number(balance.Ok) *
-        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
-    );
-    dispatch(updateBalance({ balance: amnt }));
-    return amnt;
-  };
 
   const deductPointsOnGameStart = async () => {
     const approveResp = await transferApprove(
@@ -68,6 +47,7 @@ const InfinityBubble = () => {
     );
     if (approveResp.Ok) {
       const afterApproval = await backendActor.game_start("Infinity Bubble");
+      clg(afterApproval);
       if (afterApproval.Ok) {
         toast.success("Points deducted successfully");
       } else {
@@ -75,19 +55,9 @@ const InfinityBubble = () => {
         toast.error("An error occurred during the payment process.");
       }
     } else {
-      // navigate("/");
+      navigate("/");
       toast.error("Low balance error");
     }
-    // const userHighScore = await backendActor.get_high_score("InfinityBubble");
-    // if (userHighScore.Err) {
-    //   toast.success("Welcome user!");
-    //   localStorage.setItem("BestScore", "0");
-    // } else {
-    //   localStorage.setItem("BestScore", userHighScore.Ok.toString());
-    // }
-
-    const amnt = await getBalance();
-    localStorage.setItem("Balance", amnt);
   };
 
   const getDetails = async () => {
@@ -97,8 +67,6 @@ const InfinityBubble = () => {
       if (res.Err === "New user") {
         navigate("/");
         toast.error("Please provide your email");
-      } else {
-        await deductPointsOnGameStart();
       }
     } catch (err) {
       console.log("getDetails Error", err.message);
@@ -107,15 +75,6 @@ const InfinityBubble = () => {
     }
   };
 
-  const formatTokenMetaData = (arr) => {
-    const resultObject = {};
-    arr.forEach((item) => {
-      const key = item[0];
-      const value = item[1][Object.keys(item[1])[0]];
-      resultObject[key] = value;
-    });
-    return resultObject;
-  };
 
   useEffect(() => {
     const handleScore = async (event) => {
@@ -138,8 +97,9 @@ const InfinityBubble = () => {
         } catch (err) {
           toast.error("Encryption failed");
           console.error(err);
+        } finally{ 
+          setIsPopupLoading(false);
         }
-        setIsPopupLoading(false);
       }
     };
     window.addEventListener("message", handleScore);
@@ -161,27 +121,27 @@ const InfinityBubble = () => {
   }, []);
 
   useEffect(() => {
-    const handleScore = async (event) => {
+    const handleGameStart = async (event) => {
       if (event.data?.type === "start_game") {
-        setTaskName("Saving score");
+        setTaskName("Tokens Deduction");
+        console.log(isPopUpLoading);
         setIsPopupLoading(true);
+        console.log("game start");
         try {
+          console.log(isPopUpLoading);
           deductPointsOnGameStart();
         } catch (err) {
           console.error(err);
-        }
+        }finally {
         setIsPopupLoading(false);
       }
+      }
     };
-    window.addEventListener("message", handleScore);
+    window.addEventListener("message", handleGameStart);
     return () => {
-      window.removeEventListener("message", handleScore);
+      window.removeEventListener("message", handleGameStart);
     };
   }, []);
-
-  useEffect(() => {
-    console.log("UPDATED BALANCE", userData.balance);
-  }, [userData.balance]);
 
   // Created this object because there was some problem in passing props, this gameName1 is passed to GameOverLeaderboard below.
   const gameName1 = { name: "Infinity Bubble" };
