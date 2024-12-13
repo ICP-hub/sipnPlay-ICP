@@ -2,7 +2,6 @@ use candid::{Nat, Principal};
 use ic_cdk::api::time;
 use ic_cdk::{api::call::CallResult, call, caller, update};
 use ic_cdk_timers::set_timer_interval;
-use ic_ledger_types::TransferResult;
 use icrc_ledger_types::icrc1::transfer::{NumTokens, TransferArg};
 use icrc_ledger_types::{icrc1::account::Account, icrc2::transfer_from::TransferFromArgs};
 use std::time::Duration;
@@ -17,8 +16,8 @@ use crate::api_query::{is_approved, is_authenticated};
 use crate::state_handler::read_state;
 use crate::{state_handler::STATE, types::BalanceOfArgs, UserCreationInput};
 use crate::{
-    MessageData, TetrisData, LeaderboardData, WaitlistData, SortedLeaderboardData, RewardedPlayers,
-   InfinityBubbleData,TransferFromResult
+    MessageData, GameData, LeaderboardData, WaitlistData, SortedLeaderboardData, RewardedPlayers,
+    TransferFromResult
 };
 use crate::config::SECURE_SECRET_KEY;
 
@@ -384,7 +383,6 @@ async fn join_waitlist(name: String, email: String, icp_address: String) -> Resu
 // Function to Start the game and transfer the tokens to the users
 #[update]
 pub async fn game_start(game_name: String) -> Result<String, String> {
-    use num_traits::ToPrimitive;
     let caller_principal = caller();
 
     // Define the amount of tokens to transfer based on the game
@@ -446,26 +444,39 @@ pub async fn game_start(game_name: String) -> Result<String, String> {
     match response {
         Ok((TransferFromResult::Ok(_block_index),)) => {
             // Add (caller, amount) to `tetris_data` map
-
             STATE.with(|state| {
-                let mut state = state.borrow_mut();            
+                let mut state = state.borrow_mut();           
                 if game_name == "Tetris" {
-                    state.tetris_data.insert(
-                        caller_principal.to_text(),
-                        TetrisData {
-                            id: caller_principal,                        // Use Principal ID
-                            amount: transfer_amount.0.to_u64().unwrap(), // Convert Nat to u64
-                        },
-                    );
-                }else if game_name == "Infinity Bubble" {
-                    state.infinity_bubble_data.insert(
-                        caller_principal,
-                        InfinityBubbleData {
-                            id: caller_principal,                        // Use Principal ID
-                            amount: transfer_amount.0.to_u64().unwrap(), // Convert Nat to u64
-                        },
-                    );
-                }            
+                    // Get the game play count of tetris_data of the current principal
+                    if let Some(mut data) = state.tetris_data.get(&caller_principal.to_text()) {
+                        data.game_play_count += 1;
+                        state.tetris_data.insert(caller_principal.to_text(), data);
+                    } else {
+                        // Insert a new entry if it doesn't exist
+                        state.tetris_data.insert(
+                            caller_principal.to_text(),
+                            GameData {
+                                id: caller_principal, // Use Principal ID
+                                game_play_count: 1, // Game Play Count
+                            },
+                        );
+                    }
+                } else if game_name == "Infinity Bubble" {
+                    // Get the game play count of infinity_bubble_data of the current principal
+                    if let Some(mut data) = state.infinity_bubble_data.get(&caller_principal.to_text()) {
+                        data.game_play_count += 1;
+                        state.infinity_bubble_data.insert(caller_principal.to_text(), data);
+                    } else {
+                        // Insert a new entry if it doesn't exist
+                        state.infinity_bubble_data.insert(
+                            caller_principal.to_text(),
+                            GameData {
+                                id: caller_principal, // Use Principal ID
+                                game_play_count: 1, // Game Play Count
+                            },
+                        );
+                    }
+                }                       
             });
 
             Ok(format!(

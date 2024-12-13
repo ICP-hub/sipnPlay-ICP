@@ -12,10 +12,10 @@ pub type Memory = VirtualMemory<DefaultMemoryImpl>;
 pub type UserDataMap = StableBTreeMap<Principal, UserCreationInput, Memory>;
 pub type MessageDataMap = StableBTreeMap<String, MessageData, Memory>;
 pub type WaitlistDataMap = StableBTreeMap<String, WaitlistData, Memory>;
-pub type TetrisDataMap = StableBTreeMap<String, TetrisData, Memory>;
+pub type TetrisDataMap = StableBTreeMap<String, GameData, Memory>;
 pub type TetrisLeaderboardDataMap = StableBTreeMap<String, LeaderboardData, Memory>;
 pub type TetrisSortedLeaderboardDataMap = StableVec<SortedLeaderboardData, Memory>;
-pub type InfinityBubbleDataMap = StableBTreeMap<Principal, InfinityBubbleData, Memory>;
+pub type InfinityBubbleDataMap = StableBTreeMap<String, GameData, Memory>;
 pub type InfinityBubbleLeaderboardDataMap = StableBTreeMap<String, LeaderboardData, Memory>;
 pub type InfinityBubbleSortedLeaderboardDataMap = StableVec<SortedLeaderboardData, Memory>;
 
@@ -212,23 +212,8 @@ impl Storable for WaitlistData {
         ic_stable_structures::storable::Bound::Unbounded;
 }
 
-
-// Implement Storable for TetrisData
-impl Storable for TetrisData {
-    fn to_bytes(&self) -> Cow<[u8]> {
-        Cow::Owned(Encode!(self).unwrap())
-    }
-
-    fn from_bytes(bytes: Cow<[u8]>) -> Self {
-        Decode!(bytes.as_ref(), Self).unwrap()
-    }
-
-    const BOUND: ic_stable_structures::storable::Bound =
-        ic_stable_structures::storable::Bound::Unbounded;
-}
-
-// Implement Storable for InfinityBubbleData
-impl Storable for InfinityBubbleData {
+// Implement Storable for GameData
+impl Storable for GameData {
     fn to_bytes(&self) -> Cow<[u8]> {
         Cow::Owned(Encode!(self).unwrap())
     }

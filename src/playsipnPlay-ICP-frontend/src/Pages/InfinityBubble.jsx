@@ -124,12 +124,10 @@ const InfinityBubble = () => {
     const handleGameStart = async (event) => {
       if (event.data?.type === "start_game") {
         setTaskName("Tokens Deduction");
-        console.log(isPopUpLoading);
         setIsPopupLoading(true);
         console.log("game start");
         try {
-          console.log(isPopUpLoading);
-          deductPointsOnGameStart();
+          await deductPointsOnGameStart();
         } catch (err) {
           console.error(err);
         }finally {
