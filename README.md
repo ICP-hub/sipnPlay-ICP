@@ -10,17 +10,17 @@
 - For react frontend (src/playsipnPlay-ICP-frontend/src/utils/config.js):
 
 ```bash
-  const config = {
-    ENCRYPTION_KEY: "YOUR_SECRET_KEY"};
+const config = {
+  ENCRYPTION_KEY: "YOUR_SECRET_KEY"};
 
-  export default config;
+export default config;
 ```
 
 - For rust backend (src/sipnplay_icp_backend/src/config.rs):
 
 ```bash
-  #[allow(dead_code)]
-  pub const SECURE_SECRET_KEY:   &[u8] = b"YOUR_SECRET_KEY";
+#[allow(dead_code)]
+pub const SECURE_SECRET_KEY:   &[u8] = b"YOUR_SECRET_KEY";
 ```
 
 To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
