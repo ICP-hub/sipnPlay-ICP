@@ -132,7 +132,6 @@ const Tetris = () => {
       if (event.data?.type === "save_score") {
         setTaskName("Saving score");
         setIsPopupLoading(true);
-
         try {
           const encryptedScore = await encryptScore(event.data.score);
           const resp = await backendActor.game_over("Tetris", encryptedScore);

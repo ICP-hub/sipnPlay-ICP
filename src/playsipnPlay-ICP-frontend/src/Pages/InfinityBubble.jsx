@@ -29,7 +29,6 @@ async function encryptScore(data) {
 
 const InfinityBubble = () => {
   const { isAuthenticated, backendActor, ledgerActor } = useAuth();
-  const [score, setScore] = useState(0);
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
   const dispatch = useDispatch();
