@@ -5,7 +5,7 @@
 - sipnplay_icp_backend: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=ent7t-2yaaa-aaaap-qhtcq-cai
 - test-sipnplay ledger: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=cjpyu-kqaaa-aaaap-qhyfq-cai
 
-### Setting up environment veriables
+## Setting up environment veriables
 
 - For react frontend (src/playsipnPlay-ICP-frontend/src/utils/config.js):
 

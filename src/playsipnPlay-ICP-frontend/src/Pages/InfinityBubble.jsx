@@ -29,10 +29,8 @@ async function encryptScore(data) {
 
 const InfinityBubble = () => {
   const { isAuthenticated, backendActor, ledgerActor } = useAuth();
-  const [score, setScore] = useState(0);
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
-  const dispatch = useDispatch();
   const [isGameOver, setIsGameOver] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [taskName, setTaskName] = useState("");
@@ -47,7 +45,6 @@ const InfinityBubble = () => {
     );
     if (approveResp.Ok) {
       const afterApproval = await backendActor.game_start("Infinity Bubble");
-      clg(afterApproval);
       if (afterApproval.Ok) {
         toast.success("Points deducted successfully");
       } else {
@@ -82,7 +79,6 @@ const InfinityBubble = () => {
         setTaskName("Saving score");
         setIsPopupLoading(true);
         try {
-          setScore(event.data.score);
           const encryptedScore = await encryptScore(event.data.score);
           const resp = await backendActor.game_over(
             "Infinity Bubble",
@@ -124,12 +120,9 @@ const InfinityBubble = () => {
     const handleGameStart = async (event) => {
       if (event.data?.type === "start_game") {
         setTaskName("Tokens Deduction");
-        console.log(isPopUpLoading);
         setIsPopupLoading(true);
-        console.log("game start");
         try {
-          console.log(isPopUpLoading);
-          deductPointsOnGameStart();
+          await deductPointsOnGameStart();
         } catch (err) {
           console.error(err);
         }finally {
