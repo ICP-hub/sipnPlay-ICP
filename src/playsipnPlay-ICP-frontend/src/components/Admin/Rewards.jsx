@@ -6,33 +6,43 @@ import AdminRewardModal from "../Modals/AdminRewardModal";
 import { useAuth } from "../../utils/useAuthClient";
 
 const Rewards = () => {
-  const [activeLink, setActiveLink] = useState("tetris");
+  const [activeLink, setActiveLink] = useState("Tetris");
   const { backendActor } = useAuth();
   const [isResetModalOpen, setisResetModalOpen] = useState(false);
   const [isRewardModalOpen, setisRewardModalOpen] = useState(false);
   const [topTen, setTopTen] = useState([]);
+  const [gameName, setGameName] = useState("Tetris");
   const [rewardTokens, setrewardTokens] = useState(
     Array.from({ length: topTen.length }, () => ({ principal: "", amount: 0 }))
   );
 
-  const getTetrisPlayers = async () => {
-    const topTenUsers = await backendActor.get_top_ten_players();
+  const getPlayers = async () => {
+    const topTenUsers = await backendActor.get_top_ten_players(gameName);
     setTopTen(topTenUsers.Ok);
-  }
+  };
+
   useEffect(() => {
-    if (activeLink === "tetris") {
-      getTetrisPlayers();
-    }
-  }, []);
+    getPlayers(activeLink);
+  }, [activeLink]);
 
   function handleLinkClick(section) {
     setActiveLink(section);
+    setGameName(section);
   }
   return (
     <div className="flex flex-col font-adamMed font-semibold md:flex-row">
       <div className="flex-col bg-white bg-opacity-15 rounded-2xl text-center border-r-2 border-[#696969] items-center justify-center min-w-64 ">
-        <div className="hover:bg-stone-600 rounded-2xl py-3 cursor-pointer transition-colors duration-300">
+        <div
+          className="hover:bg-stone-600 rounded-2xl py-3 cursor-pointer transition-colors duration-300"
+          onClick={() => handleLinkClick("Tetris")}
+        >
           Tetris
+        </div>
+        <div
+          className="hover:bg-stone-600 rounded-2xl py-3 cursor-pointer transition-colors duration-300"
+          onClick={() => handleLinkClick("Infinity Bubble")}
+        >
+          Infinity Bubble
         </div>
       </div>
       <div className="flex flex-col items-center flex-1 mt-8 md:mt-0">
@@ -55,7 +65,8 @@ const Rewards = () => {
           }
           primaryBtnText="Reset"
           btnColour={"red"}
-          getTetrisPlayers={getTetrisPlayers}
+          getPlayers={getPlayers}
+          gameName={gameName}
         />
         <div className="w-3/4">
           <RewardsLeaderboard
@@ -80,7 +91,6 @@ const Rewards = () => {
           primaryBtnText="Reward"
           btnColour={"green"}
           rewardTokens={rewardTokens}
-
         />
       </div>
     </div>

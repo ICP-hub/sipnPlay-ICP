@@ -10,10 +10,11 @@ const AdminRewardModal = ({
   description,
   primaryBtnText,
   btnColour,
-  rewardTokens=[],
-  getTetrisPlayers
+  rewardTokens = [],
+  getPlayers,
+  gameName,
 }) => {
-  console.log("reward tokens array object",rewardTokens);
+  console.log("reward tokens array object", rewardTokens);
   const { backendActor } = useAuth();
   const [isInProcess, setIsInProcess] = useState(false);
 
@@ -21,19 +22,19 @@ const AdminRewardModal = ({
     try {
       setIsInProcess(true);
       if (primaryBtnText === "Reset") {
-        const setResp = await backendActor.tetris_game_reset();
-        if(setResp.Ok){
+        const setResp = await backendActor.game_reset(gameName);
+        if (setResp.Ok) {
           toast.success("Reset successful");
-          getTetrisPlayers();
-        }else{
+          getPlayers();
+        } else {
           toast.error("Some error occured");
         }
       }
       if (primaryBtnText == "Reward") {
-        const setResp = await backendActor.reward_distributionre(rewardTokens);
-        if(setResp.Err){
+        const setResp = await backendActor.reward_distribution(rewardTokens);
+        if (setResp.Err) {
           toast.error(setResp.Err);
-        }else{
+        } else {
           toast.success("distributed successfully");
         }
         console.log(setResp);
@@ -43,8 +44,7 @@ const AdminRewardModal = ({
     } finally {
       setIsInProcess(false);
     }
-  }
-
+  };
 
   return (
     <Modal
@@ -72,8 +72,9 @@ const AdminRewardModal = ({
             Cancel
           </button>
           <button
-            className={`px-4 py-2 bg-${btnColour.toLowerCase()}-600 hover:bg-${btnColour.toLowerCase()}-500 transition-colors duration-300 text-white rounded-md cursor-pointer ${isInProcess && "opacity-50 hover:cursor-not-allowed"
-              }`}
+            className={`px-4 py-2 bg-${btnColour.toLowerCase()}-600 hover:bg-${btnColour.toLowerCase()}-500 transition-colors duration-300 text-white rounded-md cursor-pointer ${
+              isInProcess && "opacity-50 hover:cursor-not-allowed"
+            }`}
             onClick={handleBtnClick}
           >
             {isInProcess ? "Processing..." : primaryBtnText}

@@ -42,6 +42,7 @@ const LeaderBoardList = ({ game, isGameOver }) => {
 
   useEffect(() => {
     fetchLeaderboard(game.name);
+    console.log(game.name);
   }, []);
 
   return (

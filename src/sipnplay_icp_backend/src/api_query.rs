@@ -12,7 +12,8 @@ const APPROVED_PRINCIPALS: &[&str] = &[
     "42l52-e6bwv-2353f-idnxh-5f42y-catp6-j2yxn-msivr-ljpu2-ifqsy-dqe", // Ankur
     "n5ytn-hebsc-fbio3-ll5ed-ermti-6kvdk-sjp4d-pofnb-66xhd-gpj4t-3qe", // Tushar Jain's Plug
     "hc4gt-vtazq-2beqs-7lv5p-4nezq-wl3hs-fojqx-2iwtc-mpxx6-ggswf-7ae", // Tushar Jain's II
-    "2nh3q-od732-potbk-gs2yh-nkqyt-i4xtt-fs73b-iirbu-ows4f-glqf5-qae", // Somiya Behera
+    "4hsxq-rcsvl-rw2wr-5i5ha-gttgh-ekyeu-wsawq-2tuib-2hyul-7hpzc-zqe", // Somiya Behera's Plug
+    "ld4p7-wr47n-c4du2-g2brs-l3ueh-waqi3-m36uj-wkzzn-gpxm3-5yym7-qqe", // Somiya Behera's ICP
     "57sj2-6uilb-7r5ib-xxfdu-24nn5-ievyg-w3xp2-j5hpq-5esuf-pslkd-fae", //Toshak 
 ];
 

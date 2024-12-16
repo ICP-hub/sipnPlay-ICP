@@ -586,7 +586,7 @@ pub async fn game_reset(game_name: String) -> Result<String, String> {
 
 // Function for Destribution of the points to top ten players
 #[ic_cdk::update]
-pub async fn reward_distributionre(
+pub async fn reward_distribution(
     rewarded_players: Vec<RewardedPlayers>,
 ) -> Result<Nat, String> {
     // Check if the caller is approved

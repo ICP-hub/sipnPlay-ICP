@@ -63,7 +63,7 @@ service : () -> {
   is_approved : () -> (bool) query;
   is_authenticated : () -> (bool) query;
   join_waitlist : (text, text, text) -> (Result);
-  reward_distributionre : (vec RewardedPlayers) -> (Result_1);
+  reward_distribution : (vec RewardedPlayers) -> (Result_1);
   send_message : (text, text, text) -> (Result);
   withdraw_money_from_default : (nat64) -> (Result_1);
 }
