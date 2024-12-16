@@ -741,7 +741,7 @@ pub async fn get_crown_job_leaderboard() {
 // Add the Crown Jibob/JobSchedular which will run every 30 minutes and Provide the Sorted Data to the Leaderboard..
 #[ic_cdk::post_upgrade]
 pub async fn start_tetris_leaderboard_update() {
-    set_timer_interval(Duration::from_secs(60), || {
+    set_timer_interval(Duration::from_secs(120), || {
         ic_cdk::spawn(async {
             // This callback will run every minute (60 seconds).
             get_crown_job_leaderboard().await;

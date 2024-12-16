@@ -92,7 +92,7 @@ const LeaderBoardList = ({ game, isGameOver }) => {
         </h3>
         <p className="font-[500] font-adam mb-24 md:mb-28  text-center">
           <span className="font-[900]">NOTE : </span>The leaderboard updates
-          every 1 minute.{" "}
+          every 2 minutes.{" "}
         </p>
         <div className="flex justify-evenly h-[172px]">
           {leaderboard.length === 0 ? (
