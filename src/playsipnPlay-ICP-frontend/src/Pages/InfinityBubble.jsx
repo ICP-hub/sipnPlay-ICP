@@ -119,7 +119,7 @@ const InfinityBubble = () => {
   useEffect(() => {
     const handleGameStart = async (event) => {
       if (event.data?.type === "start_game") {
-        setTaskName("Tokens Deduction");
+        setTaskName("Deducting tokens");
         setIsPopupLoading(true);
         try {
           await deductPointsOnGameStart();
