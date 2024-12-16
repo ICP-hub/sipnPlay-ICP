@@ -44,6 +44,9 @@ record {
  }
 })"
 
+
+dfx deploy index_canister --argument "(opt variant { Init = record { ledger_id = principal \"$CANISTER_ID_TEST_SIPNPLAY\"; retrieve_blocks_from_ledger_interval_seconds = opt 10; } })"
+
 dfx deps pull
 
 dfx deps deploy
