@@ -1,7 +1,5 @@
 export PRE_MINTED_TOKENS=100000000000000
 
-export DEFAULT=n5ytn-hebsc-fbio3-ll5ed-ermti-6kvdk-sjp4d-pofnb-66xhd-gpj4t-3qe
-
 export TRANSFER_FEE=0
 
 # dfx identity new archive_controller
@@ -25,6 +23,8 @@ export MINTER=$(dfx identity get-principal)
 export FEATURE_FLAGS=true
 
 dfx identity use default
+
+export DEFAULT=$(dfx identity get-principal)
 
 dfx deploy test_sipnplay --argument "(variant {Init =
 record {
