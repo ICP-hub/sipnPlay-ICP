@@ -62,18 +62,11 @@ pub struct WaitlistData {
     pub icp_address: String,
 }
 
-// TetrisData struct
+// GameData struct
 #[derive(CandidType, Deserialize, Serialize, Debug, Clone)]
-pub struct TetrisData {
+pub struct GameData {
     pub id: Principal,
-    pub amount: u64,
-}
-
-// Infinity Bubble struct
-#[derive(CandidType, Deserialize, Serialize, Debug, Clone)]
-pub struct InfinityBubbleData {
-    pub id: Principal,
-    pub amount: u64,
+    pub game_play_count: u32,
 }
 
 // Leaderboard struct for All Games

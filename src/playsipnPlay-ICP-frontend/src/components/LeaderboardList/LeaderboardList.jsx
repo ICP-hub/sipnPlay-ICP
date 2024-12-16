@@ -64,22 +64,32 @@ const LeaderBoardList = ({ game, isGameOver }) => {
           {isGameOver && (
             <div className="flex mt-12 items-end justify-center">
               <div></div>
-              <AnimationButton>
+              <div className="hidden lg:block">
+                <AnimationButton>
+                  <div
+                    className="cursor-pointer flex items-center text-[12px] md:text-[17px] font-adam gap-4 justify-center"
+                    onClick={() => navigate("/")}
+                  >
+                    <AiFillHome size={21} />
+                    <p>Back to home</p>
+                  </div>
+                </AnimationButton>
+              </div>
+              <div className="block lg:hidden">
                 <div
                   className="cursor-pointer flex items-center text-[12px] md:text-[17px] font-adam gap-4 justify-center"
                   onClick={() => navigate("/")}
                 >
-                  <AiFillHome size={21} />
-                  Back to home
+                  <AiFillHome size={32} />
                 </div>
-              </AnimationButton>
+              </div>
             </div>
           )}
         </div>
-        <h3 className="text-center mx-[9%] mb-4 font-monckeberg text-xl">
+        <h3 className="text-center mx-[9%] mb-4 font-monckeberg text-xl mt-8">
           Leaderboard
         </h3>
-        <p className="font-[500] font-adam mb-32  text-center">
+        <p className="font-[500] font-adam mb-24 md:mb-28  text-center">
           <span className="font-[900]">NOTE : </span>The leaderboard updates
           every 30 minutes.{" "}
         </p>
@@ -90,64 +100,68 @@ const LeaderBoardList = ({ game, isGameOver }) => {
             <>
               <div className="h-3/4 w-full mt-auto relative text-center border border-[#EE3EC9]">
                 <img
-                  className=" h-[60px] md:h-[45px] lg:h-[60px] absolute rounded-full left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 border-[4px] border-gray-200"
+                  className=" h-[60px]  lg:h-[60px] absolute rounded-full left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 border-[4px] border-gray-200"
                   src={userProfilePic}
                 />
-                {leaderboard.length >= 2 && leaderboard[1] ? (
-                  <>
-                    <p className="font-adam font-[600] mx-auto truncate max-w-[90px]">
-                      {leaderboard[1].owner.toText()}
-                    </p>
-                    <p className="font-adam">{leaderboard[1].points} pts</p>
-                  </>
-                ) : (
-                  "-"
-                )}
-              </div>
-
-              <div className="h-full w-full relative text-center border border-[#EE3EC9]">
-                <div>
-                  <img
-                    className="h-[60px] md:h-[45px] lg:h-[60px] absolute rounded-full left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 border-[4px] border-yellow-400"
-                    src={userProfilePic}
-                  />
-                  <img
-                    className="absolute h-[60px] md:h-[50px] left-1/2 -top-1/4 transform -translate-x-1/2 -translate-y-1/2"
-                    src={Crown}
-                  />
-                  {leaderboard.length >= 1 && leaderboard[0] ? (
-                    <div className="mt-16 text-sm md:text-base px-2">
-                      <p className="font-adam font-[600] mx-auto truncate max-w-[90px]">
-                        {leaderboard[0].owner.toText()}
+                <div className="mt-14 text-sm md:text-base px-2 truncate max-w-[70px] lg:max-w-[90px] mx-auto">
+                  {leaderboard.length >= 2 && leaderboard[1] ? (
+                    <>
+                      <p className="font-adam font-[600] mx-auto ">
+                        {leaderboard[1].owner.toText()}
                       </p>
-                      <p className="font-adam">{leaderboard[0].points} pts</p>
-                    </div>
+                      <p className="font-adam ">{leaderboard[1].points} pts</p>
+                    </>
                   ) : (
                     "-"
                   )}
                 </div>
               </div>
 
+              <div className="h-full w-full relative text-center border border-[#EE3EC9]">
+                <div>
+                  <img
+                    className="h-[60px]  lg:h-[60px] absolute rounded-full left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 border-[4px] border-yellow-400"
+                    src={userProfilePic}
+                  />
+                  <img
+                    className="absolute h-[60px] md:h-[50px] left-1/2 -top-1/4 transform -translate-x-1/2 -translate-y-1/2"
+                    src={Crown}
+                  />
+                  <div className="mt-16 text-sm md:text-base px-2 truncate max-w-[70px] lg:max-w-[90px] mx-auto">
+                    {leaderboard.length >= 1 && leaderboard[0] ? (
+                      <>
+                        <p className="font-adam font-[600] mx-auto truncate">
+                          {leaderboard[0].owner.toText()}
+                        </p>
+                        <p className="font-adam">{leaderboard[0].points} pts</p>
+                      </>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="h-1/2 w-full mt-auto relative text-center border border-[#EE3EC9]">
                 <img
-                  className="h-[60px] md:h-[45px] lg:h-[60px] absolute rounded-full  left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 border-[4px] border-[#cd7f32]"
+                  className="h-[60px]  lg:h-[60px] absolute rounded-full  left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 border-[4px] border-[#cd7f32]"
                   src={userProfilePic}
                 />
-                {leaderboard.length >= 3 && leaderboard[2] ? (
-                  <>
-                    <p className="font-adam font-[600] mx-auto truncate max-w-[90px]">
-                      {leaderboard[2].owner.toText()}
-                    </p>
-                    <p className="font-adam">{leaderboard[2].points} pts</p>
-                  </>
-                ) : (
-                  "-"
-                )}
+                <div className="mt-10 text-sm md:text-base px-2 truncate max-w-[70px] lg:max-w-[90px] mx-auto">
+                  {leaderboard.length >= 3 && leaderboard[2] ? (
+                    <>
+                      <p className="font-adam font-[600] mx-auto truncate"></p>
+                      <p className="font-adam">{leaderboard[2].points} pts</p>
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </div>
               </div>
             </>
           )}
         </div>
-        <div className="overflow-auto max-h-[400px]">
+        <div className="overflow-y-auto max-h-[400px]">
           {" "}
           {/* Added scroll */}
           <ul>
@@ -196,7 +210,7 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                         alt={JSON.stringify(user.owner.toText())}
                         className="h-8 rounded-full mr-2"
                       />
-                      <span className="text-sm truncate max-w-[165px] md:max-w-[239px]">
+                      <span className="text-sm truncate max-w-20 md:max-w-32 lg:max-w-48">
                         {user.owner.toText()}
                       </span>
                     </div>

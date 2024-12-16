@@ -3,9 +3,7 @@ use ic_cdk::{caller, query};
 use num_traits::ToPrimitive;
 
 use crate::{
-    state_handler::STATE,
-    types::{MessageData, PaginatedResult, UserCreationInput, SortedLeaderboardData},
-    LeaderboardData, WaitlistData
+    state_handler::STATE, types::{MessageData, PaginatedResult, SortedLeaderboardData, UserCreationInput}, GameData, LeaderboardData, WaitlistData
 };
 
 const APPROVED_PRINCIPALS: &[&str] = &[
@@ -319,4 +317,35 @@ pub fn get_top_ten_players(game_name: String) -> Result<Vec<LeaderboardData>, St
 pub fn get_current_principal() -> String {
     // Return the principal as a string
     caller().to_text() // No semicolon here, so it returns the value
+}
+
+#[ic_cdk::query]
+pub fn get_game_data(game_name: String) -> Result<Vec<GameData>, String>{
+    // check the approval request
+    if !is_approved() {
+        return Err("You are not approved".to_string());
+    }
+    if game_name == "Tetris" {
+        let tetris_data: Vec<GameData> = STATE.with(|state| {
+            state
+                .borrow()
+                .tetris_data
+                .iter()
+                .map(|(_, data)| data.clone())
+                .collect()
+        });
+        Ok(tetris_data)
+    } else if game_name == "Infinity Bubble" {
+        let infinity_bubble_data: Vec<GameData> = STATE.with(|state| {
+            state
+                .borrow()
+                .infinity_bubble_data
+                .iter()
+                .map(|(_, data)| data.clone())
+                .collect()
+        });
+        Ok(infinity_bubble_data)
+    } else {
+        Err("No data found".to_string())
+    }
 }
