@@ -26,6 +26,11 @@
       "candid": "src/test_sipnplay/test_sipnplay.did",
       "wasm": "src/test_sipnplay/ic-icrc1-ledger.wasm.gz"
     },
+    "index_canister": {
+      "type": "custom",
+      "candid": "src/index_canister/index_canister.did",
+      "wasm": "src/index_canister/index_canister.wasm.gz"
+    },
     "sipnPlay-ICP-frontend": {
       "dependencies": [
         "sipnplay_icp_backend"
