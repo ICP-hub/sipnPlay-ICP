@@ -7,6 +7,13 @@ import { BrowserRouter } from 'react-router-dom';
 import { store, persistor } from './utils/redux/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import TagManager from 'react-gtm-module'
+ 
+const tagManagerArgs = {
+    gtmId: 'GTM-WM9KD87'
+}
+
+TagManager.initialize(tagManagerArgs)
 
 Modal.setAppElement('#root');
 

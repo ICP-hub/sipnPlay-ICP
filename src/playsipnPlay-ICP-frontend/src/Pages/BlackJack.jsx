@@ -8,6 +8,7 @@ import CryptoJS from "crypto-js";
 import LoadingWindow from "../components/Loaders/LoadingWindow";
 import LoadingPopUp from "../components/Loaders/LoadingPopUp";
 import config from '../utils/config';
+import TagManager from "react-gtm-module";
 
 const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
 
@@ -32,6 +33,17 @@ const BlackJack = () => {
   const [taskName, setTaskName] = useState("");
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
+
+  useEffect(() => {
+    const tagManagerArgs = {
+        dataLayer: {
+            event: "pageView",
+            page: "BlackjackPage",
+            game: "Blackjack",
+        },
+    };
+    TagManager.dataLayer(tagManagerArgs);
+}, []);
 
   const getBalance = async () => {
     let balance = await backendActor.get_caller_balance();

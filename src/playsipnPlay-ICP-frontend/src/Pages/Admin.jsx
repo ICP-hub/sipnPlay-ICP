@@ -7,6 +7,7 @@ import PaginatedData from "../components/Admin/PaginatedData";
 import Resources from "../components/Admin/Resources";
 import { Oval } from "react-loader-spinner";
 import Rewards from "../components/Admin/Rewards";
+import TagManager from "react-gtm-module";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
@@ -16,6 +17,17 @@ const AdminPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const { backendActor, logout, principal, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    const tagManagerArgs = {
+        dataLayer: {
+            event: "pageView",
+            page: "AdminPage",
+            role: "admin",
+        },
+    };
+    TagManager.dataLayer(tagManagerArgs);
+}, []);
 
   const fetchWaitlist = async () => {
     try {
@@ -70,7 +82,6 @@ const AdminPanel = () => {
       if (isAuthenticated) {
         let isApproved = false;
         try {
-          console.log("isaprroveddd", principal);
           isApproved = await backendActor.is_approved();
           
         } catch (error) {

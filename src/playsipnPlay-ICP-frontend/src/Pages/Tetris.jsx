@@ -10,6 +10,7 @@ import LoadingPopUp from "../components/Loaders/LoadingPopUp";
 import { transferApprove } from "../utils/transApprove";
 import GameOverLeaderBoard from "../components/Modals/GameOverLeaderBoard";
 import config from '../utils/config';
+import TagManager from "react-gtm-module";
 
 const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
 
@@ -30,6 +31,17 @@ const Tetris = () => {
   const [isPopUpLoading, setIsPopupLoading] = useState(false);
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
+
+  useEffect(() => {
+    const tagManagerArgs = {
+        dataLayer: {
+            event: "pageView",
+            page: "TetrisPage",
+            game: "Tetris",
+        },
+    };
+    TagManager.dataLayer(tagManagerArgs);
+}, []);
 
   const getBalance = async () => {
     let balance = await backendActor.get_caller_balance();
