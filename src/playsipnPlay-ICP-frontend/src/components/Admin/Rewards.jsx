@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import RewardsLeaderboard from "./RewardsLeaderboard";
 import AdminRewardModal from "../Modals/AdminRewardModal";
 import { useAuth } from "../../utils/useAuthClient";
+import toast from "react-hot-toast";
 
 const Rewards = () => {
   const [activeLink, setActiveLink] = useState("Tetris");
@@ -12,13 +13,22 @@ const Rewards = () => {
   const [isRewardModalOpen, setisRewardModalOpen] = useState(false);
   const [topTen, setTopTen] = useState([]);
   const [gameName, setGameName] = useState("Tetris");
-  const [rewardTokens, setrewardTokens] = useState(
-    Array.from({ length: topTen.length }, () => ({ principal: "", amount: 0 }))
-  );
+  const [rewardTokens, setrewardTokens] = useState([]);
 
   const getPlayers = async () => {
     const topTenUsers = await backendActor.get_top_ten_players(gameName);
-    setTopTen(topTenUsers.Ok);
+    if (topTenUsers.Ok) {
+      setTopTen(topTenUsers.Ok);
+      setrewardTokens(
+        topTenUsers?.map((user) => ({
+          principal: user.owner.toText(),
+          amount: 0,
+        }))
+      );
+    }
+    else {
+      console.log(topTenUsers.Err);
+    }
   };
 
   useEffect(() => {
