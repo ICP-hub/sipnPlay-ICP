@@ -14,7 +14,6 @@ const AdminRewardModal = ({
   getPlayers,
   gameName,
 }) => {
-  console.log("reward tokens array object", rewardTokens);
   const { backendActor } = useAuth();
   const [isInProcess, setIsInProcess] = useState(false);
 
@@ -25,6 +24,7 @@ const AdminRewardModal = ({
         const setResp = await backendActor.game_reset(gameName);
         if (setResp.Ok) {
           toast.success("Reset successful");
+          closeModal();
           getPlayers();
         } else {
           toast.error("Some error occured");
@@ -36,6 +36,7 @@ const AdminRewardModal = ({
           toast.error(setResp.Err);
         } else {
           toast.success("distributed successfully");
+          closeModal();
         }
         console.log(setResp);
       }

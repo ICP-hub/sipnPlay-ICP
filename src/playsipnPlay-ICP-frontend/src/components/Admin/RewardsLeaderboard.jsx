@@ -67,7 +67,7 @@ const RewardsLeaderboard = ({ topTen, rewardTokens, setrewardTokens }) => {
           );
         })
       ) : (
-        <p className="mb-8 text-sm text-center">No users in the leaderboard.</p>
+        <p className="mt-24 text-md font-black text-center">No users in the leaderboard.</p>
       )}
     </ul>
   );
