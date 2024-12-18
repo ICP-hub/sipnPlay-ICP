@@ -13,7 +13,7 @@ const tagManagerArgs = {
     gtmId: 'GTM-WM9KD87'
 }
 
-TagManager.initialize(tagManagerArgs)
+TagManager.initialize(tagManagerArgs);
 
 Modal.setAppElement('#root');
 
