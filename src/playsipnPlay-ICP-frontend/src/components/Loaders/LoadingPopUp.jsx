@@ -27,7 +27,7 @@ const LoadingPopUp = ({ gameName, taskName }) => {
     <Modal
       isOpen={true}
       contentLabel="Popup Modal"
-      className="fixed inset-0 flex flex-col items-center justify-center py-8 overflow-hidden"
+      className="fixed inset-0 flex flex-col items-center justify-center py-8 overflow-hidden min-h-fit"
       overlayClassName="fixed z-[100] inset-0 bg-[#191919] bg-opacity-40 backdrop:filter backdrop-blur-md p-8"
       shouldCloseOnOverlayClick={true}
       shouldCloseOnEsc={false}
