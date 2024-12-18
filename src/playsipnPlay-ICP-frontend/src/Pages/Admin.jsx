@@ -20,14 +20,14 @@ const AdminPanel = () => {
 
   useEffect(() => {
     const tagManagerArgs = {
-        dataLayer: {
-            event: "pageView",
-            page: "AdminPage",
-            role: "admin",
-        },
+      dataLayer: {
+        event: "pageView",
+        page: "AdminPage",
+        role: "admin",
+      },
     };
     TagManager.dataLayer(tagManagerArgs);
-}, []);
+  }, []);
 
   const fetchWaitlist = async () => {
     try {
@@ -83,7 +83,6 @@ const AdminPanel = () => {
         let isApproved = false;
         try {
           isApproved = await backendActor.is_approved();
-          
         } catch (error) {
           console.error("Error checking approval status:", error);
         } finally {
@@ -157,7 +156,7 @@ const AdminPanel = () => {
           Logout
         </button>
 
-        {activeSection !== "resources" && (
+        {activeSection !== "resources" && activeSection !== "rewards" && (
           <button
             onClick={handleDownload}
             className="px-4 bg-[#EE3EC9] text-white rounded-lg"
