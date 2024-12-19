@@ -11,7 +11,7 @@ const APPROVED_PRINCIPALS: &[&str] = &[
     "wbrxn-i57lw-zrazv-y3lr6-vh4od-cqtc2-kvz6z-54vwx-og5bv-54j2r-jae", //Paras ii
     "42l52-e6bwv-2353f-idnxh-5f42y-catp6-j2yxn-msivr-ljpu2-ifqsy-dqe", // Ankur
     "n5ytn-hebsc-fbio3-ll5ed-ermti-6kvdk-sjp4d-pofnb-66xhd-gpj4t-3qe", // Tushar Jain's Plug
-    "hc4gt-vtazq-2beqs-7lv5p-4nezq-wl3hs-fojqx-2iwtc-mpxx6-ggswf-7ae", // Tushar Jain's II
+    "2xtmc-5eo2k-c5422-e3fih-uyjbn-fiefs-u72o7-xgn4m-kveqk-7unet-3qe", // Chandan sir's plug
     "4hsxq-rcsvl-rw2wr-5i5ha-gttgh-ekyeu-wsawq-2tuib-2hyul-7hpzc-zqe", // Somiya Behera's Plug
     "ld4p7-wr47n-c4du2-g2brs-l3ueh-waqi3-m36uj-wkzzn-gpxm3-5yym7-qqe", // Somiya Behera's ICP
     "57sj2-6uilb-7r5ib-xxfdu-24nn5-ievyg-w3xp2-j5hpq-5esuf-pslkd-fae", //Toshak 
