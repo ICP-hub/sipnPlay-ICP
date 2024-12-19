@@ -131,7 +131,7 @@
           if (amnt === null) {
             return -1;
           }
-          
+
           return isNaN(amnt) ? -1 : amnt;
         } catch (error) {
           console.error("Error retrieving balance:", error);
@@ -174,8 +174,8 @@
       function updateScore() {
         score++;
 
-        if (score*10 > bestScore) {
-          bestScore = score*10;
+        if (score * 10 > bestScore) {
+          bestScore = score * 10;
         }
       }
 
@@ -184,7 +184,7 @@
         context.fillStyle = "white";
         context.font = "20px monospace";
         context.textAlign = "left";
-        context.fillText("Score: " + score*10, 10, 30);
+        context.fillText("Score: " + score * 10, 10, 30);
         context.fillText("Best: " + bestScore, 10, 60);
         context.fillText("TSIP: " + balance, 180, 30);
       }
@@ -555,7 +555,16 @@
 
       // start the game
       displayStartScreen();
-      document.addEventListener("click", startGame);
+      document.addEventListener("click", (event) => {
+        startGame();
+        if (isMobileDevice()) {
+          document.documentElement.requestFullscreen().catch((err) => {
+            console.error(
+              `Error attempting to enable full-screen mode: ${err.message} (${err.name})`
+            );
+          });
+        }
+      });
     </script>
   </body>
 </html>
