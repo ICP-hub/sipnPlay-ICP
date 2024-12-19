@@ -72,7 +72,6 @@ const InfinityBubble = () => {
     }
   };
 
-
   useEffect(() => {
     const handleScore = async (event) => {
       if (event.data?.type === "save_score") {
@@ -93,7 +92,7 @@ const InfinityBubble = () => {
         } catch (err) {
           toast.error("Encryption failed");
           console.error(err);
-        } finally{ 
+        } finally {
           setIsPopupLoading(false);
         }
       }
@@ -125,9 +124,9 @@ const InfinityBubble = () => {
           await deductPointsOnGameStart();
         } catch (err) {
           console.error(err);
-        }finally {
-        setIsPopupLoading(false);
-      }
+        } finally {
+          setIsPopupLoading(false);
+        }
       }
     };
     window.addEventListener("message", handleGameStart);

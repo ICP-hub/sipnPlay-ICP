@@ -23,34 +23,34 @@ const LoadingWindow = ({ gameName }) => {
   }
   return (
     <div
-      className="p-8 min-h-screen"
+      className="p-8 min-h-screen flex flex-col justify-between"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="min-h-[80px] md:h-[160px] lg:h-[200px]">
+      <div>
         <img
-          className=" h-[36px] md:h-[45px] lg:h-[60px]"
+          className="max-h-fit aspect-auto object-cover"
           draggable="false"
           src={logo}
         />
       </div>
-      <div className="flex flex-col my-auto justify-center items-center min-h-[160px] md:h-[200px] lg:h-[160px] mb-4 md:mb-32 lg:mb-44 xl:mb-64">
+      <div className="flex flex-grow flex-col justify-center items-center">
         <img
-          className="block min-h-[130px] sm:min-h-[201px] md:min-h-[320px]"
+          className="block min-h-[130px] sm:min-h-[201px] md:min-h-[320px] object-cover"
           draggable="false"
           src={gameImage}
         />
-      </div>
-      {/* Loader */}
-      <div className="loader flex justify-center mb-2">
-        <div className={`${styles.coloredDot}`}></div>
-        <div className={`${styles.dot} ${styles.dot1}`}></div>
-        <div className={`${styles.dot} ${styles.dot2}`}></div>
-        <div className={`${styles.dot} ${styles.dot3}`}></div>
-        <div className={`${styles.dot} ${styles.dot4}`}></div>
+        {/* Loader */}
+        <div className="loader flex justify-center items-center my-8">
+          <div className={`${styles.coloredDot}`}></div>
+          <div className={`${styles.dot} ${styles.dot1}`}></div>
+          <div className={`${styles.dot} ${styles.dot2}`}></div>
+          <div className={`${styles.dot} ${styles.dot3}`}></div>
+          <div className={`${styles.dot} ${styles.dot4}`}></div>
+        </div>
       </div>
     </div>
   );
