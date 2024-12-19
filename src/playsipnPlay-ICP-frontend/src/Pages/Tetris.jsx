@@ -14,7 +14,7 @@ import TagManager from "react-gtm-module";
 
 const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
 
-async function encryptScore (data) {
+async function encryptScore(data) {
   const encrypted = CryptoJS.AES.encrypt(data.toString(), CryptoJS.enc.Utf8.parse(ENCRYPTION_KEY), {
     mode: CryptoJS.mode.ECB,
     padding: CryptoJS.pad.Pkcs7
@@ -34,14 +34,14 @@ const Tetris = () => {
 
   useEffect(() => {
     const tagManagerArgs = {
-        dataLayer: {
-            event: "pageView",
-            page: "TetrisPage",
-            game: "Tetris",
-        },
+      dataLayer: {
+        event: "pageView",
+        page: "TetrisPage",
+        game: "Tetris",
+      },
     };
     TagManager.dataLayer(tagManagerArgs);
-}, []);
+  }, []);
 
   const getBalance = async () => {
     let balance = await backendActor.get_caller_balance();
@@ -58,7 +58,7 @@ const Tetris = () => {
 
     let amnt = parseFloat(
       Number(balance.Ok) *
-        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+      Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
     );
     dispatch(updateBalance({ balance: amnt }));
     return amnt;
@@ -86,7 +86,7 @@ const Tetris = () => {
             navigate("/");
             toast.error("An error occurred during the payment process.");
           }
-        }else{
+        } else {
           navigate("/");
           toast.error("Low balance error")
         }
@@ -97,10 +97,7 @@ const Tetris = () => {
         } else {
           localStorage.setItem("BestScore", userHighScore.Ok.toString());
         }
-
         const amnt = await getBalance();
-        localStorage.setItem("Balance", amnt);
-
         dispatch(
           addUserData({
             id: principal.toString(),
@@ -175,7 +172,7 @@ const Tetris = () => {
   useEffect(() => {
     // Beforeunload handler
     const handleBeforeUnload = (event) => {
-        event.preventDefault();
+      event.preventDefault();
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -186,7 +183,7 @@ const Tetris = () => {
   }, []);
 
 
-  const gameName1 = {name:"Tetris"};
+  const gameName1 = { name: "Tetris" };
 
   return (
     <div>
@@ -195,6 +192,9 @@ const Tetris = () => {
         <LoadingWindow gameName="tetris" />
       ) : (
         <div>
+          <div className="absolute  mx-[9%] mt-4">
+              <div className="text-white font-adam font-[800] text-[18px] md:text-[26px] "> TSIP: {userData.balance}</div>
+          </div>
           {isPopUpLoading && (
             <LoadingPopUp gameName="tetris" taskName={taskName} />
           )}

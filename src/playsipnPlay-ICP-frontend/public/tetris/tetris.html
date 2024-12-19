@@ -124,23 +124,6 @@
       var bestScore = localStorage.getItem("BestScore");
       var isGamePaused = false;
 
-      function getBalanceFromLocalStorage() {
-        try {
-          const amnt = localStorage.getItem("Balance");
-
-          if (amnt === null) {
-            return -1;
-          }
-
-          return isNaN(amnt) ? -1 : amnt;
-        } catch (error) {
-          console.error("Error retrieving balance:", error);
-          return -1;
-        }
-      }
-      const balance = getBalanceFromLocalStorage();
-      console.log("Parsed balance:", balance);
-
       function togglePause() {
         if (!gameOver) {
           isGamePaused = !isGamePaused;
@@ -186,7 +169,6 @@
         context.textAlign = "left";
         context.fillText("Score: " + score * 10, 10, 30);
         context.fillText("Best: " + bestScore, 10, 60);
-        context.fillText("TSIP: " + balance, 180, 30);
       }
       function getRandomInt(min, max) {
         min = Math.ceil(min);
