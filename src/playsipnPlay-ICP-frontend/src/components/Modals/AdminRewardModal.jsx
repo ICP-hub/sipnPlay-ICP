@@ -3,6 +3,7 @@ import { ImCross } from "react-icons/im";
 import Modal from "react-modal";
 import { useAuth } from "../../utils/useAuthClient";
 import toast from "react-hot-toast";
+
 const AdminRewardModal = ({
   isOpen,
   closeModal,
@@ -54,27 +55,29 @@ const AdminRewardModal = ({
       shouldCloseOnEsc={true}
       shouldCloseOnOverlayClick={true}
       contentLabel="Admin Reset/Reward Leaderboard Modal"
-      className="fixed inset-y-72 inset-x-96 flex items-center justify-center bg-transparent"
-      overlayClassName="fixed z-[100] inset-y-72 inset-x-[32rem] rounded-lg"
+      className="relative flex items-center justify-center bg-transparent w-1/2 md:w-full"
+      overlayClassName="fixed z-[100] inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
     >
-      <div className="relative bg-stone-50 rounded-2xl p-8">
-        <h2 className="font-bold text-2xl text-center mb-4">{header}</h2>
+      <div className="relative bg-stone-800 text-white border-2 border-white rounded-2xl p-8">
+        <h2 className="font-bold text-center mb-4 text-xl md:text-2xl">
+          {header}
+        </h2>
         <ImCross
           className="absolute top-4 right-4 cursor-pointer"
           onClick={closeModal}
         />
 
-        <p className="font-semibold">{description}</p>
+        <p className="font-semibold text-xs sm:text-base">{description}</p>
         <div className="flex place-items-end place-self-end mt-8">
           <button
             onClick={closeModal}
-            className="px-4 py-2 mr-4 bg-stone-400 hover:bg-stone-300 transition-colors duration-300 text-black rounded-md cursor-pointer"
+            className="px-4 py-2 mr-4 bg-stone-50 hover:bg-stone-300 transition-colors duration-300 text-black rounded-md cursor-pointer text-sm md:text-base"
           >
             Cancel
           </button>
           <button
-            className={`px-4 py-2 bg-${btnColour.toLowerCase()}-600 hover:bg-${btnColour.toLowerCase()}-500 transition-colors duration-300 text-white rounded-md cursor-pointer ${
-              isInProcess && "opacity-50 hover:cursor-not-allowed"
+            className={`px-4 py-2 bg-${btnColour.toLowerCase()}-600 hover:bg-${btnColour.toLowerCase()}-500 transition-colors duration-300 text-white rounded-md cursor-pointer text-sm md:text-base ${
+              isInProcess ? "opacity-50 hover:cursor-not-allowed" : ""
             }`}
             onClick={handleBtnClick}
           >

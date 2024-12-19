@@ -27,23 +27,19 @@ const Rewards = () => {
             amount: 0,
           }))
         );
-
-      }
-      else {
+      } else {
         if (topTenUsers.Err === "No data found") {
           setTopTen([]);
         }
         console.log(topTenUsers.Err);
       }
-    }
-    catch (err) {
+    } catch (err) {
       console.log(err);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
-  
   useEffect(() => {
     getPlayers(gameName);
   }, [gameName]);
@@ -55,27 +51,33 @@ const Rewards = () => {
     <div className="flex flex-col font-adamMed font-semibold md:flex-row">
       <div className="flex-col bg-white bg-opacity-15 rounded-2xl text-center border-r-2 border-[#696969] items-center justify-center min-w-64 ">
         <div
-          className={`hover:bg-stone-600  ${gameName === "Tetris" ? "bg-stone-600" : ""} rounded-2xl py-3 cursor-pointer transition-colors duration-300`}
+          className={`hover:bg-stone-600  ${
+            gameName === "Tetris" ? "bg-stone-600" : ""
+          } rounded-2xl py-3 cursor-pointer transition-colors duration-300`}
           onClick={() => handleLinkClick("Tetris")}
         >
           Tetris
         </div>
         <div
-          className={`hover:bg-stone-600 ${gameName === "Infinity Bubble" ? "bg-stone-600" : ""} rounded-2xl py-3 cursor-pointer transition-colors duration-300`}
+          className={`hover:bg-stone-600 ${
+            gameName === "Infinity Bubble" ? "bg-stone-600" : ""
+          } rounded-2xl py-3 cursor-pointer transition-colors duration-300`}
           onClick={() => handleLinkClick("Infinity Bubble")}
         >
           Infinity Bubble
         </div>
       </div>
-      {isLoading    ? <Oval
-        color="#EE3EC9"
-        secondaryColor="#fff"
-        wrapperClass="flex mx-auto mt-24 justify-center"
-        width={64}
-        height={64}
-      /> :
-        <div className="flex flex-col items-center flex-1 mt-8 md:mt-0">
-          {topTen.length > 0 &&
+      {isLoading ? (
+        <Oval
+          color="#EE3EC9"
+          secondaryColor="#fff"
+          wrapperClass="flex mx-auto mt-24 justify-center"
+          width={64}
+          height={64}
+        />
+      ) : (
+        <div className="flex flex-col items-center justify-center flex-1 mt-8 md:mt-0">
+          {topTen.length > 0 && (
             <>
               <button
                 onClick={() => setisResetModalOpen(true)}
@@ -84,12 +86,12 @@ const Rewards = () => {
                 Reset Leaderboard
               </button>
               <p className="text-center text-sm mb-10">
-                NOTE - Resetting the leaderboard will remove all the users and their
-                points from the leaderboard table. This action can't be undone!
+                NOTE - Resetting the leaderboard will remove all the users and
+                their points from the leaderboard table. This action can't be
+                undone!
               </p>
-
             </>
-          }
+          )}
           <AdminRewardModal
             isOpen={isResetModalOpen}
             closeModal={() => setisResetModalOpen(false)}
@@ -109,14 +111,14 @@ const Rewards = () => {
               setrewardTokens={setrewardTokens}
             />
           </div>
-          {topTen.length > 0 &&
+          {topTen.length > 0 && (
             <button
               onClick={() => setisRewardModalOpen(true)}
               className={`px-4 py-2 bg-green-600 hover:bg-green-500 transition-colors duration-300 text-white rounded-md cursor-pointer`}
             >
               Reward Users
             </button>
-          }
+          )}
           <AdminRewardModal
             isOpen={isRewardModalOpen}
             closeModal={() => setisRewardModalOpen(false)}
@@ -129,7 +131,7 @@ const Rewards = () => {
             rewardTokens={rewardTokens}
           />
         </div>
-      }
+      )}
     </div>
   );
 };

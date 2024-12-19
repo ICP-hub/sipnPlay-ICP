@@ -33,7 +33,7 @@ const RewardsLeaderboard = ({ topTen, rewardTokens, setrewardTokens }) => {
           return (
             <li
               className={`${borderClass} px-4 py-2 my-4`}
-              key={user.principal}
+              key={user.owner.toText()}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -67,7 +67,9 @@ const RewardsLeaderboard = ({ topTen, rewardTokens, setrewardTokens }) => {
           );
         })
       ) : (
-        <p className="mt-24 text-md font-black text-center">No users in the leaderboard.</p>
+        <p className="mt-24 text-md font-black text-center">
+          No users in the leaderboard.
+        </p>
       )}
     </ul>
   );
