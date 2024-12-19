@@ -187,7 +187,7 @@ const Tetris = () => {
 
   return (
     <div>
-      {isGameOver && <GameOverLeaderBoard gameName={gameName1} isGameOver={true} />}
+      {true && <GameOverLeaderBoard gameName={gameName1} isGameOver={true} />}
       {isLoading ? (
         <LoadingWindow gameName="tetris" />
       ) : (

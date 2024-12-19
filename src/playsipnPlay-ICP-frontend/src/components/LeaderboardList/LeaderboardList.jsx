@@ -34,7 +34,7 @@ const LeaderBoardList = ({ game, isGameOver }) => {
       }
     } catch (error) {
       console.error("Error fetching Tetris Leaderboard:", error);
-      toast.error("Error fetching Tetris Leaderboard");
+      setLeaderboard([]);
     } finally {
       setIsLoading(false);
     }

@@ -26,7 +26,7 @@ const GameOverLeaderBoard = ({
         }}
         className="bg-black relative w-[90%] text-white h-[87%] lg:grid-cols-2 border border-[#696969] rounded-xl px-8 py-4 lg:px-16 lg:py-8 overflow-hidden font-semibold"
       >
-        <div className="mx-auto">
+        <div className="md:w-[60%] mx-auto">
           {" "}
           <LeaderBoardList game={gameName} isGameOver={isGameOver} />
         </div>
