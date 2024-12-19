@@ -9,16 +9,20 @@ import LoadingWindow from "../components/Loaders/LoadingWindow";
 import LoadingPopUp from "../components/Loaders/LoadingPopUp";
 import { transferApprove } from "../utils/transApprove";
 import GameOverLeaderBoard from "../components/Modals/GameOverLeaderBoard";
-import config from '../utils/config';
+import config from "../utils/config";
 import TagManager from "react-gtm-module";
 
 const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
 
 async function encryptScore(data) {
-  const encrypted = CryptoJS.AES.encrypt(data.toString(), CryptoJS.enc.Utf8.parse(ENCRYPTION_KEY), {
-    mode: CryptoJS.mode.ECB,
-    padding: CryptoJS.pad.Pkcs7
-  });
+  const encrypted = CryptoJS.AES.encrypt(
+    data.toString(),
+    CryptoJS.enc.Utf8.parse(ENCRYPTION_KEY),
+    {
+      mode: CryptoJS.mode.ECB,
+      padding: CryptoJS.pad.Pkcs7,
+    }
+  );
   return encrypted.toString();
 }
 
@@ -58,7 +62,7 @@ const Tetris = () => {
 
     let amnt = parseFloat(
       Number(balance.Ok) *
-      Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
     );
     dispatch(updateBalance({ balance: amnt }));
     return amnt;
@@ -83,12 +87,12 @@ const Tetris = () => {
           if (afterApproval.Ok) {
             toast.success("Tokens deducted successfully");
           } else {
-            navigate("/");
+            // navigate("/");
             toast.error("An error occurred during the payment process.");
           }
         } else {
-          navigate("/");
-          toast.error("Low balance error")
+          // navigate("/");
+          toast.error("Low balance error");
         }
         const userHighScore = await backendActor.get_high_score("Tetris");
         if (userHighScore.Err) {
@@ -168,7 +172,6 @@ const Tetris = () => {
     console.log("UPDATED BALANCE", userData.balance);
   }, [userData.balance]);
 
-
   useEffect(() => {
     // Beforeunload handler
     const handleBeforeUnload = (event) => {
@@ -182,18 +185,22 @@ const Tetris = () => {
     };
   }, []);
 
-
   const gameName1 = { name: "Tetris" };
 
   return (
     <div>
-      {true && <GameOverLeaderBoard gameName={gameName1} isGameOver={true} />}
+      {isGameOver && (
+        <GameOverLeaderBoard gameName={gameName1} isGameOver={true} />
+      )}
       {isLoading ? (
         <LoadingWindow gameName="tetris" />
       ) : (
         <div>
           <div className="absolute  mx-[9%] mt-4">
-              <div className="text-white font-adam font-[800] text-[18px] md:text-[26px] "> TSIP: {userData.balance}</div>
+            <div className="text-white font-mono font-[400] text-[18px] md:text-[26px] ">
+              {" "}
+              TSIP: {userData.balance}
+            </div>
           </div>
           {isPopUpLoading && (
             <LoadingPopUp gameName="tetris" taskName={taskName} />
