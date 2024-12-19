@@ -17,13 +17,10 @@ const LeaderBoardList = ({ game, isGameOver }) => {
 
   const fetchLeaderboard = async (gameName) => {
     try {
-      console.log("Game Name", gameName);
       setIsLoading(true);
       const [leaderboard, userRank] = await backendActor.get_leaderboard(
         gameName
       );
-      console.log("Leaderboard: ", leaderboard);
-      console.log("User Rank: ", userRank.toString());
       if (leaderboard.Err) {
         console.error("Error fetching Leaderboard", leaderboard.Err);
       } else {
@@ -42,7 +39,6 @@ const LeaderBoardList = ({ game, isGameOver }) => {
 
   useEffect(() => {
     fetchLeaderboard(game.name);
-    console.log(game.name);
   }, []);
 
   return (
@@ -94,7 +90,7 @@ const LeaderBoardList = ({ game, isGameOver }) => {
           <span className="font-[900]">NOTE : </span>The leaderboard updates
           every 2 minutes.{" "}
         </p>
-        <div className="flex justify-evenly h-[172px]">
+        <div className="flex justify-evenly h-[202px]">
           {leaderboard.length === 0 ? (
             <p>No users in the leaderboard yet.</p>
           ) : (
@@ -110,7 +106,9 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                       <p className="font-adam font-[600] mx-auto ">
                         {leaderboard[1].owner.toText()}
                       </p>
-                      <p className="font-adam ">{leaderboard[1].points} pts</p>
+                      <p className="font-adam  text-xs">
+                        {leaderboard[1].points} pts
+                      </p>
                     </>
                   ) : (
                     "-"
@@ -125,7 +123,7 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                     src={userProfilePic}
                   />
                   <img
-                    className="absolute h-[60px] md:h-[50px] left-1/2 -top-1/4 transform -translate-x-1/2 -translate-y-1/2"
+                    className="absolute h-[60px] left-1/2 -top-1/4 transform -translate-x-1/2 -translate-y-1/2"
                     src={Crown}
                   />
                   <div className="mt-16 text-sm md:text-base px-2 truncate max-w-[70px] lg:max-w-[90px] mx-auto">
@@ -134,7 +132,9 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                         <p className="font-adam font-[600] mx-auto truncate">
                           {leaderboard[0].owner.toText()}
                         </p>
-                        <p className="font-adam">{leaderboard[0].points} pts</p>
+                        <p className="font-adam text-xs">
+                          {leaderboard[0].points} pts
+                        </p>
                       </>
                     ) : (
                       ""
@@ -151,8 +151,12 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                 <div className="mt-10 text-sm md:text-base px-2 truncate max-w-[70px] lg:max-w-[90px] mx-auto">
                   {leaderboard.length >= 3 && leaderboard[2] ? (
                     <>
-                      <p className="font-adam font-[600] mx-auto truncate"></p>
-                      <p className="font-adam">{leaderboard[2].points} pts</p>
+                      <p className="font-adam font-[600] mx-auto truncate">
+                        {leaderboard[2].owner.toText()}
+                      </p>
+                      <p className="font-adam text-xs">
+                        {leaderboard[2].points} pts
+                      </p>
                     </>
                   ) : (
                     "-"

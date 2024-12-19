@@ -12,7 +12,7 @@ const GamesNav = () => {
         style={{
           background: "linear-gradient(to top, #ffffff27,  #99999927)",
         }}
-        className="flex md:flex-col justify-around md:justify-start gap-2 md:gap-4 py-2 sm:py-4 text-xs sm:text-sm md:text-md lg:text-lg md:ps-8 md:pe-16 px-8 md:h-dvh md:border-r-2 md:border-t-2 md:border-b-2 border-[#3f3939] md:rounded-r-2xl"
+        className="flex flex-grow md:flex-col justify-around md:justify-start gap-2 md:gap-4 py-2 sm:py-4 text-xs sm:text-sm md:text-md lg:text-lg md:ps-8 md:pe-16 px-8 h-full md:border-r-2 md:border-t-2 md:border-b-2 border-[#3f3939] md:rounded-r-2xl"
       >
         <div
           onClick={() => handleLinkClick("home")}

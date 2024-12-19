@@ -16,9 +16,9 @@ const GamesList = () => {
       style={{
         background: "linear-gradient(to right, #ee3ec927, black, #ee3ec927)",
       }}
-      className="max-w-full min-h-screen flex flex-col justify-between lg:py-12"
+      className="max-w-full flex-grow flex flex-col justify-between lg:py-12"
     >
-      <div className=" relative flex flex-col md:flex-row gap-8 max-w-screen-xl   ">
+      <div className=" relative flex flex-col md:flex-row gap-8 max-w-screen-xl h-full   ">
         <GamesNav />
 
         {isFetching ? (
@@ -41,7 +41,7 @@ const GamesList = () => {
           </div>
         )}
       </div>
-      <p className="text-center font-adam font-semibold text-md md:text-lg lg:text-xl">
+      <p className="text-center font-adam font-semibold text-md md:text-lg lg:text-xl my-8">
         More games coming soon...
       </p>
     </div>
