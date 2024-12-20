@@ -97,7 +97,7 @@ const LeaderBoardList = ({ game, isGameOver }) => {
             <>
               <div className="h-3/4 w-full mt-auto relative text-center border border-[#EE3EC9]">
                 <img
-                  className=" h-[60px]  lg:h-[60px] absolute rounded-full left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 border-[4px] border-gray-200"
+                  className=" h-[60px] lg:h-[60px] absolute rounded-full left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 border-[4px] border-gray-200"
                   src={userProfilePic}
                 />
                 <div className="mt-14 text-sm md:text-base px-2 truncate max-w-[70px] lg:max-w-[90px] mx-auto">
@@ -126,7 +126,7 @@ const LeaderBoardList = ({ game, isGameOver }) => {
                     className="absolute h-[60px] left-1/2 -top-1/4 transform -translate-x-1/2 -translate-y-1/2"
                     src={Crown}
                   />
-                  <div className="mt-16 text-sm md:text-base px-2 truncate max-w-[70px] lg:max-w-[90px] mx-auto">
+                  <div className="mt-20 text-sm md:text-base px-2 truncate max-w-[70px] lg:max-w-[90px] mx-auto">
                     {leaderboard.length >= 1 && leaderboard[0] ? (
                       <>
                         <p className="font-adam font-[600] mx-auto truncate">

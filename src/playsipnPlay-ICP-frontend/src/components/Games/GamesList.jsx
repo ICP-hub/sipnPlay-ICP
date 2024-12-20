@@ -16,7 +16,7 @@ const GamesList = () => {
       style={{
         background: "linear-gradient(to right, #ee3ec927, black, #ee3ec927)",
       }}
-      className="max-w-full flex-grow flex flex-col justify-between lg:py-12"
+      className="max-w-full flex-grow h-full flex flex-col justify-between lg:py-12" //DO NOT REMOVE H_FULL
     >
       <div className=" relative flex flex-col md:flex-row gap-8 max-w-screen-xl h-full   ">
         <GamesNav />
@@ -41,7 +41,7 @@ const GamesList = () => {
           </div>
         )}
       </div>
-      <p className="text-center font-adam font-semibold text-md md:text-lg lg:text-xl my-8">
+      <p className="text-center font-adam font-semibold text-md md:text-lg lg:text-xl my-4 md:my-0">
         More games coming soon...
       </p>
     </div>
