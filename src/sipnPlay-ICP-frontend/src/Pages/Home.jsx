@@ -9,7 +9,6 @@ import GameMania from "../components/HomePageComponents/GameMania";
 import ArcadeCommunity from "../components/HomePageComponents/ArcadeCommunity";
 
 function Home() {
-
   useEffect(() => {
     const tagManagerArgs = {
       dataLayer: {
@@ -21,7 +20,7 @@ function Home() {
   }, []);
 
   return (
-    <div>
+    <>
       <Hero />
       <TrustedBy />
       <Intro />
@@ -29,7 +28,7 @@ function Home() {
       <OurTeam />
       <ArcadeCommunity />
       <SendMessage />
-    </div>
+    </>
   );
 }
 
