@@ -4,7 +4,7 @@ import Footer from "../components/Footer/Footer";
 
 const PrivateLayout = ({ children }) => {
   return (
-    <div className="h-screen">
+    <div className="overflow-x-hidden h-screen">
       <Header />
       <main className="flex-grow">{children}</main>
       <Footer />
