@@ -181,7 +181,14 @@ pub fn get_leaderboard(game_name: String) -> (Result<Vec<SortedLeaderboardData>,
                 .iter()
                 .map(|data| data.clone().into())
                 .collect()
-        } else {
+        } else if game_name == "Block Tap" {
+            state
+                .borrow()
+                .block_tap_sorted_leaderboard_data
+                .iter()
+                .map(|data| data.clone().into())
+                .collect()
+        }else {
             Vec::new()
         }
     });
@@ -226,6 +233,12 @@ pub fn get_logged_in_user_leaderboard(game_name: String) -> Result<LeaderboardDa
                 .infinity_bubble_leaderboard_data
                 .get(&principal.to_text())
                 .map(|data| data.clone()) // Use map to clone the data if it exists
+        } else if game_name == "Block Tap" {
+            state
+                .borrow()
+                .block_tap_leaderboard_data
+                .get(&principal.to_text())
+                .map(|data| data.clone()) // Use map to clone the data if it exists    
         } else {
             None
         }
@@ -259,7 +272,13 @@ pub fn get_high_score(game_name: String) -> Result<String, String> {
             .infinity_bubble_leaderboard_data
             .get(&princial.to_text())
             .map(|data| data.high_score.to_string())
-        } else {
+        } else if game_name == "Block Tap" {
+        state
+            .borrow()
+            .block_tap_leaderboard_data
+            .get(&princial.to_text())
+            .map(|data| data.high_score.to_string())
+        }else {
             None
         }
     });
@@ -291,6 +310,13 @@ pub fn get_top_ten_players(game_name: String) -> Result<Vec<LeaderboardData>, St
             state
                 .borrow()
                 .infinity_bubble_leaderboard_data
+                .iter()
+                .map(|(_, data)| data.clone()) // Collect all leaderboard data
+                .collect::<Vec<_>>()
+        } else if game_name == "Block Tap" {
+            state
+                .borrow()
+                .block_tap_leaderboard_data
                 .iter()
                 .map(|(_, data)| data.clone()) // Collect all leaderboard data
                 .collect::<Vec<_>>()
@@ -346,6 +372,16 @@ pub fn get_game_data(game_name: String) -> Result<Vec<GameData>, String>{
                 .collect()
         });
         Ok(infinity_bubble_data)
+    } else if game_name == "Block Tap" {
+        let block_tap_data: Vec<GameData> = STATE.with(|state| {
+            state
+                .borrow()
+                .block_tap_data
+                .iter()
+                .map(|(_, data)| data.clone())
+                .collect()
+        });
+        Ok(block_tap_data)
     } else {
         Err("No data found".to_string())
     }

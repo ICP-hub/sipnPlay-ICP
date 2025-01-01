@@ -18,6 +18,9 @@ pub type TetrisSortedLeaderboardDataMap = StableVec<SortedLeaderboardData, Memor
 pub type InfinityBubbleDataMap = StableBTreeMap<String, GameData, Memory>;
 pub type InfinityBubbleLeaderboardDataMap = StableBTreeMap<String, LeaderboardData, Memory>;
 pub type InfinityBubbleSortedLeaderboardDataMap = StableVec<SortedLeaderboardData, Memory>;
+pub type BlockTapDataMap = StableBTreeMap<String, GameData, Memory>;
+pub type BlockTapLeaderboardDataMap = StableBTreeMap<String, LeaderboardData, Memory>;
+pub type BlockTapSortedLeaderboardDataMap = StableVec<SortedLeaderboardData, Memory>;
 
 // Memory IDs for stable storage
 const USER_DATA_MEMORY_ID: MemoryId = MemoryId::new(0);
@@ -29,6 +32,10 @@ const SORTED_LEADERBOARD_MEMORY_ID: MemoryId = MemoryId::new(6);
 const INFINITY_BUBBLE_DATA_MEMORY_ID: MemoryId = MemoryId::new(7);
 const INFINITY_BUBBLE_LEADERBOARD_DATA_MEMORY_ID: MemoryId = MemoryId::new(8);
 const INFINITY_BUBBLE_SORTED_LEADERBOARD_DATA_MEMORY_ID: MemoryId = MemoryId::new(9);
+const BLOCK_TAP_DATA_MEMORY_ID: MemoryId = MemoryId::new(10);
+const BLOCK_TAP_LEADERBOARD_DATA_MEMORY_ID: MemoryId = MemoryId::new(11);
+const BLOCK_TAP_SORTED_LEADERBOARD_DATA_MEMORY_ID: MemoryId = MemoryId::new(12);
+
 
 // Thread-local memory manager
 thread_local! {
@@ -47,6 +54,9 @@ thread_local! {
             infinity_bubble_data: InfinityBubbleDataMap::init(mm.borrow().get(INFINITY_BUBBLE_DATA_MEMORY_ID)),
             infinity_bubble_leaderboard_data: InfinityBubbleLeaderboardDataMap::init(mm.borrow().get(INFINITY_BUBBLE_LEADERBOARD_DATA_MEMORY_ID)),
             infinity_bubble_sorted_leaderboard_data: InfinityBubbleSortedLeaderboardDataMap::init(mm.borrow().get(INFINITY_BUBBLE_SORTED_LEADERBOARD_DATA_MEMORY_ID)).unwrap(),
+            block_tap_data : BlockTapDataMap::init(mm.borrow().get(BLOCK_TAP_DATA_MEMORY_ID)),
+            block_tap_leaderboard_data: BlockTapLeaderboardDataMap::init(mm.borrow().get(BLOCK_TAP_LEADERBOARD_DATA_MEMORY_ID)),
+            block_tap_sorted_leaderboard_data: BlockTapSortedLeaderboardDataMap::init(mm.borrow().get(BLOCK_TAP_SORTED_LEADERBOARD_DATA_MEMORY_ID)).unwrap(),
         })
     );
 }
@@ -63,6 +73,9 @@ pub struct State {
     pub infinity_bubble_data: InfinityBubbleDataMap,
     pub infinity_bubble_leaderboard_data: InfinityBubbleLeaderboardDataMap,
     pub infinity_bubble_sorted_leaderboard_data: InfinityBubbleSortedLeaderboardDataMap,
+    pub block_tap_data: BlockTapDataMap,
+    pub block_tap_leaderboard_data: BlockTapLeaderboardDataMap,
+    pub block_tap_sorted_leaderboard_data: BlockTapSortedLeaderboardDataMap,
 }
 
 // State Initialization
@@ -79,6 +92,9 @@ fn init() {
         state.infinity_bubble_data = init_infinity_bubble_data_map();
         state.infinity_bubble_leaderboard_data = init_infinity_bubble_leaderboard_data_map();
         state.infinity_bubble_sorted_leaderboard_data = init_infinity_bubble_sorted_leaderboard_data_map();
+        state.block_tap_data = BlockTapDataMap::init(get_block_tap_data_memory());
+        state.block_tap_leaderboard_data = BlockTapLeaderboardDataMap::init(get_block_tap_leaderboard_data_memory());
+        state.block_tap_sorted_leaderboard_data = BlockTapSortedLeaderboardDataMap::init(get_block_tap_sorted_leaderboard_data_memory()).unwrap();
     });
 
     ic_cdk::print("Tetris Leaderboard initialized successfully!");
@@ -126,6 +142,18 @@ pub fn init_infinity_bubble_sorted_leaderboard_data_map() -> InfinityBubbleSorte
     InfinityBubbleSortedLeaderboardDataMap::init(get_infinity_bubble_sorted_leaderboard_data_memory()).unwrap()
 }
 
+pub fn init_block_tap_data_map() -> BlockTapDataMap {
+    BlockTapDataMap::init(get_block_tap_data_memory())
+}
+
+pub fn init_block_tap_leaderboard_data_map() -> BlockTapLeaderboardDataMap {
+    BlockTapLeaderboardDataMap::init(get_block_tap_leaderboard_data_memory())
+}
+
+pub fn init_block_tap_sorted_leaderboard_data_map() -> BlockTapSortedLeaderboardDataMap {
+    BlockTapSortedLeaderboardDataMap::init(get_block_tap_sorted_leaderboard_data_memory()).unwrap()
+}
+
 
 // Memory accessors
 pub fn get_user_data_memory() -> Memory {
@@ -162,6 +190,18 @@ pub fn get_infinity_bubble_leaderboard_data_memory() -> Memory {
 
 pub fn get_infinity_bubble_sorted_leaderboard_data_memory() -> Memory {
     MEMORY_MANAGER.with(|m| m.borrow().get(INFINITY_BUBBLE_SORTED_LEADERBOARD_DATA_MEMORY_ID))
+}
+
+pub fn get_block_tap_data_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(BLOCK_TAP_DATA_MEMORY_ID))
+}
+
+pub fn get_block_tap_leaderboard_data_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(BLOCK_TAP_LEADERBOARD_DATA_MEMORY_ID))
+}
+
+pub fn get_block_tap_sorted_leaderboard_data_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(BLOCK_TAP_SORTED_LEADERBOARD_DATA_MEMORY_ID))
 }
 
 // Helper functions for state read/mutation

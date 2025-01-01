@@ -390,7 +390,9 @@ pub async fn game_start(game_name: String) -> Result<String, String> {
         Nat::from(3000000000u64) // 30 tokens
     } else if game_name == "Infinity Bubble" {
         Nat::from(3000000000u64) // 30 tokens
-    } else {
+    } else if game_name == "Block Tap" {
+        Nat::from(3000000000u64) // 30 tokens
+    }else {
         Nat::from(0u64)
     };
 
@@ -476,6 +478,23 @@ pub async fn game_start(game_name: String) -> Result<String, String> {
                             },
                         );
                     }
+                    
+                } else if game_name == "Block Tap" {
+                    // Get the game play count of infinity_bubble_data of the current principal
+                    if let Some(mut data) = state.block_tap_data.get(&caller_principal.to_text()) {
+                        data.game_play_count += 1;
+                        state.block_tap_data.insert(caller_principal.to_text(), data);
+                    } else {
+                        // Insert a new entry if it doesn't exist
+                        state.block_tap_data.insert(
+                            caller_principal.to_text(),
+                            GameData {
+                                id: caller_principal, // Use Principal ID
+                                game_play_count: 1, // Game Play Count
+                            },
+                        );
+                    }
+                    
                 }                       
             });
 
@@ -492,7 +511,6 @@ pub async fn game_start(game_name: String) -> Result<String, String> {
 // Approach 2 Insert the score when user exits then firstly remove the previous entry and then add new entry
 #[update]
 pub async fn game_over(game_name: String, encrypted_score: String) -> Result<String, String> {
-    ic_cdk::println!("tetris_game_over");
     ic_cdk::println!("Encrypted Score : {}", encrypted_score);
 
     let decrypted_score = decrypt_score(encrypted_score);
@@ -522,7 +540,9 @@ pub async fn game_over(game_name: String, encrypted_score: String) -> Result<Str
             &mut state.tetris_leaderboard_data
         } else if game_name == "Infinity Bubble" {
             &mut state.infinity_bubble_leaderboard_data
-        } else {
+        } else if game_name == "Block Tap" {
+            &mut state.block_tap_leaderboard_data
+        }else {
             return Err("Invalid game name".to_string());
         };
 
@@ -578,7 +598,10 @@ pub async fn game_reset(game_name: String) -> Result<String, String> {
         } else if game_name == "Infinity Bubble" {
             state.infinity_bubble_leaderboard_data.clear_new();
             while state.infinity_bubble_sorted_leaderboard_data.pop().is_some() {}
-        } 
+        } else if game_name == "Block Tap" {
+            state.block_tap_leaderboard_data.clear_new();
+            while state.block_tap_sorted_leaderboard_data.pop().is_some() {}
+        }
     });
 
     Ok("reset successful".to_string())
@@ -680,12 +703,24 @@ pub async fn get_crown_job_leaderboard() {
             .collect::<Vec<_>>()
     });
 
+    let mut block_tap_leaderboard = STATE.with(|state| {
+        state
+            .borrow()
+            .block_tap_leaderboard_data
+            .iter()
+            .map(|(_, data)| data.clone())
+            .collect::<Vec<_>>()
+    });
+
     // Sort the leaderboard by points in descending order
     tetris_leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
     ic_cdk::println!("Sorted Tetris Leaderboard data: {:#?}", tetris_leaderboard);
 
     infinity_bubble_leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
     ic_cdk::println!("Sorted Infinity Bubble Leaderboard data: {:#?}", infinity_bubble_leaderboard);
+
+    block_tap_leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
+    ic_cdk::println!("Sorted Block Tap Leaderboard data: {:#?}", block_tap_leaderboard);
 
     // Clear all elements from the StableVec manually by popping each one
     STATE.with(|state| {
@@ -698,6 +733,12 @@ pub async fn get_crown_job_leaderboard() {
         let state = state.borrow_mut();
         // while state.sorted_leaderboard_data.pop().is_some() {}
         while let Some(_) = state.infinity_bubble_sorted_leaderboard_data.pop() {}
+    });
+
+    STATE.with(|state| {
+        let state = state.borrow_mut();
+        // while state.sorted_leaderboard_data.pop().is_some() {}
+        while let Some(_) = state.block_tap_sorted_leaderboard_data.pop() {}
     });
 
     // Insert sorted data into the StableVec
@@ -730,6 +771,23 @@ pub async fn get_crown_job_leaderboard() {
 
             state
                 .infinity_bubble_sorted_leaderboard_data
+                .push(&sorted_data)
+                .expect("Failed to push data into StableVec");
+        }
+    });
+
+    STATE.with(|state| {
+        let state = state.borrow_mut();
+        for data in block_tap_leaderboard {
+            // Convert TetrisLeaderboardData to SortedLeaderboardData, if needed
+            let sorted_data = SortedLeaderboardData {
+                owner: data.owner,
+                high_score: data.high_score,
+                points: data.points,
+            };
+
+            state
+                .block_tap_sorted_leaderboard_data
                 .push(&sorted_data)
                 .expect("Failed to push data into StableVec");
         }
