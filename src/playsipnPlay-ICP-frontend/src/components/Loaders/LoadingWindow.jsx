@@ -5,6 +5,7 @@ import blackJackLogo from "../../assets/images/blackjack.png";
 import tetrisLogo from "../../assets/images/tetris.png";
 import bubbleLogo from "../../assets/images/bubble.png";
 import styles from "./LoadingWindow.module.css";
+import blocktapLogo from "../../assets/images/blocktap.png";
 
 const LoadingWindow = ({ gameName }) => {
   let gameImage = null;
@@ -17,6 +18,9 @@ const LoadingWindow = ({ gameName }) => {
       break;
     case "infinity_bubble":
       gameImage = bubbleLogo;
+      break;
+    case "block_tap":
+      gameImage = blocktapLogo;
       break;
     default:
       gameImage = logo;

@@ -4,7 +4,7 @@ import blackJackLogo from "../../assets/images/blackjack.png";
 import tetrisLogo from "../../assets/images/tetris.png";
 import bubbleLogo from "../../assets/images/bubble.png";
 import gamepadLogo from "../../assets/images/gamepadLoader.gif";
-
+import blocktapLogo from "../../assets/images/blocktap.png";
 import Modal from "react-modal";
 import styles from "./LoadingPopup.module.css";
 
@@ -19,6 +19,9 @@ const LoadingPopUp = ({ gameName, taskName }) => {
       break;
     case "infinity_bubble":
       gameImage = bubbleLogo;
+      break;
+    case "block_tap":
+      gameImage = blocktapLogo;
       break;
     default:
       gameImage = logo;

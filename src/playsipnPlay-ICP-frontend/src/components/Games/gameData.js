@@ -1,6 +1,7 @@
 import blackjackLogo from "../../assets/images/blackjack.png";
 import tetrisLogo from "../../assets/images/tetris.png";
 import bubbleLogo from "../../assets/images/bubble.png";
+import blocktapLogo from "../../assets/images/blocktap.png";
 
 export const games = [
   {
@@ -51,6 +52,23 @@ export const games = [
     link: "infinity-bubble",
     name: "Infinity Bubble",
     img: bubbleLogo,
+    description: [
+      `Infinity Bubble is an exciting puzzle game where you control a shooter that fires bubbles at a grid of random-colored bubbles at the top of the screen.`,
+      `Your goal is to match three or more bubbles of the same color to make them pop and score points.`,
+      `The shooter constantly holds a random-colored bubble, and you must aim and shoot strategically to create combos.`,
+      `The more bubbles you pop in a single shot, the higher your score.`,
+      `Challenge yourself to clear the screen and achieve the highest possible points in this fast-paced, addictive game!`,
+      `The game is over once the bubbles reach the bottom of the screen, so act quickly and aim accurately to keep the game going.`,
+    ],
+    controls: `Aim and shoot colored bubbles to match three or more of the same color and score points. On PC, use the mouse to aim and left-click to shoot. On mobile devices, simply tap to shoot and hold to aim. Use the ricochet feature by bouncing bubbles off the screen corners to reach difficult spots. Strategically clear bubbles to achieve high scores and combos!`,
+    leaderboard: true,
+    tokenomics:
+      "Players are required to pay a one-time fee of 30 TSIP tokens everytime they start the game. Once the game is over, the player receives points (which is 10 times their score) based on their in-game performance. Additionally, the player's rank on the leaderboard is determined by the number of points they have, with higher points securing higher rankings. Players earn TSIP tokens as rewards based on their position in the leaderboard, incentivizing skillful gameplay and competition for top spots.",
+  },
+  {
+    link: "block-tap",
+    name: "Block Tap",
+    img: blocktapLogo,
     description: [
       `Infinity Bubble is an exciting puzzle game where you control a shooter that fires bubbles at a grid of random-colored bubbles at the top of the screen.`,
       `Your goal is to match three or more bubbles of the same color to make them pop and score points.`,

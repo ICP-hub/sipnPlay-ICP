@@ -32,8 +32,8 @@ const GamesList = () => {
             />
           </div>
         ) : (
-          <div className="flex-1 mt-4 lg:mt-0 justify-between">
-            <div className=" flex flex-wrap justify-center md:grid md:grid-cols-2 lg:grid-cols-3 gap-16">
+          <div className="flex-1 mt-4 lg:mt-0 mx-auto justify-between">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-16">
               {games.map((game, i) => (
                 <Game key={game.link} game={game} />
               ))}

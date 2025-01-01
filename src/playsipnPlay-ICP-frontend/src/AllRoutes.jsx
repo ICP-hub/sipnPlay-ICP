@@ -8,6 +8,7 @@ import AdminPanel from "./Pages/Admin";
 import TetrisGame from "./Pages/Tetris";
 import NotFound from "./Pages/NotFound";
 import InfinityBubble from "./Pages/InfinityBubble";
+import BlockTap from "./Pages/BlockTap";
 
 function AllRoutes() {
   return (
@@ -25,6 +26,7 @@ function AllRoutes() {
         <Route path="/tetris" element={<TetrisGame />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/infinity-bubble" element={<InfinityBubble />} />
+        <Route path="/block-tap" element={<BlockTap />} />
         <Route
           path="/*"
           element={
