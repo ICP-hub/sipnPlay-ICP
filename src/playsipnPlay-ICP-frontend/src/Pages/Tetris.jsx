@@ -26,6 +26,10 @@ async function encryptScore(data) {
   return encrypted.toString();
 }
 
+function encryptData(data, key) {
+  return CryptoJS.AES.encrypt(data, key).toString();
+}
+
 const Tetris = () => {
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const dispatch = useDispatch();
@@ -62,7 +66,7 @@ const Tetris = () => {
 
     let amnt = parseFloat(
       Number(balance.Ok) *
-        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+      Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
     );
     dispatch(updateBalance({ balance: amnt }));
     return amnt;
@@ -95,11 +99,13 @@ const Tetris = () => {
           toast.error("Low balance error");
         }
         const userHighScore = await backendActor.get_high_score("Tetris");
+        console.log(userHighScore);
+        const encryptedUserHighScore = encryptData(userHighScore.toString(), "Abh67_#fbau-@y74_7A_0nm6je7");
         if (userHighScore.Err) {
           toast.success("Welcome user!");
           localStorage.setItem("BestScore", "0");
         } else {
-          localStorage.setItem("BestScore", userHighScore.Ok.toString());
+          localStorage.setItem("BestScore", encryptedUserHighScore);
         }
         const amnt = await getBalance();
         dispatch(

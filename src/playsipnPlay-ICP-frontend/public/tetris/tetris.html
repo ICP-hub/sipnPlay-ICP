@@ -15,6 +15,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <!-- Encryption library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
       html,
@@ -120,9 +121,28 @@
       // get a random integer between the range of [min,max]
       // @see https://stackoverflow.com/a/1527820/2124254
 
+      // Decrypt the best score
+      function getBestScore() {
+        try {
+          var getBestScore = localStorage.getItem("BestScore");
+          if (getBestScore === null) {
+            return -1;
+          }
+          const decryptedBytes = CryptoJS.AES.decrypt(getBestScore, "Abh67_#fbau-@y74_7A_0nm6je7");
+          const decryptedBestScore = decryptedBytes.toString(CryptoJS.enc.Utf8);
+          console.log(decryptedBestScore);
+          return parseInt(decryptedBestScore);
+
+        } catch (error) {
+          console.error("Error retrieving balance:", error);
+          return -1;
+        }
+      }
+
+      // Define the variables
       var score = 0;
-      var bestScore = localStorage.getItem("BestScore");
       var isGamePaused = false;
+      var bestScore = getBestScore();
 
       function togglePause() {
         if (!gameOver) {
