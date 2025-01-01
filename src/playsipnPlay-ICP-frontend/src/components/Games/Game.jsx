@@ -22,7 +22,7 @@ const Game = ({ game }) => {
         style={{
           background: "linear-gradient(to right, #cd335f, #4999f6)",
         }}
-        className="min-h-[240px] min-w-[260px] max-w-[320px] sm:max-w-[480px] relative md:max-w-[400px] md:min[w-200px]  flex items-center justify-center p-4 border-[1px] transition-transform duration-300 group hover:scale-105 cursor-pointer"
+        className="min-h-[240px] max-h-[260px] min-w-[260px] max-w-[320px] sm:max-w-[480px] relative md:max-w-[400px] md:min[w-200px]  flex items-center justify-center p-4 border-[1px] transition-transform duration-300 group hover:scale-105 cursor-pointer"
         onClick={() => setShowPopUp(true)}
       >
         <div className="absolute h-[5px] w-[5px] -top-[1px] -left-[1px] border-t-[1px] border-l-[1px] border-white "></div>
@@ -35,7 +35,7 @@ const Game = ({ game }) => {
         >
           Play Now
         </div>
-        <img src={game.img} alt="game-image" className=" object-contain" />
+        <img src={game.img} alt="game-image" className="max-h-[220px] object-contain" />
       </div>
     </div>
   );

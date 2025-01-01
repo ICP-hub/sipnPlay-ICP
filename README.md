@@ -2,7 +2,7 @@
 
 - playsipnPlay-ICP-frontend: https://r4s25-liaaa-aaaap-qhxma-cai.icp0.io/
 - sipnPlay-ICP-frontend: https://tlnsj-qqaaa-aaaap-qhp2q-cai.icp0.io/
-- sipnplay_icp_backend: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=ent7t-2yaaa-aaaap-qhtcq-cai
+- sipnplay_icp_backend: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=rjrbu-ryaaa-aaaap-qplna-cai
 - test-sipnplay ledger: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=cjpyu-kqaaa-aaaap-qhyfq-cai
 - index_canister: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=3q5f2-liaaa-aaaap-qpnjq-cai
 
