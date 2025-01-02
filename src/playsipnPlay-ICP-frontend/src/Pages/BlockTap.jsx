@@ -9,8 +9,6 @@ import LoadingWindow from "../components/Loaders/LoadingWindow";
 import LoadingPopUp from "../components/Loaders/LoadingPopUp";
 import { transferApprove } from "../utils/transApprove";
 import GameOverLeaderBoard from "../components/Modals/GameOverLeaderBoard";
-import Cookies from "js-cookie";
-import { LocalStorage } from "@dfinity/auth-client";
 
 const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
 
@@ -26,6 +24,10 @@ async function encryptScore(data) {
     }
   );
   return encrypted.toString();
+}
+
+function encryptData(data, key) {
+  return CryptoJS.AES.encrypt(data, key).toString();
 }
 
 const BlockTap = () => {
@@ -72,6 +74,7 @@ const BlockTap = () => {
         toast.error("Please provide your email");
       } else {
         const userHighScore = await backendActor.get_high_score("Block Tap");
+        console.log("userhighscore ",userHighScore.Ok)
         const encryptedUserHighScore = encryptData(
           userHighScore.Ok.toString(),
           "Abh67_#fbau-@y74_7A_0nm6je7"

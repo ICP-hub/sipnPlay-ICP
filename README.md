@@ -5,6 +5,7 @@
 - sipnplay_icp_backend: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=rjrbu-ryaaa-aaaap-qplna-cai
 - test-sipnplay ledger: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=cjpyu-kqaaa-aaaap-qhyfq-cai
 - index_canister: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=3q5f2-liaaa-aaaap-qpnjq-cai
+- sipnplay-test ledger: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=ku7bj-lyaaa-aaaap-qpocq-cai#send_dfx
 
 ## Setting up environment veriables
 
