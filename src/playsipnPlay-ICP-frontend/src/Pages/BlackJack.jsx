@@ -168,7 +168,9 @@ const BlackJack = () => {
             navigate("/");
           }
         } catch (err) {
-          console.log(err);
+          toast.error(`${err.message}`);
+          navigate("/");
+
         } finally {
           setIsPopUpLoading(false);
           setTaskName("");

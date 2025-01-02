@@ -37,24 +37,31 @@ const InfinityBubble = () => {
   const [isPopUpLoading, setIsPopupLoading] = useState(false);
 
   const deductPointsOnGameStart = async () => {
-    const approveResp = await transferApprove(
-      backendActor,
-      ledgerActor,
-      30,
-      false
-    );
+    try {
+      const approveResp = await transferApprove(
+        backendActor,
+        ledgerActor,
+        30,
+        false
+      );
+      console.log(approveResp)
     if (approveResp.Ok) {
       const afterApproval = await backendActor.game_start("Infinity Bubble");
       if (afterApproval.Ok) {
         toast.success("Points deducted successfully");
       } else {
-        navigate("/");
         toast.error("An error occurred during the payment process.");
+        navigate("/");
+        
       }
     } else {
       navigate("/");
       toast.error("Low balance error");
     }
+  } catch (err) {
+    toast.error(`${err.message}`);
+    navigate("/");
+  }
   };
 
   const getDetails = async () => {

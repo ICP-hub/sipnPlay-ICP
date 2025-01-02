@@ -26,6 +26,11 @@
       "candid": "src/test_sipnplay/test_sipnplay.did",
       "wasm": "src/test_sipnplay/ic-icrc1-ledger.wasm.gz"
     },
+    "sipnplay_test": {
+      "type": "custom",
+      "candid": "https://raw.githubusercontent.com/dfinity/ic/08f32722df2f56f1e5c1e603fee0c87c40b77cba/rs/rosetta-api/icp_ledger/ledger.did",
+      "wasm": "https://download.dfinity.systems/ic/08f32722df2f56f1e5c1e603fee0c87c40b77cba/canisters/ledger-canister.wasm.gz"
+    },
     "index_canister": {
       "type": "custom",
       "candid": "src/index_canister/index_canister.did",

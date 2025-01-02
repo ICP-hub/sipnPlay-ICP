@@ -47,6 +47,7 @@ if (location.protocol.substr(0, 4) === "file")
 	<script src="scripts/offlineclient.js" type="module"></script>
 	<script src="scripts/main.js" type="module"></script>
 	<script src="scripts/register-sw.js" type="module"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.5/js.cookie.min.js"></script>
 
 	<script>
 		function sendScore(score) {
@@ -72,9 +73,8 @@ if (location.protocol.substr(0, 4) === "file")
 		}
 
 		function getBestScore() {
-
-
-			c3_callFunction("bestScore",[1001])
+			const highScore = Cookies.get("highscore") || 0;			
+			c3_callFunction("bestScore",[parseInt(highScore)])
 		}
 	  </script>
 

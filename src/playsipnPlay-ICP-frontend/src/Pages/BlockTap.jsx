@@ -9,6 +9,7 @@ import LoadingWindow from "../components/Loaders/LoadingWindow";
 import LoadingPopUp from "../components/Loaders/LoadingPopUp";
 import { transferApprove } from "../utils/transApprove";
 import GameOverLeaderBoard from "../components/Modals/GameOverLeaderBoard";
+import Cookies from "js-cookie";
 
 const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
 
@@ -36,24 +37,30 @@ const BlockTap = () => {
   const [isPopUpLoading, setIsPopupLoading] = useState(false);
 
   const deductPointsOnGameStart = async () => {
-    const approveResp = await transferApprove(
-      backendActor,
-      ledgerActor,
-      30,
-      false
-    );
-    if (approveResp.Ok) {
-      const afterApproval = await backendActor.game_start("Block Tap");
-      if (afterApproval.Ok) {
-        toast.success("Points deducted successfully");
+    try {
+      const approveResp = await transferApprove(
+        backendActor,
+        ledgerActor,
+        30,
+        false
+      );
+      if (approveResp.Ok) {
+        const afterApproval = await backendActor.game_start("Block Tap");
+        if (afterApproval.Ok) {
+          toast.success("Points deducted successfully");
+        } else {
+          navigate("/");
+          toast.error("An error occurred during the payment process.");
+        }
       } else {
         navigate("/");
-        toast.error("An error occurred during the payment process.");
+        toast.error("Low balance error");
       }
-    } else {
+    } catch (error) {
+      toast.error(`${error.message}`);
       navigate("/");
-      toast.error("Low balance error");
     }
+
   };
 
   const getDetails = async () => {
@@ -63,6 +70,10 @@ const BlockTap = () => {
       if (res.Err === "New user") {
         navigate("/");
         toast.error("Please provide your email");
+      } else {
+        const userHighScore = await backendActor.get_high_score("Block Tap");
+        console.log("userhighscore ", userHighScore);
+        Cookies.set("highscore", userHighScore.Ok, { expires: 1 });
       }
     } catch (err) {
       console.log("getDetails Error", err.message);

@@ -43,8 +43,8 @@ pub async fn get_caller_balance() -> Result<u128, String> {
     let caller_principal = caller(); // Get the caller's principal
 
     // Fetch the canister ID from the environment
-    let ledger_canister_id = option_env!("CANISTER_ID_TEST_SIPNPLAY")
-        .ok_or("Environment variable `CANISTER_ID_TEST_SIPNPLAY` not set")?;
+    let ledger_canister_id = option_env!("CANISTER_ID_SIPNPLAY_TEST")
+        .ok_or("Environment variable `CANISTER_ID_SIPNPLAY_TEST` not set")?;
 
     let args = BalanceOfArgs {
         owner: caller_principal,
@@ -67,8 +67,8 @@ pub async fn get_caller_balance() -> Result<u128, String> {
 #[update]
 pub async fn get_backend_balance() -> Result<u128, String> {
     // Fetch the ledger canister ID from the environment
-    let ledger_canister_id = option_env!("CANISTER_ID_TEST_SIPNPLAY")
-        .ok_or("Environment variable `CANISTER_ID_TEST_SIPNPLAY` not set")?;
+    let ledger_canister_id = option_env!("CANISTER_ID_SIPNPLAY_TEST")
+        .ok_or("Environment variable `CANISTER_ID_SIPNPLAY_TEST` not set")?;
 
     // Fetch the backend canister ID from the environment (this is the owner principal)
     let backend_canister_id = option_env!("CANISTER_ID_SIPNPLAY_ICP_BACKEND")
@@ -165,7 +165,7 @@ async fn deduct_money(amount: Nat) -> Result<String, String> {
     let backend_canister_id = Principal::from_text(backend_canister_id_str)
         .map_err(|_| "Invalid backend canister ID".to_string())?;
 
-    let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
+    let ledger_canister_id_str = option_env!("CANISTER_ID_SIPNPLAY_TEST")
         .ok_or("Ledger canister ID not found in environment variables")?;
 
     let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
@@ -212,7 +212,7 @@ pub async fn withdraw_money_from_default(amount: u64) -> Result<Nat, String> {
     use ic_cdk::caller;
 
     let user_principal = caller();
-    let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
+    let ledger_canister_id_str = option_env!("CANISTER_ID_SIPNPLAY_TEST")
         .ok_or("Ledger canister ID not found in environment variables")?;
 
     let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
@@ -274,7 +274,7 @@ async fn add_money(encrypted_score: String) -> Result<String, String> {
     let bet_amount = Nat::from(amount as u64) * Nat::from(100_000_000u64);
     ic_cdk::println!("Bet Amount : {}", bet_amount);
     
-    let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
+    let ledger_canister_id_str = option_env!("CANISTER_ID_SIPNPLAY_TEST")
         .ok_or("Ledger canister ID not found in environment variables")?;
 
     let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
@@ -413,7 +413,7 @@ pub async fn game_start(game_name: String) -> Result<String, String> {
     let backend_canister_id = Principal::from_text(backend_canister_id_str)
         .map_err(|_| "Invalid backend canister ID".to_string())?;
 
-    let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
+    let ledger_canister_id_str = option_env!("CANISTER_ID_SIPNPLAY_TEST")
         .ok_or("Ledger canister ID not found in environment variables")?;
 
     let ledger_canister_id = Principal::from_text(ledger_canister_id_str)
@@ -617,7 +617,7 @@ pub async fn reward_distribution(
         return Err("You are not approved".to_string());
     }
 
-    let ledger_canister_id_str = option_env!("CANISTER_ID_TEST_SIPNPLAY")
+    let ledger_canister_id_str = option_env!("CANISTER_ID_SIPNPLAY_TEST")
         .ok_or("Backend canister ID not found in environment variables")?;
 
     let ledger_canister_id = Principal::from_text(ledger_canister_id_str)

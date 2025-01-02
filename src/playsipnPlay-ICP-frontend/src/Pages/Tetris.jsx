@@ -100,11 +100,12 @@ const Tetris = () => {
         }
         const userHighScore = await backendActor.get_high_score("Tetris");
         console.log(userHighScore);
-        const encryptedUserHighScore = encryptData(userHighScore.toString(), "Abh67_#fbau-@y74_7A_0nm6je7");
         if (userHighScore.Err) {
           toast.success("Welcome user!");
-          localStorage.setItem("BestScore", "0");
+          const Zeroscore=  encryptData("0", "Abh67_#fbau-@y74_7A_0nm6je7");;
+          localStorage.setItem("BestScore", Zeroscore);
         } else {
+          const encryptedUserHighScore = encryptData(userHighScore.Ok.toString(), "Abh67_#fbau-@y74_7A_0nm6je7");
           localStorage.setItem("BestScore", encryptedUserHighScore);
         }
         const amnt = await getBalance();
@@ -117,7 +118,9 @@ const Tetris = () => {
         );
       }
     } catch (err) {
+      toast.error(`${err.message}`);
       console.log("getDetails Error", err.message);
+      navigate("/");
     } finally {
       setIsLoading(false);
     }

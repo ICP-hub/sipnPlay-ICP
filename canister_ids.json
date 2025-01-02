@@ -11,6 +11,9 @@
   "sipnplay_icp_backend": {
     "ic": "rjrbu-ryaaa-aaaap-qplna-cai"
   },
+  "sipnplay_test": {
+    "ic": "ku7bj-lyaaa-aaaap-qpocq-cai"
+  },
   "test_sipnplay": {
     "ic": "cjpyu-kqaaa-aaaap-qhyfq-cai"
   }

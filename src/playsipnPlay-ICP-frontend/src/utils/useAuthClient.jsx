@@ -42,7 +42,7 @@ export const useAuthClient = (options = defaultOptions) => {
     }
   }, [authClient]);
 
-  const ledgerCanId = process.env.CANISTER_ID_TEST_SIPNPLAY;
+  const ledgerCanId = process.env.CANISTER_ID_SIPNPLAY_TEST;
 
   const login = async (provider) => {
     return new Promise(async (resolve, reject) => {
