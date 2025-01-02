@@ -10,6 +10,7 @@ import LoadingPopUp from "../components/Loaders/LoadingPopUp";
 import { transferApprove } from "../utils/transApprove";
 import GameOverLeaderBoard from "../components/Modals/GameOverLeaderBoard";
 import Cookies from "js-cookie";
+import { LocalStorage } from "@dfinity/auth-client";
 
 const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
 
@@ -60,7 +61,6 @@ const BlockTap = () => {
       toast.error(`${error.message}`);
       navigate("/");
     }
-
   };
 
   const getDetails = async () => {
@@ -72,8 +72,11 @@ const BlockTap = () => {
         toast.error("Please provide your email");
       } else {
         const userHighScore = await backendActor.get_high_score("Block Tap");
-        console.log("userhighscore ", userHighScore);
-        Cookies.set("highscore", userHighScore.Ok, { expires: 1 });
+        const encryptedUserHighScore = encryptData(
+          userHighScore.Ok.toString(),
+          "Abh67_#fbau-@y74_7A_0nm6je7"
+        );
+        localStorage.setItem("BestScore", encryptedUserHighScore);
       }
     } catch (err) {
       console.log("getDetails Error", err.message);
