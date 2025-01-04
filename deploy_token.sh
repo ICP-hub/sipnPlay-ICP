@@ -1,52 +1,29 @@
-export PRE_MINTED_TOKENS=100000000000000
-
-export TRANSFER_FEE=0
-
-# dfx identity new archive_controller
-dfx identity use archive_controller
-export ARCHIVE_CONTROLLER=$(dfx identity get-principal)
-
-export TRIGGER_THRESHOLD=2000
-
-export CYCLE_FOR_ARCHIVE_CREATION=10000000000000
-
-export NUM_OF_BLOCK_TO_ARCHIVE=1000
-
-export TOKEN_NAME="Test Token"
-
-export TOKEN_SYMBOL="TSIP"
-
 # dfx identity new minter
-dfx identity use minter
-export MINTER=$(dfx identity get-principal)
+dfx identity use tushar
+export MINTER_ACCOUNT_ID=$(dfx ledger account-id)
 
-export FEATURE_FLAGS=true
-
-dfx identity use default
-
-export DEFAULT=$(dfx identity get-principal)
-
-dfx deploy test_sipnplay --argument "(variant {Init =
-record {
-     token_symbol = \"${TOKEN_SYMBOL}\";
-     token_name = \"${TOKEN_NAME}\";
-     minting_account = record { owner = principal \"${MINTER}\" };
-     transfer_fee = ${TRANSFER_FEE};
-     metadata = vec {};
-     feature_flags = opt record{icrc2 = ${FEATURE_FLAGS}};
-     initial_balances = vec { record { record { owner = principal \"${DEFAULT}\"; }; ${PRE_MINTED_TOKENS}; }; };
-     archive_options = record {
-         num_blocks_to_archive = ${NUM_OF_BLOCK_TO_ARCHIVE};
-         trigger_threshold = ${TRIGGER_THRESHOLD};
-         controller_id = principal \"${ARCHIVE_CONTROLLER}\";
-         cycles_for_archive_creation = opt ${CYCLE_FOR_ARCHIVE_CREATION};
-     };
- }
-})"
+export DEFAULT_ACCOUNT_ID=$(dfx ledger account-id)
 
 
-dfx deploy index_canister --argument '(opt variant { Init = record { ledger_id = principal "cjpyu-kqaaa-aaaap-qhyfq-cai"; retrieve_blocks_from_ledger_interval_seconds = opt 3600; } })'
-
-dfx deps pull
-
-dfx deps deploy
+dfx deploy --ic sipnplay_test --argument "
+    (variant {
+      Init = record {
+        minting_account = \"$MINTER_ACCOUNT_ID\";
+        initial_values = vec {
+          record {
+            \"$DEFAULT_ACCOUNT_ID\";
+            record {
+              e8s = 10_000_000_000_00000000 : nat64;
+            };
+          };
+        };
+        send_whitelist = vec {};
+        transfer_fee = opt record {
+          e8s = 0 : nat64;
+        };
+        token_symbol = opt \"TSIP\";
+        token_name = opt \"Test SipnPlay\";
+        feature_flags = opt record { icrc2 = true };
+      }
+    })
+  "
