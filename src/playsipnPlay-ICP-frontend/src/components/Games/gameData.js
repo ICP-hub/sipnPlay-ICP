@@ -26,6 +26,8 @@ export const games = [
     leaderboard: false,
     tokenomics:
       "In the tokenomics of this blackjack game, players place a bet by deducting the specified amount from their balance before starting the game. If the player wins, they receive double the amount of their original bet. In the case of a loss, no further deduction occurs as the bet is already deducted at the start. Additionally, if the player draws a perfect 21 on the first hand (a blackjack), they earn 2.5 times the amount of their initial bet as a special bonus. This structure ensures a seamless and engaging experience while maintaining a clear and transparent token flow.",
+    bgColor: "#000000",
+    designColor: "#94AF26",
   },
   {
     link: "tetris",
@@ -47,6 +49,8 @@ export const games = [
     leaderboard: true,
     tokenomics:
       "Players are required to pay a one-time fee of 30 TSIP tokens everytime they start the game. Once the game is over, the player receives points (which is 10 times their score) based on their in-game performance. Additionally, the player's rank on the leaderboard is determined by the number of points they have, with higher points securing higher rankings. Players earn TSIP tokens as rewards based on their position in the leaderboard, incentivizing skillful gameplay and competition for top spots.",
+      bgColor: "#00075F",
+      designColor: "#CD4650",
   },
   {
     link: "infinity-bubble",
@@ -64,6 +68,8 @@ export const games = [
     leaderboard: true,
     tokenomics:
       "Players are required to pay a one-time fee of 30 TSIP tokens everytime they start the game. Once the game is over, the player receives points (which is 10 times their score) based on their in-game performance. Additionally, the player's rank on the leaderboard is determined by the number of points they have, with higher points securing higher rankings. Players earn TSIP tokens as rewards based on their position in the leaderboard, incentivizing skillful gameplay and competition for top spots.",
+      bgColor: "#035A16",
+      designColor: "#F1F967",
   },
   {
     link: "block-tap",
@@ -81,6 +87,8 @@ export const games = [
     leaderboard: true,
     tokenomics:
       "Players are required to pay a one-time fee of 30 TSIP tokens everytime they start the game. Once the game is over, the player receives points (which is 10 times their score) based on their in-game performance. Additionally, the player's rank on the leaderboard is determined by the number of points they have, with higher points securing higher rankings. Players earn TSIP tokens as rewards based on their position in the leaderboard, incentivizing skillful gameplay and competition for top spots.",
+      bgColor: "#011100",
+      designColor: "#6FFFCA",
   },
 ];
 

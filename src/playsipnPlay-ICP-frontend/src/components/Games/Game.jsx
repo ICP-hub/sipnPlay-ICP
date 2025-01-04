@@ -1,29 +1,13 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import GameDetails from "./GameDetails";
+import React from "react";
 
 const Game = ({ game }) => {
-  const [showPopUp, setShowPopUp] = useState(false);
-
-  const closemodal = () => {
-    setShowPopUp(false);
-  };
   return (
     <div>
-      {showPopUp && (
-        <GameDetails
-          modalIsOpen={showPopUp}
-          closeModal={closemodal}
-          game={game}
-          tokenomics={game.tokenomics}
-        />
-      )}
       <div
         style={{
           background: "linear-gradient(to right, #cd335f, #4999f6)",
         }}
-        className="min-h-[240px] max-h-[260px] min-w-[260px] max-w-[320px] sm:max-w-[480px] relative md:max-w-[400px] md:min[w-200px]  flex items-center justify-center p-4 border-[1px] transition-transform duration-300 group hover:scale-105 cursor-pointer"
-        onClick={() => setShowPopUp(true)}
+        className="min-h-[140px] max-h-[160px] max-w-[220px] relative flex items-center justify-center p-4 border-[1px] transition-transform duration-300 group hover:scale-105 cursor-pointer"
       >
         <div className="absolute h-[5px] w-[5px] -top-[1px] -left-[1px] border-t-[1px] border-l-[1px] border-white "></div>
         <div className="absolute h-[5px] w-[5px] -top-[1px] -right-[1px] border-t-[1px] border-r-[1px] border-white "></div>

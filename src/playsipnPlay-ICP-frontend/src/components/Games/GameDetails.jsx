@@ -6,7 +6,7 @@ import bgImage from "../../assets/images/waitlistBg.png";
 import { ImCross } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "../../../../sipnPlay-ICP-frontend/src/utils/useDisableScroll";
-import LeaderBoardList from "../LeaderboardList/LeaderboardList";
+import LeaderBoardList from "./LeaderboardList";
 
 const GameDetails = ({ modalIsOpen, closeModal, game, tokenomics }) => {
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ const GameDetails = ({ modalIsOpen, closeModal, game, tokenomics }) => {
               <ol className="font-adam text-white text-sm">
                 {game.description.map((item, i) => (
                   <li key={i}>
-                    <span>{i}) </span>
+                    <span>{i+1}&#41;</span>
                     {item}
                   </li>
                 ))}
@@ -75,9 +75,6 @@ const GameDetails = ({ modalIsOpen, closeModal, game, tokenomics }) => {
               <p className="font-adam text-white text-sm">{tokenomics}</p>
             </div>
           </div>
-          {game.leaderboard && (
-            <LeaderBoardList game={game} isGameOver={false} />
-          )}
         </div>
       </div>
     </Modal>

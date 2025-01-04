@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-import LeaderBoardList from "../LeaderboardList/LeaderboardList";
+import LeaderBoardList from "../Games/LeaderboardList";
 import bgImage from "../../assets/images/waitlistBg.png";
 import { ImCross } from "react-icons/im";
 

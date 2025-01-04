@@ -1,7 +1,7 @@
 import React from "react";
 import "./AnimationButton.css";
 import { Oval } from "react-loader-spinner";
-const AnimationButton = ({ children, onClick, isLoading }) => {
+const AnimationButton = ({ children, onClick, isLoading=false }) => {
   return (
     <>
       <button

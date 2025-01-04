@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import userProfilePic from "../../assets/images/DefaultUserPic.svg";
 import { useAuth } from "../../utils/useAuthClient";
 import Crown from "../../assets/images/Crown.svg";
-import toast from "react-hot-toast";
 import { Oval } from "react-loader-spinner";
 import AnimationButton from "../../common/AnimationButton";
 import { useNavigate } from "react-router-dom";
