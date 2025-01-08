@@ -92,9 +92,9 @@ fn init() {
         state.infinity_bubble_data = init_infinity_bubble_data_map();
         state.infinity_bubble_leaderboard_data = init_infinity_bubble_leaderboard_data_map();
         state.infinity_bubble_sorted_leaderboard_data = init_infinity_bubble_sorted_leaderboard_data_map();
-        state.block_tap_data = BlockTapDataMap::init(get_block_tap_data_memory());
-        state.block_tap_leaderboard_data = BlockTapLeaderboardDataMap::init(get_block_tap_leaderboard_data_memory());
-        state.block_tap_sorted_leaderboard_data = BlockTapSortedLeaderboardDataMap::init(get_block_tap_sorted_leaderboard_data_memory()).unwrap();
+        state.block_tap_data = init_block_tap_data_map();
+        state.block_tap_leaderboard_data = init_block_tap_leaderboard_data_map();
+        state.block_tap_sorted_leaderboard_data = init_block_tap_sorted_leaderboard_data_map();
     });
 
     ic_cdk::print("Tetris Leaderboard initialized successfully!");
@@ -213,11 +213,11 @@ pub fn read_state<R>(f: impl FnOnce(&State) -> R) -> R {
 // Implement Storable for UserCreationInput
 impl Storable for UserCreationInput {
     fn to_bytes(&self) -> Cow<[u8]> {
-        Cow::Owned(Encode!(self).unwrap())
+        Cow::Owned(Encode!(self).expect("Failed to encode"))
     }
 
     fn from_bytes(bytes: Cow<[u8]>) -> Self {
-        Decode!(bytes.as_ref(), Self).unwrap()
+        Decode!(bytes.as_ref(), Self).expect("Failed to decode")
     }
 
     const BOUND: ic_stable_structures::storable::Bound =
@@ -255,11 +255,11 @@ impl Storable for WaitlistData {
 // Implement Storable for GameData
 impl Storable for GameData {
     fn to_bytes(&self) -> Cow<[u8]> {
-        Cow::Owned(Encode!(self).unwrap())
+        Cow::Owned(Encode!(self).expect("Failed to encode"))
     }
 
     fn from_bytes(bytes: Cow<[u8]>) -> Self {
-        Decode!(bytes.as_ref(), Self).unwrap()
+        Decode!(bytes.as_ref(), Self).expect("Failed to decode")
     }
 
     const BOUND: ic_stable_structures::storable::Bound =

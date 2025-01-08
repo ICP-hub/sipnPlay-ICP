@@ -98,28 +98,44 @@ const Tetris = () => {
           navigate("/");
           toast.error("Low balance error");
         }
-        const userHighScore = await backendActor.get_high_score("Tetris");
-        console.log(userHighScore);
-        if (userHighScore.Err) {
-          toast.success("Welcome user!");
-          const Zeroscore=  encryptData("0", "Abh67_#fbau-@y74_7A_0nm6je7");;
-          localStorage.setItem("BestScore", Zeroscore);
-        } else {
-          const encryptedUserHighScore = encryptData(userHighScore.Ok.toString(), "Abh67_#fbau-@y74_7A_0nm6je7");
-          localStorage.setItem("BestScore", encryptedUserHighScore);
+
+        // Gracefully handle high score retrieval
+        try {
+          const userHighScore = await backendActor.get_high_score("Tetris");
+          if (userHighScore.Err) {
+            toast.success("Welcome user!");
+            const Zeroscore = encryptData("0", "Abh67_#fbau-@y74_7A_0nm6je7");
+            localStorage.setItem("BestScore", Zeroscore);
+          } else {
+            const encryptedUserHighScore = encryptData(
+              userHighScore.Ok.toString(),
+              "Abh67_#fbau-@y74_7A_0nm6je7"
+            );
+            localStorage.setItem("BestScore", encryptedUserHighScore);
+          }
+        } catch (highScoreError) {
+          toast.error("Failed to retrieve high score");
+          console.error("High score retrieval error", highScoreError);
         }
-        const amnt = await getBalance();
-        dispatch(
-          addUserData({
-            id: principal.toString(),
-            email: res.Ok.email,
-            balance: amnt,
-          })
-        );
+
+        // Handle balance retrieval
+        try {
+          const amnt = await getBalance();
+          dispatch(
+            addUserData({
+              id: principal.toString(),
+              email: res.Ok.email,
+              balance: amnt,
+            })
+          );
+        } catch (balanceError) {
+          toast.error("Failed to retrieve balance");
+          console.error("Balance retrieval error", balanceError);
+        }
       }
     } catch (err) {
-      toast.error(`${err.message}`);
-      console.log("getDetails Error", err.message);
+      toast.error(`Error: ${err.message}`);
+      console.error("getDetails Error", err.message);
       navigate("/");
     } finally {
       setIsLoading(false);

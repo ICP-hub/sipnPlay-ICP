@@ -446,57 +446,57 @@ pub async fn game_start(game_name: String) -> Result<String, String> {
     match response {
         Ok((TransferFromResult::Ok(_block_index),)) => {
             // Add (caller, amount) to `tetris_data` map
-            STATE.with(|state| {
-                let mut state = state.borrow_mut();           
-                if game_name == "Tetris" {
-                    // Get the game play count of tetris_data of the current principal
-                    if let Some(mut data) = state.tetris_data.get(&caller_principal.to_text()) {
-                        data.game_play_count += 1;
-                        state.tetris_data.insert(caller_principal.to_text(), data);
-                    } else {
-                        // Insert a new entry if it doesn't exist
-                        state.tetris_data.insert(
-                            caller_principal.to_text(),
-                            GameData {
-                                id: caller_principal, // Use Principal ID
-                                game_play_count: 1, // Game Play Count
-                            },
-                        );
-                    }
-                } else if game_name == "Infinity Bubble" {
-                    // Get the game play count of infinity_bubble_data of the current principal
-                    if let Some(mut data) = state.infinity_bubble_data.get(&caller_principal.to_text()) {
-                        data.game_play_count += 1;
-                        state.infinity_bubble_data.insert(caller_principal.to_text(), data);
-                    } else {
-                        // Insert a new entry if it doesn't exist
-                        state.infinity_bubble_data.insert(
-                            caller_principal.to_text(),
-                            GameData {
-                                id: caller_principal, // Use Principal ID
-                                game_play_count: 1, // Game Play Count
-                            },
-                        );
-                    }
+            // STATE.with(|state| {
+            //     let mut state = state.borrow_mut();           
+            //     if game_name == "Tetris" {
+            //         // Get the game play count of tetris_data of the current principal
+            //         if let Some(mut data) = state.tetris_data.get(&caller_principal.to_text()) {
+            //             data.game_play_count += 1;
+            //             state.tetris_data.insert(caller_principal.to_text(), data);
+            //         } else {
+            //             // Insert a new entry if it doesn't exist
+            //             state.tetris_data.insert(
+            //                 caller_principal.to_text(),
+            //                 GameData {
+            //                     id: caller_principal, // Use Principal ID
+            //                     game_play_count: 1, // Game Play Count
+            //                 },
+            //             );
+            //         }
+            //     } else if game_name == "Infinity Bubble" {
+            //         // Get the game play count of infinity_bubble_data of the current principal
+            //         if let Some(mut data) = state.infinity_bubble_data.get(&caller_principal.to_text()) {
+            //             data.game_play_count += 1;
+            //             state.infinity_bubble_data.insert(caller_principal.to_text(), data);
+            //         } else {
+            //             // Insert a new entry if it doesn't exist
+            //             state.infinity_bubble_data.insert(
+            //                 caller_principal.to_text(),
+            //                 GameData {
+            //                     id: caller_principal, // Use Principal ID
+            //                     game_play_count: 1, // Game Play Count
+            //                 },
+            //             );
+            //         }
                     
-                } else if game_name == "Block Tap" {
-                    // Get the game play count of infinity_bubble_data of the current principal
-                    if let Some(mut data) = state.block_tap_data.get(&caller_principal.to_text()) {
-                        data.game_play_count += 1;
-                        state.block_tap_data.insert(caller_principal.to_text(), data);
-                    } else {
-                        // Insert a new entry if it doesn't exist
-                        state.block_tap_data.insert(
-                            caller_principal.to_text(),
-                            GameData {
-                                id: caller_principal, // Use Principal ID
-                                game_play_count: 1, // Game Play Count
-                            },
-                        );
-                    }
+            //     } else if game_name == "Block Tap" {
+            //         // Get the game play count of infinity_bubble_data of the current principal
+            //         if let Some(mut data) = state.block_tap_data.get(&caller_principal.to_text()) {
+            //             data.game_play_count += 1;
+            //             state.block_tap_data.insert(caller_principal.to_text(), data);
+            //         } else {
+            //             // Insert a new entry if it doesn't exist
+            //             state.block_tap_data.insert(
+            //                 caller_principal.to_text(),
+            //                 GameData {
+            //                     id: caller_principal, // Use Principal ID
+            //                     game_play_count: 1, // Game Play Count
+            //                 },
+            //             );
+            //         }
                     
-                }                       
-            });
+            //     }                       
+            // });
 
             Ok(format!(
                 "Tokens deducted successfully: {}",
