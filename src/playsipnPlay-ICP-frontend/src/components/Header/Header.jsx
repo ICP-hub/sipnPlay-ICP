@@ -36,13 +36,13 @@ const Header = () => {
   const getStatus = async () => {
     setIsFetching(true);
     const response = await backendActor.get_user();
-    console.log("response from get_user ", response)
+    console.log("response from get_user ", response);
     if (response.Err === "New user") {
       setIsFetching(false);
       return { isNewUser: true };
     } else {
       let balance = await backendActor.get_caller_balance();
-      let metaData = null;      
+      let metaData = null;
       await ledgerActor
         .icrc1_metadata()
         .then((res) => {
@@ -51,16 +51,15 @@ const Header = () => {
         .catch((err) => {
           console.log(err);
         });
-
       let amnt =
         parseInt(balance.Ok) *
         Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]));
-        
+
       setIsFetching(false);
       return {
         isNewUser: false,
         email: response.Ok.email,
-        balance: (amnt),
+        balance: amnt,
       };
     }
   };

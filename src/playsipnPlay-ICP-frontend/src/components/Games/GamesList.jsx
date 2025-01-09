@@ -6,115 +6,112 @@ import { useFetching } from "../../utils/fetchingContext";
 import { Oval } from "react-loader-spinner";
 import GameDetails from "./GameDetails";
 
-
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import { Autoplay } from 'swiper/modules';
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Autoplay } from "swiper/modules";
+import { useNavigate } from "react-router-dom";
 
 const GamesList = () => {
   const { isFetching } = useFetching();
-  const [gameIndex, setGameIndex] = useState(0);
+  const [currentGame, setCurrentGame] = useState(games[0]);
   const [showPopUp, setShowPopUp] = useState(false);
+  const [showFullControls, setshowFullControls] = useState(false);
+  const [showFullTokenomics, setshowFullTokenomics] = useState(false);
+  const navigate = useNavigate();
 
   const closemodal = () => {
     setShowPopUp(false);
   };
 
   return (
-    <div className={`bg-[${games[gameIndex].bgColor}]`}>
-      <div>
+    <>
+      <div className="h-full flex justify-center items-center">
         {isFetching ? (
-          <div className="flex-1 h-full w-full justify-center items-center mt-36">
-            <Oval
-              color="#ee3ec9"
-              secondaryColor="#fff"
-              height={128}
-              width={128}
-              wrapperClass="flex justify-center items-center"
-            />
-          </div>
+          <Oval
+            color="#ee3ec9"
+            secondaryColor="#fff"
+            height={128}
+            width={128}
+            wrapperClass="flex justify-center items-center"
+          />
         ) : (
-          <div>
-            <div className={`relative -z-10`}>
-              <div className={`w-[358px] h-[358px] absolute -left-[132px] top-[128px] rounded-full blur-3xl opacity-45 bg-[${games[gameIndex].designColor}]`}></div>
-              <div className={`w-[248px] h-[248px] absolute -right-[12px] top-[268px] rounded-full blur-3xl opacity-45 bg-[${games[gameIndex].designColor}]`}></div>
-              <div className={`w-[248px] h-[248px] absolute right-[112px] top-[458px] rounded-full blur-3xl opacity-45 bg-[${games[gameIndex].designColor}]`}></div>
-              {/* <div className={`w-[358px] h-[358px] absolute -left-[132px] top-[128px] rounded-full blur-3xl opacity-45 bg-[${games[gameIndex].designColor}]`}></div>
-              <div className={`w-[358px] h-[358px] absolute -left-[132px] top-[128px] rounded-full blur-3xl opacity-45 bg-[${games[gameIndex].designColor}]`}></div> */}
-            </div>
-            <div className="z-10 grid grid-cols-3 mt-6 items-center px-[9%]">
-              <div>
-                <p className="font-monckeberg text-6xl">{games[gameIndex].name}</p>
-                <p className="font-adam mt-5 mb-5 line-clamp-5">{games[gameIndex].description}</p>
+          <div className="py-16 md:py-4 text-center md:text-start">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 md:px-8">
+              {/* Image */}
+              <div className="order-1 md:order-2">
+                <img draggable="false" src={currentGame.img} />
+              </div>
+              {/* Description */}
+              <div className="order-2 md:order-1">
+                <h1 className="font-monckeberg text-2xl md:text-6xl">
+                  {currentGame.name}
+                </h1>
+                <p className="font-adam mt-5 mb-5">{currentGame.description}</p>
                 <div className="flex gap-4">
-                  <AnimationButton onClick={() => setShowPopUp(true)} >Play</AnimationButton>
+                  <AnimationButton onClick={() => navigate(currentGame.link)}>
+                    Play Now
+                  </AnimationButton>
                   {showPopUp && (
                     <GameDetails
                       modalIsOpen={showPopUp}
                       closeModal={closemodal}
-                      game={games[gameIndex]}
-                      tokenomics={games[gameIndex].tokenomics}
+                      game={currentGame}
+                      tokenomics={currentGame.tokenomics}
                     />
                   )}
-                  {games[gameIndex].leaderboard &&
-                    <AnimationButton onClick="" >Leaderboard</AnimationButton>
-                  }
+                  {/* {currentGame.leaderboard && (
+                    <AnimationButton onClick="">Leaderboard</AnimationButton>
+                  )} */}
                 </div>
               </div>
-              <div>
-                <img src={games[gameIndex].img} />
-              </div>
-              <div>
+
+              {/* Additional Content */}
+              <div className="order-3">
                 <div className="mb-12">
                   <h4 className="font-monckeberg mb-4">HOW TO PLAY:</h4>
-                  <p className="font-adam line-clamp-[3] text-white text-sm">{games[gameIndex].controls} </p>
-                  <span>...</span>
+                  <p className="font-adam text-white text-sm">
+                    {showFullControls
+                      ? currentGame.controls + "..."
+                      : currentGame.controls.slice(0, 200)}
+                  </p>
+                  <span
+                    onClick={() => setshowFullControls(!showFullControls)}
+                    className="font-adam text-sm cursor-pointer"
+                  >
+                    {showFullControls ? "show less" : "show more"}
+                  </span>
                 </div>
-                <div className="mb-12">
-                  <p className="font-monckeberg mb-4">ABOUT GAME:</p>
-                  <ol className="font-adam line-clamp-6 text-white text-sm">
-                    {games[gameIndex].description.map((item, i) => (
-                      <li key={i}>
-                        <span>{i + 1}&#41;</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ol>
-                  <p>...</p>
 
-                </div>
                 <div className="mb-12">
                   <h4 className="font-monckeberg mb-4">TOKENOMICS:</h4>
-                  <p className="font-adam line-clamp-[3] text-white text-sm">{games[gameIndex].tokenomics}</p>
-                  <p>...</p>
+                  <p className="font-adam text-white text-sm">
+                    {showFullTokenomics
+                      ? currentGame.tokenomics + "..."
+                      : currentGame.tokenomics.slice(0, 200)}
+                  </p>
+                  <span
+                    onClick={() => setshowFullTokenomics(!showFullTokenomics)}
+                    className="font-adam text-sm cursor-pointer"
+                  >
+                    {showFullTokenomics ? "show less" : "show more"}
+                  </span>
                 </div>
               </div>
             </div>
+
+            {/* Game list */}
+            <div className="flex gap-4 mt-8 px-4 md:px-8">
+              {games.map((game, index) => (
+                <div key={game.link} onClick={() => setCurrentGame(game)}>
+                  <Game game={game} />
+                </div>
+              ))}
+            </div>
           </div>
         )}
-      </div >
-      <div className="ml-[9%] md:w-[650px]">
-        <Swiper
-          slidesPerView={3}
-          spaceBetween={20}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: false,
-          }}
-          loop={true}
-          modules={[Autoplay]}
-          className="mySwiper"
-        >
-          {games.map((game, index) => (
-              <SwiperSlide onClick={() => setGameIndex(index)}>
-                <Game key={index} game={game} />
-              </SwiperSlide>
-          )
-          )}
-        </Swiper>
       </div>
-    </div>
+    </>
   );
 };
 

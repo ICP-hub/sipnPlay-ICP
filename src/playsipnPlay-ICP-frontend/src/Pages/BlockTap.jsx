@@ -74,7 +74,7 @@ const BlockTap = () => {
         toast.error("Please provide your email");
       } else {
         const userHighScore = await backendActor.get_high_score("Block Tap");
-        console.log("userhighscore ",userHighScore.Ok)
+        console.log("userhighscore ", userHighScore.Ok);
         const encryptedUserHighScore = encryptData(
           userHighScore.Ok.toString(),
           "Abh67_#fbau-@y74_7A_0nm6je7"
@@ -173,7 +173,7 @@ const BlockTap = () => {
           )}
           <iframe
             title="Block Tap"
-            src="blocktap/index.html"
+            src="blocktap_v2/index.html"
             style={{ width: "100vw", height: "100vh", border: "none" }}
           />
         </div>
