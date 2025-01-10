@@ -9,8 +9,8 @@ import { useDispatch } from "react-redux";
 import { addUserData, removeUserData } from "../../utils/redux/userSlice";
 import { useFetching } from "../../utils/fetchingContext";
 import { Link } from "react-router-dom";
-import cross from '../../assets/images/icons/cross.png';
-import menu from '../../assets/images/icons/menu.png';
+import { RxHamburgerMenu,  } from "react-icons/rx";
+import { RxCross1 } from "react-icons/rx";
 
 const Header = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -145,21 +145,9 @@ const Header = () => {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? (
-            <div>
-              <img 
-              src={cross}
-              width={34}
-              height={34}
-              />
-            </div>
+            <RxCross1 className="h-7 w-7" />
           ) : (
-            <div>
-              <img 
-              src={menu}
-              width={34}
-              height={34}
-              />
-            </div>
+            <RxHamburgerMenu className="h-7 w-7" />
           )}
         </button>
       </nav>
