@@ -97,6 +97,7 @@ const Header = () => {
             draggable="false"
           />
         </Link>
+        <p className="font-adam text-white text-sm mt-6">beta</p>
       </div>
 
       <Register
@@ -105,7 +106,7 @@ const Header = () => {
         setIsOpen={setRegisterModalOpen}
       />
 
-      <div>
+      <div className="flex gap-6">
         {isAuthenticated ? (
           <div>
             <UserDetails
@@ -117,6 +118,11 @@ const Header = () => {
         ) : (
           <>
             <AnimationButton onClick={openModal}>Login</AnimationButton>
+
+            <a href="https://discord.com/invite/6PmNCezvG4" target="_blank">
+              <AnimationButton>Get Tokens</AnimationButton>
+            </a>
+
             <ConnectWallets modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
           </>
         )}

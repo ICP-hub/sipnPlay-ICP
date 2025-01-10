@@ -11,6 +11,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay } from "swiper/modules";
 import { useNavigate } from "react-router-dom";
+import LeaderBoardList from "./LeaderboardList";
 
 const GamesList = () => {
   const { isFetching } = useFetching();
@@ -18,6 +19,8 @@ const GamesList = () => {
   const [showPopUp, setShowPopUp] = useState(false);
   const [showFullControls, setshowFullControls] = useState(false);
   const [showFullTokenomics, setshowFullTokenomics] = useState(false);
+  const [showFullDescription, setshowFullDescription] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
   const navigate = useNavigate();
 
   const closemodal = () => {
@@ -39,16 +42,28 @@ const GamesList = () => {
           <div className="py-16 md:py-4 text-center md:text-start">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 md:px-8">
               {/* Image */}
-              <div className="order-1 md:order-2">
+              <div className="order-1 md:order-2 flex items-center">
                 <img draggable="false" src={currentGame.img} />
               </div>
               {/* Description */}
-              <div className="order-2 md:order-1">
-                <h1 className="font-monckeberg text-2xl md:text-6xl">
+              <div className="order-2 md:order-1 ">
+                <h1 className="font-monckeberg text-4xl md:text-6xl">
                   {currentGame.name}
                 </h1>
-                <p className="font-adam mt-5 mb-5">{currentGame.description}</p>
-                <div className="flex gap-4">
+
+                <p className="font-adam text-white text-sm mt-8">
+                  {showFullDescription
+                    ? currentGame.controls + "..."
+                    : currentGame.controls.slice(0, 400)}
+                </p>
+                <span
+                  onClick={() => setshowFullDescription(!showFullDescription)}
+                  className="font-adam text-sm cursor-pointer"
+                >
+                  {showFullDescription ? "show less" : "show more"}
+                </span>
+
+                <div className="flex gap-4 mt-8 w-full md:justify-start justify-center items-center">
                   <AnimationButton onClick={() => navigate(currentGame.link)}>
                     Play Now
                   </AnimationButton>
@@ -60,10 +75,20 @@ const GamesList = () => {
                       tokenomics={currentGame.tokenomics}
                     />
                   )}
-                  {/* {currentGame.leaderboard && (
-                    <AnimationButton onClick="">Leaderboard</AnimationButton>
-                  )} */}
+                  {currentGame.leaderboard && (
+                    <AnimationButton onClick={() => setShowLeaderboard(true)}>
+                      Leaderboard
+                    </AnimationButton>
+                  )}
                 </div>
+                {showLeaderboard && (
+                  <LeaderBoardList
+                    showLeaderboard={showLeaderboard}
+                    setShowLeaderboard={setShowLeaderboard}
+                    game={currentGame}
+                    isGameOver={false}
+                  />
+                )}
               </div>
 
               {/* Additional Content */}

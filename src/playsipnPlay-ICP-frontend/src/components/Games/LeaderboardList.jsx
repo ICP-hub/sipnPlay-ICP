@@ -3,16 +3,26 @@ import userProfilePic from "../../assets/images/DefaultUserPic.svg";
 import { useAuth } from "../../utils/useAuthClient";
 import Crown from "../../assets/images/Crown.svg";
 import { Oval } from "react-loader-spinner";
+import Modal from "react-modal";
 import AnimationButton from "../../common/AnimationButton";
 import { useNavigate } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
+import useDisableScroll from "../../../../sipnPlay-ICP-frontend/src/utils/useDisableScroll";
+import bgImage from "../../assets/images/waitlistBg.png";
+import { ImCross } from "react-icons/im";
 
-const LeaderBoardList = ({ game, isGameOver }) => {
+const LeaderBoardList = ({
+  game,
+  isGameOver,
+  showLeaderboard,
+  setShowLeaderboard,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const { backendActor } = useAuth();
   const [leaderboard, setLeaderboard] = useState([]);
   const [userRank, setUserRank] = useState(0);
   const navigate = useNavigate();
+  useDisableScroll(showLeaderboard);
 
   const fetchLeaderboard = async (gameName) => {
     try {
@@ -41,7 +51,12 @@ const LeaderBoardList = ({ game, isGameOver }) => {
   }, []);
 
   return (
-    <>
+    <Modal
+      isOpen={showLeaderboard}
+      contentLabel="Leaderboard Modal"
+      className="fixed inset-4 rounded-xl flex items-center justify-center bg-transparent"
+      overlayClassName="fixed z-[100] inset-0 bg-gray-800 backdrop-filter backdrop-blur-sm rounded-lg bg-opacity-50"
+    >
       {isLoading && (
         <Oval
           color="#ee3ec9"
@@ -52,10 +67,20 @@ const LeaderBoardList = ({ game, isGameOver }) => {
         />
       )}
       <div
-        className={`${
-          isGameOver ? "border-none" : "md:border-l-2 border-white md:ps-16"
-        } overflow-y-auto max-h-[70vh]`}
+        style={{
+          backgroundImage: `url(${bgImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          color: "white",
+        }}
+        className={`overflow-y-auto max-h-[70vh] rounded-lg p-4 md:p-16 relative`}
       >
+        {!isGameOver && (
+          <ImCross
+            className="top-6 right-6 cursor-pointer absolute"
+            onClick={() => setShowLeaderboard(false)}
+          />
+        )}
         <div className="absolute left-12 -top-4 ">
           {isGameOver && (
             <div className="flex mt-12 items-end justify-center">
@@ -226,7 +251,7 @@ const LeaderBoardList = ({ game, isGameOver }) => {
           </ul>
         </div>
       </div>
-    </>
+    </Modal>
   );
 };
 export default LeaderBoardList;
