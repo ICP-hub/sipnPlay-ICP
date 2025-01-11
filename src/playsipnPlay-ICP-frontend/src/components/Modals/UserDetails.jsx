@@ -11,7 +11,7 @@ import { IoCopy, IoCopyOutline } from "react-icons/io5";
 const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
   const userDetails = useSelector((state) => state.user);
   const [isPrincipalCopied, setisPrincipalCopied] = useState(false);
-  const { logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const ref = useRef();
   function openModal() {
     setDetailsModalOpen(true);
@@ -93,7 +93,7 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
-            className="absolute right-4 top-10 p-4 my-4 md:top-16 md:p-6 md:right-16 md:h-80 lg:top-16 lg:right-24 lg:h-96 lg:w-72 lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4 backdrop-filter backdrop-blur-lg bg-black"
+            className="absolute right-4 top-10 p-4 my-4 md:top-16 md:p-6 md:right-16 md:h-80 lg:top-16 lg:right-24 lg:h-96 lg:w-72 lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4 backdrop-filter backdrop-blur-lg bg-black min-h-fit"
             ref={ref}
           >
             {/* Wrapper for positioning the button */}

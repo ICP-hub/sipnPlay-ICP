@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import { addUserData, removeUserData } from "../../utils/redux/userSlice";
 import { useFetching } from "../../utils/fetchingContext";
 import { Link } from "react-router-dom";
-import { RxHamburgerMenu,  } from "react-icons/rx";
+import { RxHamburgerMenu } from "react-icons/rx";
 import { RxCross1 } from "react-icons/rx";
 
 const Header = () => {
@@ -120,20 +120,20 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex gap-6">
+          <a href="https://discord.com/invite/6PmNCezvG4" target="_blank">
+            <AnimationButton>Get Tokens</AnimationButton>
+          </a>
           {isAuthenticated ? (
-            <div>
+            <>
               <UserDetails
                 detailsModalOpen={detailsModalOpen}
                 setDetailsModalOpen={setDetailsModalOpen}
                 isFetching={isFetching}
               />
-            </div>
+            </>
           ) : (
             <>
               <AnimationButton onClick={openModal}>Login</AnimationButton>
-              <a href="https://discord.com/invite/6PmNCezvG4" target="_blank">
-                <AnimationButton>Get Tokens</AnimationButton>
-              </a>
               <ConnectWallets modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
             </>
           )}
@@ -147,47 +147,34 @@ const Header = () => {
           {mobileMenuOpen ? (
             <RxCross1 className="h-7 w-7" />
           ) : (
-            <RxHamburgerMenu className="h-7 w-7" />
+            <RxHamburgerMenu
+              className="h-7 w-7"
+              onClick={() => setDetailsModalOpen(true)}
+            />
           )}
         </button>
       </nav>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-10 md:hidden bg-black bg-opacity-90 z-99">
-          <div className="absolute right-4  top-20 bg-gradient-to-l w-[50%]  space-x-auto from-[#2F2F2F] to-[#252525] rounded-md p-4 shadow-xl">
-            <div className="flex flex-col space-y-4">
-              <div className="flex flex-col items-end">
-                {navigationLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    to={link.path}
-                    className="text-white hover:text-pink-500 py-2 px-4 text-right font-light"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
-              {!isAuthenticated && (
-                <div className="flex flex-col items-center w-full space-y-4">
-                  <AnimationButton
-                    onClick={() => {
-                      openModal();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    Login
-                  </AnimationButton>
-                  <AnimationButton
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Get Tokens
-                  </AnimationButton>
-                </div>
-              )}
+        <div className="fixed inset-0 md:hidden bg-black bg-opacity-90 z-60">
+          {isAuthenticated ? (
+            <div className="absolute top-20 right-8">
+              <UserDetails
+                detailsModalOpen={detailsModalOpen}
+                setDetailsModalOpen={setDetailsModalOpen}
+                isFetching={isFetching}
+              />
             </div>
-          </div>
+          ) : (
+            <div className="absolute top-24 right-8 flex flex-col gap-4 bg-stone-900 p-8 items-center justify-center rounded-xl">
+              <a href="https://discord.com/invite/6PmNCezvG4" target="_blank">
+                <AnimationButton>Get Tokens</AnimationButton>
+              </a>
+              <AnimationButton onClick={openModal}>Login</AnimationButton>
+              <ConnectWallets modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} />
+            </div>
+          )}
         </div>
       )}
     </>
