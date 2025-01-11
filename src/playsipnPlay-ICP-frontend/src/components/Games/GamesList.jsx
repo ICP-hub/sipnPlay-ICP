@@ -12,6 +12,8 @@ import "swiper/css/pagination";
 import { Autoplay } from "swiper/modules";
 import { useNavigate } from "react-router-dom";
 import LeaderBoardList from "./LeaderboardList";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
+
 
 const GamesList = () => {
   const { isFetching } = useFetching();
@@ -21,10 +23,24 @@ const GamesList = () => {
   const [showFullTokenomics, setshowFullTokenomics] = useState(false);
   const [showFullDescription, setshowFullDescription] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [startIndex, setStartIndex] = useState(0);
+  const visibleGames = 4; // Number of games visible at once
   const navigate = useNavigate();
 
   const closemodal = () => {
     setShowPopUp(false);
+  };
+
+  const handlePrevious = () => {
+    if (startIndex > 0) {
+      setStartIndex(startIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (startIndex + visibleGames < games.length) {
+      setStartIndex(startIndex + 1);
+    }
   };
 
   const containerVariants = {
@@ -253,23 +269,77 @@ const GamesList = () => {
               </motion.div>
             </div>
 
-            {/* Game list */}
+            {/* Games Navigation */}
+            <div className="relative w-full px-4 md:px-8 mt-8">
             <motion.div
-              className="flex gap-4 mt-8 px-4 md:px-8"
+              className="flex items-center gap-4"
               variants={containerVariants}
             >
-              {games.map((game, index) => (
-                <motion.div
-                  key={game.link}
-                  onClick={() => setCurrentGame(game)}
-                  variants={imageVariants}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Game game={game} />
-                </motion.div>
-              ))}
+              {/* Left Arrow */}
+              <motion.button
+                onClick={() => {
+                  // Find the current game's index in the full games array
+                  const currentIndex = games.findIndex(game => game.link === currentGame.link);
+                  if (currentIndex > 0) {
+                    // Set the previous game as active
+                    setCurrentGame(games[currentIndex - 1]);
+                    // Update startIndex if needed to keep the new active game visible
+                    if (currentIndex - 1 < startIndex) {
+                      setStartIndex(startIndex - 1);
+                    }
+                  }
+                }}
+                className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors cursor-pointer"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FaArrowLeft className="w-6 h-6" />
+              </motion.button>
+
+              {/* Games List */}
+              <div className="flex gap-4 overflow-hidden">
+                {games.slice(startIndex, startIndex + visibleGames).map((game, index) => (
+                  <motion.div
+                    key={game.link}
+                    onClick={() => setCurrentGame(game)}
+                    variants={imageVariants}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative cursor-pointer transition-all duration-300"
+                    style={{
+                      filter: currentGame.link === game.link ? 'none' : 'brightness(0.5) blur(1px)',
+                      transform: currentGame.link === game.link ? 'scale(1.05)' : 'scale(1)',
+                      opacity: currentGame.link === game.link ? 1 : 0.5,
+                    }}
+                  >
+                    <Game game={game} />
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Right Arrow */}
+              <motion.button
+                onClick={() => {
+                  // Find the current game's index in the full games array
+                  const currentIndex = games.findIndex(game => game.link === currentGame.link);
+                  if (currentIndex < games.length - 1) {
+                    // Set the next game as active
+                    setCurrentGame(games[currentIndex + 1]);
+                    // Update startIndex if needed to keep the new active game visible
+                    if (currentIndex + 1 >= startIndex + visibleGames) {
+                      setStartIndex(startIndex + 1);
+                    }
+                  }
+                }}
+                className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors cursor-pointer"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FaArrowRight className="w-6 h-6" />
+              </motion.button>
             </motion.div>
+            </div>
+
           </motion.div>
         )}
       </div>
