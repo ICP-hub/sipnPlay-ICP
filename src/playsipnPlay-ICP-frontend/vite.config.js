@@ -40,6 +40,9 @@ export default defineConfig({
         replacement: fileURLToPath(
           new URL("../declarations", import.meta.url)
         ),
+        assert: 'assert',
+        crypto: 'crypto-browserify',
+        stream: 'stream-browserify',
       },
     ],
   },
