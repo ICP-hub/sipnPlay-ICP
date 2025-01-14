@@ -27,28 +27,38 @@ const LeaderBoardList = ({
   const fetchLeaderboard = async (gameName) => {
     try {
       setIsLoading(true);
-      const [leaderboard, userRank] = await backendActor.get_leaderboard(
+      console.log("Fetching leaderboard for game:", gameName); // Debug log
+
+      const [leaderboardResult, userRankResult] = await backendActor.get_leaderboard(
         gameName
       );
-      if (leaderboard.Err) {
-        console.error("Error fetching Leaderboard", leaderboard.Err);
-      } else {
-        if (leaderboard.Ok) {
-          setLeaderboard(leaderboard.Ok);
-          setUserRank(Number(userRank.toString()));
-        }
+      
+      console.log("Leaderboard response:", leaderboardResult); // Debug log
+      console.log("User rank response:", userRankResult); // Debug log
+
+      if (leaderboardResult.Err) {
+        console.error("Error fetching Leaderboard", leaderboardResult.Err);
+      } else if (leaderboardResult.Ok) {
+        console.log("Setting leaderboard data:", leaderboardResult.Ok); // Debug log
+        setLeaderboard(leaderboardResult.Ok);
+        setUserRank(Number(userRankResult.toString()));
       }
     } catch (error) {
-      console.error("Error fetching Tetris Leaderboard:", error);
+      console.error("Error fetching leaderboard:", error);
       setLeaderboard([]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Add effect dependency on isGameOver
   useEffect(() => {
-    fetchLeaderboard(game.name);
-  }, []);
+    if (game?.name) {
+      console.log("Fetching leaderboard on mount or game over:", game.name); // Debug log
+      fetchLeaderboard(game.name);
+    }
+  }, [game?.name, isGameOver]); // Refetch when game ends
+
 
   return (
     <Modal
