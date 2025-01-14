@@ -1,13 +1,13 @@
 {
-    "compilerOptions": {
-        "strict": true,
-        "target": "ES2020",
-        "experimentalDecorators": true,
-        "strictPropertyInitialization": false,
-        "moduleResolution": "node",
-        "allowJs": true,
-        "outDir": "HACK_BECAUSE_OF_ALLOW_JS",
-        "skipLibCheck": true,
-        "incremental": true
-    }
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2020",
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "moduleResolution": "node",
+    "allowJs": true,
+    "outDir": "HACK_BECAUSE_OF_ALLOW_JS",
+    "skipLibCheck": true,
+    "incremental": true
+  }
 }

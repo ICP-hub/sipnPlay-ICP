@@ -16,7 +16,7 @@ use crate::api_query::{is_approved, is_authenticated};
 use crate::state_handler::read_state;
 use crate::{state_handler::STATE, types::BalanceOfArgs, UserCreationInput};
 use crate::{
-    MessageData, GameData, LeaderboardData, WaitlistData, SortedLeaderboardData, RewardedPlayers,
+    MessageData, LeaderboardData, WaitlistData, SortedLeaderboardData, RewardedPlayers,
     TransferFromResult
 };
 use crate::config::SECURE_SECRET_KEY;
