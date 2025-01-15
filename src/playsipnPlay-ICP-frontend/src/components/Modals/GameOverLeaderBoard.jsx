@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "react-modal";
 import LeaderBoardList from "../Games/LeaderboardList";
 import bgImage from "../../assets/images/waitlistBg.png";
 import { ImCross } from "react-icons/im";
 
 const GameOverLeaderBoard = ({
-  gameName,
+  game, // Changed from gameName to match LeaderBoardList props
   isGameOver,
   shouldShowCross,
   closeModal,
 }) => {
+  // Add state to control leaderboard visibility
+  const [showLeaderboard, setShowLeaderboard] = useState(true);
+
   return (
     <Modal
       isOpen={isGameOver}
@@ -27,8 +30,12 @@ const GameOverLeaderBoard = ({
         className="bg-black relative w-[90%] text-white h-[87%] lg:grid-cols-2 border border-[#696969] rounded-xl px-8 py-4 lg:px-16 lg:py-8 overflow-hidden font-semibold"
       >
         <div className="md:w-[60%] mx-auto">
-          {" "}
-          <LeaderBoardList game={gameName} isGameOver={isGameOver} />
+          <LeaderBoardList 
+            game={game}
+            isGameOver={isGameOver}
+            showLeaderboard={showLeaderboard}
+            setShowLeaderboard={setShowLeaderboard}
+          />
         </div>
         {shouldShowCross && (
           <button
