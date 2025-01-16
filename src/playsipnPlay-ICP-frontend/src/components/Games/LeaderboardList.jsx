@@ -17,7 +17,7 @@ const LeaderBoardList = ({
   showLeaderboard,
   setShowLeaderboard,
 }) => {
-  const [isLoading, setIsLoading] = useState(true); // Set initial loading state to true
+  const [isLoading, setIsLoading] = useState(true);
   const { backendActor } = useAuth();
   const [leaderboard, setLeaderboard] = useState([]);
   const [userRank, setUserRank] = useState(0);
@@ -44,14 +44,12 @@ const LeaderBoardList = ({
     }
   };
 
-  // Reset loading state when modal is opened
   useEffect(() => {
     if (showLeaderboard) {
       setIsLoading(true);
     }
   }, [showLeaderboard]);
 
-  // Fetch data when modal is shown and game name is available
   useEffect(() => {
     if (showLeaderboard && game?.name) {
       fetchLeaderboard(game.name);
@@ -64,7 +62,7 @@ const LeaderBoardList = ({
     <Modal
       isOpen={showLeaderboard}
       contentLabel="Leaderboard Modal"
-      className="fixed inset-4 md:inset-8 lg:inset-12 rounded-xl flex items-center justify-center bg-transparent"
+      className="fixed inset-2 sm:inset-4 md:inset-6 lg:inset-8 rounded-xl flex items-center justify-center bg-transparent"
       overlayClassName="fixed z-[100] inset-0 bg-gray-800 backdrop-filter backdrop-blur-sm rounded-lg bg-opacity-50"
     >
       <div className="w-full h-full flex items-center justify-center">
@@ -83,7 +81,7 @@ const LeaderBoardList = ({
               backgroundPosition: "center",
               color: "white",
             }}
-            className="overflow-y-auto w-full max-w-4xl mx-auto max-h-[90vh] md:max-h-[80vh] rounded-lg p-3 md:p-8 lg:p-16 relative"
+            className="overflow-y-auto w-full max-w-[95vw] sm:max-w-[90vw] md:max-w-[85vw] lg:max-w-[80vw] mx-auto max-h-[96vh] sm:max-h-[92vh] md:max-h-[88vh] lg:max-h-[84vh] rounded-lg p-2 sm:p-3 md:p-6 lg:p-8 relative"
           >
             {!isGameOver && (
               <ImCross
