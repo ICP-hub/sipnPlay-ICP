@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../utils/useAuthClient";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import config from "../utils/config";
 import CryptoJS from "crypto-js";
-import { updateBalance, addUserData } from "../utils/redux/userSlice";
 import LoadingWindow from "../components/Loaders/LoadingWindow";
 import LoadingPopUp from "../components/Loaders/LoadingPopUp";
 import { transferApprove } from "../utils/transApprove";
@@ -13,9 +12,7 @@ import GameOverLeaderBoard from "../components/Modals/GameOverLeaderBoard";
 
 const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
 
-// Function to encrypt the score
 async function encryptScore(data) {
-  // Ensure data is converted to string before encryption
   const encrypted = CryptoJS.AES.encrypt(
     data.toString(),
     CryptoJS.enc.Utf8.parse(ENCRYPTION_KEY),
@@ -27,7 +24,7 @@ async function encryptScore(data) {
   return encrypted.toString();
 }
 
-const InfinityBubble = () => {
+const InfinityBubble = () => {  
   const { isAuthenticated, backendActor, ledgerActor } = useAuth();
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
@@ -35,6 +32,9 @@ const InfinityBubble = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [taskName, setTaskName] = useState("");
   const [isPopUpLoading, setIsPopupLoading] = useState(false);
+
+  // Define game name object
+  const gameName = { name: "Infinity Bubble" }; 
 
   const deductPointsOnGameStart = async () => {
     try {
@@ -44,24 +44,22 @@ const InfinityBubble = () => {
         30,
         false
       );
-      console.log(approveResp)
-    if (approveResp.Ok) {
-      const afterApproval = await backendActor.game_start("Infinity Bubble");
-      if (afterApproval.Ok) {
-        toast.success("Points deducted successfully");
+      if (approveResp.Ok) {
+        const afterApproval = await backendActor.game_start(gameName.name);
+        if (afterApproval.Ok) {
+          toast.success("Points deducted successfully");
+        } else {
+          navigate("/");
+          toast.error("An error occurred during the payment process.");
+        }
       } else {
-        toast.error("An error occurred during the payment process.");
         navigate("/");
-        
+        toast.error("Low balance error");
       }
-    } else {
+    } catch (error) {
+      toast.error(`${error.message}`);
       navigate("/");
-      toast.error("Low balance error");
     }
-  } catch (err) {
-    toast.error(`${err.message}`);
-    navigate("/");
-  }
   };
 
   const getDetails = async () => {
@@ -85,38 +83,42 @@ const InfinityBubble = () => {
         setTaskName("Saving score");
         setIsPopupLoading(true);
         try {
+          console.log("Score received:", event.data.score);
           const encryptedScore = await encryptScore(event.data.score);
+          console.log("Encrypted score:", encryptedScore);
+          
           const resp = await backendActor.game_over(
-            "Infinity Bubble",
+            gameName.name,
             encryptedScore
           );
+          
+          console.log("Game over response:", resp);
           if (resp.Ok) {
             setIsGameOver(true);
             toast.success("Score saved successfully");
           } else {
+            console.error("Game over error:", resp.Err);
             toast.error("Some error occurred");
           }
         } catch (err) {
+          console.error("Error saving score:", err);
           toast.error("Encryption failed");
-          console.error(err);
         } finally {
           setIsPopupLoading(false);
         }
       }
     };
     window.addEventListener("message", handleScore);
-    return () => {
-      window.removeEventListener("message", handleScore);
-    };
+    return () => window.removeEventListener("message", handleScore);
   }, []);
 
   useEffect(() => {
     if (!userData.id || !userData.email) {
-      toast.error("You are not logged in! ");
+      toast.error("You are not logged in!");
       navigate("/");
     } else if (!isAuthenticated) {
       navigate("/");
-      toast.error("You are not logged in! ");
+      toast.error("You are not logged in!");
     } else {
       getDetails();
     }
@@ -137,34 +139,29 @@ const InfinityBubble = () => {
       }
     };
     window.addEventListener("message", handleGameStart);
-    return () => {
-      window.removeEventListener("message", handleGameStart);
-    };
+    return () => window.removeEventListener("message", handleGameStart);
   }, []);
-
-  // Created this object because there was some problem in passing props, this gameName1 is passed to GameOverLeaderboard below.
-  const gameName1 = { name: "Infinity Bubble" };
 
   return (
     <div>
       {isGameOver && (
         <GameOverLeaderBoard
-          gameName={gameName1}
+          game={gameName}
           isGameOver={true}
           shouldShowCross={true}
           closeModal={() => setIsGameOver(false)}
         />
       )}
       {isLoading ? (
-        <LoadingWindow gameName="infinity_bubble" />
+        <LoadingWindow gameName="infinity_bubble" /> 
       ) : (
         <div>
           {isPopUpLoading && (
-            <LoadingPopUp gameName="infinity_bubble" taskName={taskName} />
+            <LoadingPopUp gameName="infinity_bubble" taskName={taskName} /> 
           )}
           <iframe
-            title="Infinity Bubble"
-            src="bubble/index.html"
+            title="Infinity Bubble" 
+            src="bubble/index.html" 
             style={{ width: "100vw", height: "100vh", border: "none" }}
           />
         </div>
@@ -173,4 +170,4 @@ const InfinityBubble = () => {
   );
 };
 
-export default InfinityBubble;
+export default InfinityBubble; // or BlockTap

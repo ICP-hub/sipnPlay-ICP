@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../utils/useAuthClient";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import config from "../utils/config";
 import CryptoJS from "crypto-js";
@@ -12,9 +12,7 @@ import GameOverLeaderBoard from "../components/Modals/GameOverLeaderBoard";
 
 const ENCRYPTION_KEY = config.ENCRYPTION_KEY;
 
-// Function to encrypt the score
 async function encryptScore(data) {
-  // Ensure data is converted to string before encryption
   const encrypted = CryptoJS.AES.encrypt(
     data.toString(),
     CryptoJS.enc.Utf8.parse(ENCRYPTION_KEY),
@@ -26,10 +24,6 @@ async function encryptScore(data) {
   return encrypted.toString();
 }
 
-function encryptData(data, key) {
-  return CryptoJS.AES.encrypt(data, key).toString();
-}
-
 const BlockTap = () => {
   const { isAuthenticated, backendActor, ledgerActor } = useAuth();
   const navigate = useNavigate();
@@ -38,6 +32,9 @@ const BlockTap = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [taskName, setTaskName] = useState("");
   const [isPopUpLoading, setIsPopupLoading] = useState(false);
+
+  // Define game name object
+  const gameName = { name: "Block Tap" };
 
   const deductPointsOnGameStart = async () => {
     try {
@@ -48,7 +45,7 @@ const BlockTap = () => {
         false
       );
       if (approveResp.Ok) {
-        const afterApproval = await backendActor.game_start("Block Tap");
+        const afterApproval = await backendActor.game_start(gameName.name);
         if (afterApproval.Ok) {
           toast.success("Points deducted successfully");
         } else {
@@ -72,14 +69,6 @@ const BlockTap = () => {
       if (res.Err === "New user") {
         navigate("/");
         toast.error("Please provide your email");
-      } else {
-        const userHighScore = await backendActor.get_high_score("Block Tap");
-        console.log("userhighscore ", userHighScore.Ok);
-        const encryptedUserHighScore = encryptData(
-          userHighScore.Ok.toString(),
-          "Abh67_#fbau-@y74_7A_0nm6je7"
-        );
-        localStorage.setItem("BestScore", encryptedUserHighScore);
       }
     } catch (err) {
       console.log("getDetails Error", err.message);
@@ -94,38 +83,42 @@ const BlockTap = () => {
         setTaskName("Saving score");
         setIsPopupLoading(true);
         try {
+          console.log("Score received:", event.data.score);
           const encryptedScore = await encryptScore(event.data.score);
+          console.log("Encrypted score:", encryptedScore);
+          
           const resp = await backendActor.game_over(
-            "Block Tap",
+            gameName.name,
             encryptedScore
           );
+          
+          console.log("Game over response:", resp);
           if (resp.Ok) {
             setIsGameOver(true);
             toast.success("Score saved successfully");
           } else {
+            console.error("Game over error:", resp.Err);
             toast.error("Some error occurred");
           }
         } catch (err) {
+          console.error("Error saving score:", err);
           toast.error("Encryption failed");
-          console.error(err);
         } finally {
           setIsPopupLoading(false);
         }
       }
     };
     window.addEventListener("message", handleScore);
-    return () => {
-      window.removeEventListener("message", handleScore);
-    };
+    return () => window.removeEventListener("message", handleScore);
   }, []);
 
   useEffect(() => {
     if (!userData.id || !userData.email) {
-      toast.error("You are not logged in! ");
+      toast.error("You are not logged in!");
       navigate("/");
     } else if (!isAuthenticated) {
       navigate("/");
-      toast.error("You are not logged in! ");
+      toast.error("You are not logged in!");
     } else {
       getDetails();
     }
@@ -146,19 +139,14 @@ const BlockTap = () => {
       }
     };
     window.addEventListener("message", handleGameStart);
-    return () => {
-      window.removeEventListener("message", handleGameStart);
-    };
+    return () => window.removeEventListener("message", handleGameStart);
   }, []);
-
-  // Created this object because there was some problem in passing props, this gameName1 is passed to GameOverLeaderboard below.
-  const gameName1 = { name: "Block Tap" };
 
   return (
     <div>
       {isGameOver && (
         <GameOverLeaderBoard
-          gameName={gameName1}
+          game={gameName}
           isGameOver={true}
           shouldShowCross={true}
           closeModal={() => setIsGameOver(false)}

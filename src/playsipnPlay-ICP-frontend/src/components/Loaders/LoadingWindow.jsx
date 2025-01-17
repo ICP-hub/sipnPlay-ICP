@@ -25,30 +25,32 @@ const LoadingWindow = ({ gameName }) => {
     default:
       gameImage = logo;
   }
+
   return (
     <div
-      className="p-8 min-h-screen flex flex-col justify-between"
+      className="p-4 h-screen flex flex-col"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div>
+      <div className="h-16 md:h-24">
         <img
-          className="max-h-fit aspect-auto object-cover"
+          className="h-full w-auto object-contain"
           draggable="false"
           src={logo}
         />
       </div>
-      <div className="flex flex-grow flex-col justify-center items-center">
+      
+      <div className="flex-1 flex flex-col justify-center items-center gap-8">
         <img
-          className="block min-h-[130px] sm:min-h-[201px] md:min-h-[320px] object-cover"
+          className="h-32 sm:h-48 md:h-64 w-auto object-contain"
           draggable="false"
           src={gameImage}
         />
         {/* Loader */}
-        <div className="loader flex justify-center items-center my-8">
+        <div className="loader flex justify-center items-center">
           <div className={`${styles.coloredDot}`}></div>
           <div className={`${styles.dot} ${styles.dot1}`}></div>
           <div className={`${styles.dot} ${styles.dot2}`}></div>
