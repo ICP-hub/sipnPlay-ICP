@@ -24,7 +24,7 @@ async function encryptScore(data) {
   return encrypted.toString();
 }
 
-const InfinityBubble = () => {  // or BlockTap for BlockTap.js
+const InfinityBubble = () => {  
   const { isAuthenticated, backendActor, ledgerActor } = useAuth();
   const navigate = useNavigate();
   const userData = useSelector((state) => state.user);
@@ -34,7 +34,7 @@ const InfinityBubble = () => {  // or BlockTap for BlockTap.js
   const [isPopUpLoading, setIsPopupLoading] = useState(false);
 
   // Define game name object
-  const gameName = { name: "Infinity Bubble" }; // or "Block Tap" for BlockTap.js
+  const gameName = { name: "Infinity Bubble" }; 
 
   const deductPointsOnGameStart = async () => {
     try {
@@ -153,15 +153,15 @@ const InfinityBubble = () => {  // or BlockTap for BlockTap.js
         />
       )}
       {isLoading ? (
-        <LoadingWindow gameName="infinity_bubble" /> // or "block_tap" for BlockTap.js
+        <LoadingWindow gameName="infinity_bubble" /> 
       ) : (
         <div>
           {isPopUpLoading && (
-            <LoadingPopUp gameName="infinity_bubble" taskName={taskName} /> // or "block_tap" for BlockTap.js
+            <LoadingPopUp gameName="infinity_bubble" taskName={taskName} /> 
           )}
           <iframe
-            title="Infinity Bubble" // or "Block Tap" for BlockTap.js
-            src="bubble/index.html" // or "blocktap_v2/index.html" for BlockTap.js
+            title="Infinity Bubble" 
+            src="bubble/index.html" 
             style={{ width: "100vw", height: "100vh", border: "none" }}
           />
         </div>
