@@ -5,12 +5,11 @@ import bgImage from "../../assets/images/waitlistBg.png";
 import { ImCross } from "react-icons/im";
 
 const GameOverLeaderBoard = ({
-  game, // Changed from gameName to match LeaderBoardList props
+  game,
   isGameOver,
   shouldShowCross,
   closeModal,
 }) => {
-  // Add state to control leaderboard visibility
   const [showLeaderboard, setShowLeaderboard] = useState(true);
 
   return (
@@ -30,7 +29,7 @@ const GameOverLeaderBoard = ({
         className="bg-black relative w-[90%] text-white h-[87%] lg:grid-cols-2 border border-[#696969] rounded-xl px-8 py-4 lg:px-16 lg:py-8 overflow-hidden font-semibold"
       >
         <div className="md:w-[60%] mx-auto">
-          <LeaderBoardList 
+          <LeaderBoardList
             game={game}
             isGameOver={isGameOver}
             showLeaderboard={showLeaderboard}

@@ -25,13 +25,18 @@ const LeaderBoardList = ({
   useDisableScroll(showLeaderboard);
 
   const fetchLeaderboard = async (gameName) => {
+    console.log("Fetching leaderboard for game:", gameName);
     try {
       const [leaderboardResult, userRankResult] = await backendActor.get_leaderboard(
         gameName
       );
       
+      console.log("Leaderboard Result:", leaderboardResult);
+      console.log("User Rank Result:", userRankResult);
+
       if (leaderboardResult.Err) {
         console.error("Error fetching Leaderboard", leaderboardResult.Err);
+        toast.error("Error fetching leaderboard");
       } else if (leaderboardResult.Ok) {
         setLeaderboard(leaderboardResult.Ok);
         setUserRank(Number(userRankResult.toString()));
@@ -39,6 +44,7 @@ const LeaderBoardList = ({
     } catch (error) {
       console.error("Error fetching leaderboard:", error);
       setLeaderboard([]);
+      toast.error("Failed to load leaderboard");
     } finally {
       setIsLoading(false);
     }
@@ -47,9 +53,12 @@ const LeaderBoardList = ({
   useEffect(() => {
     if (showLeaderboard) {
       setIsLoading(true);
+      if (game?.name) {
+        console.log("Initiating leaderboard fetch for:", game.name);
+        fetchLeaderboard(game.name);
+      }
     }
-  }, [showLeaderboard]);
-
+  }, [showLeaderboard, game?.name, isGameOver]);
   useEffect(() => {
     if (showLeaderboard && game?.name) {
       fetchLeaderboard(game.name);
