@@ -48,26 +48,26 @@ const GameOverLeaderBoard = ({ game, isGameOver, closeModal }) => {
       onRequestClose={closeModal}
       contentLabel="GameOver Modal"
       className="fixed inset-2 sm:inset-4 md:inset-6 lg:inset-8 rounded-xl flex items-center justify-center bg-transparent"
-      overlayClassName="fixed z-[100] inset-0 bg-gray-800 backdrop-filter backdrop-blur-sm bg-opacity-50"
+      overlayClassName="fixed z-[100] inset-0 bg-black/10 backdrop-blur-sm"
     >
       <div className="w-full h-full flex items-center justify-center">
         {isLoading ? (
           <Oval color="#ee3ec9" secondaryColor="#fff" height={48} width={48} />
         ) : (
-          <div className="overflow-y-auto w-full max-w-[95vw] sm:max-w-[90vw] md:max-w-[85vw] lg:max-w-[80vw] mx-auto max-h-[96vh] sm:max-h-[92vh] md:max-h-[88vh] lg:max-h-[84vh] rounded-lg p-2 sm:p-3 md:p-6 lg:p-8 relative bg-black bg-opacity-90 text-white border border-[#EE3EC9]">
+          <div className="overflow-y-auto w-full max-w-[95vw] sm:max-w-[90vw] md:max-w-[85vw] lg:max-w-[80vw] mx-auto max-h-[96vh] sm:max-h-[92vh] md:max-h-[88vh] lg:max-h-[84vh] rounded-lg p-2 sm:p-3 md:p-6 lg:p-8 relative bg-black/60 backdrop-blur-sm text-white">
             <div className="absolute right-4 top-4 flex items-center gap-4">
               <ImCross
-                className="cursor-pointer"
+                className="cursor-pointer text-white"
                 onClick={handleHomeClick}
                 size={20}
               />
             </div>
 
-            <h3 className="text-center mx-[5%] md:mx-[9%] mb-2 md:mb-4 font-bold text-lg md:text-xl mt-6 md:mt-8">
+            <h3 className="text-center mx-[5%] md:mx-[9%] font-monckeberg mb-2 md:mb-4 font-bold text-lg md:text-xl mt-6 md:mt-8">
               Leaderboard
             </h3>
-            <p className="font-medium mb-16 md:mb-24 lg:mb-28 text-sm md:text-base text-center">
-              <span className="font-bold">NOTE: </span>
+            <p className="font-[500] font-adam mb-16 md:mb-24 lg:mb-28 text-sm md:text-base text-center">
+              <span className="font-bold ">NOTE : </span>
               The leaderboard updates every 2 minutes
             </p>
 
