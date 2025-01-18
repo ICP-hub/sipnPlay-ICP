@@ -33,43 +33,84 @@ function encryptData(data, key) {
 const Tetris = () => {
   const { isAuthenticated, backendActor, principal, ledgerActor } = useAuth();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const userData = useSelector((state) => state.user);
+  
   const [isGameOver, setIsGameOver] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [taskName, setTaskName] = useState("");
   const [isPopUpLoading, setIsPopupLoading] = useState(false);
-  const navigate = useNavigate();
-  const userData = useSelector((state) => state.user);
+
+  // Define game name object consistently
+  const gameName = { name: "Tetris" };
 
   useEffect(() => {
     const tagManagerArgs = {
       dataLayer: {
         event: "pageView",
         page: "TetrisPage",
-        game: "Tetris",
+        game: gameName.name,
       },
     };
     TagManager.dataLayer(tagManagerArgs);
   }, []);
 
   const getBalance = async () => {
-    let balance = await backendActor.get_caller_balance();
-    console.log(balance);
-    let metaData = null;
-    await ledgerActor
-      .icrc1_metadata()
-      .then((res) => {
-        metaData = formatTokenMetaData(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    try {
+      const balance = await backendActor.get_caller_balance();
+      console.log("Balance response:", balance);
+      
+      const metaData = await ledgerActor.icrc1_metadata()
+        .then(res => formatTokenMetaData(res))
+        .catch(err => {
+          console.error("Metadata error:", err);
+          return null;
+        });
 
-    let amnt = parseFloat(
-      Number(balance.Ok) *
-      Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
-    );
-    dispatch(updateBalance({ balance: amnt }));
-    return amnt;
+      if (!metaData) {
+        throw new Error("Failed to fetch token metadata");
+      }
+
+      const amnt = parseFloat(
+        Number(balance.Ok) * 
+        Math.pow(10, -1 * parseInt(metaData?.["icrc1:decimals"]))
+      );
+      
+      dispatch(updateBalance({ balance: amnt }));
+      return amnt;
+    } catch (error) {
+      console.error("Get balance error:", error);
+      throw error;
+    }
+  };
+
+  const deductPointsOnGameStart = async () => {
+    try {
+      const approveResp = await transferApprove(
+        backendActor,
+        ledgerActor,
+        30,
+        false
+      );
+      
+      if (approveResp.Ok) {
+        const afterApproval = await backendActor.game_start(gameName.name);
+        if (afterApproval.Ok) {
+          toast.success("Points deducted successfully");
+          return true;
+        } else {
+          toast.error("An error occurred during the payment process.");
+          return false;
+        }
+      } else {
+        toast.error("Low balance error");
+        return false;
+      }
+    } catch (error) {
+      console.error("Deduct points error:", error);
+      toast.error(error.message);
+      return false;
+    }
   };
 
   const getDetails = async () => {
@@ -79,63 +120,49 @@ const Tetris = () => {
       if (res.Err === "New user") {
         navigate("/");
         toast.error("Please provide your email");
-      } else {
-        const approveResp = await transferApprove(
-          backendActor,
-          ledgerActor,
-          30,
-          false
-        );
-        if (approveResp.Ok) {
-          const afterApproval = await backendActor.game_start("Tetris");
-          if (afterApproval.Ok) {
-            toast.success("Tokens deducted successfully");
-          } else {
-            navigate("/");
-            toast.error("An error occurred during the payment process.");
-          }
-        } else {
-          navigate("/");
-          toast.error("Low balance error");
-        }
-
-        // Gracefully handle high score retrieval
-        try {
-          const userHighScore = await backendActor.get_high_score("Tetris");
-          if (userHighScore.Err) {
-            toast.success("Welcome user!");
-            const Zeroscore = encryptData("0", "Abh67_#fbau-@y74_7A_0nm6je7");
-            localStorage.setItem("BestScore", Zeroscore);
-          } else {
-            const encryptedUserHighScore = encryptData(
-              userHighScore.Ok.toString(),
-              "Abh67_#fbau-@y74_7A_0nm6je7"
-            );
-            localStorage.setItem("BestScore", encryptedUserHighScore);
-          }
-        } catch (highScoreError) {
-          toast.error("Failed to retrieve high score");
-          console.error("High score retrieval error", highScoreError);
-        }
-
-        // Handle balance retrieval
-        try {
-          const amnt = await getBalance();
-          dispatch(
-            addUserData({
-              id: principal.toString(),
-              email: res.Ok.email,
-              balance: amnt,
-            })
-          );
-        } catch (balanceError) {
-          toast.error("Failed to retrieve balance");
-          console.error("Balance retrieval error", balanceError);
-        }
+        return;
       }
-    } catch (err) {
-      toast.error(`Error: ${err.message}`);
-      console.error("getDetails Error", err.message);
+
+      // Deduct points first
+      const deductionSuccessful = await deductPointsOnGameStart();
+      if (!deductionSuccessful) {
+        navigate("/");
+        return;
+      }
+
+      // Get high score
+      try {
+        const userHighScore = await backendActor.get_high_score(gameName.name);
+        const encryptionKey = "Abh67_#fbau-@y74_7A_0nm6je7";
+        
+        if (userHighScore.Err) {
+          const zeroScore = encryptData("0", encryptionKey);
+          localStorage.setItem("BestScore", zeroScore);
+        } else {
+          const encryptedScore = encryptData(
+            userHighScore.Ok.toString(),
+            encryptionKey
+          );
+          localStorage.setItem("BestScore", encryptedScore);
+        }
+      } catch (error) {
+        console.error("High score error:", error);
+        toast.error("Failed to retrieve high score");
+      }
+
+      // Get balance and update user data
+      const balance = await getBalance();
+      dispatch(
+        addUserData({
+          id: principal.toString(),
+          email: res.Ok.email,
+          balance: balance,
+        })
+      );
+
+    } catch (error) {
+      console.error("getDetails error:", error);
+      toast.error(`Error: ${error.message}`);
       navigate("/");
     } finally {
       setIsLoading(false);
@@ -154,76 +181,76 @@ const Tetris = () => {
 
   useEffect(() => {
     if (!userData.id || !userData.email) {
-      toast.error("You are not logged in! ");
+      toast.error("You are not logged in!");
       navigate("/");
     } else if (!isAuthenticated) {
       navigate("/");
-      toast.error("You are not logged in! ");
+      toast.error("You are not logged in!");
     } else {
       getDetails();
     }
   }, []);
 
   useEffect(() => {
-    // The handleScore function
     const handleScore = async (event) => {
       if (event.data?.type === "save_score") {
         setTaskName("Saving score");
         setIsPopupLoading(true);
         try {
+          console.log("Received score:", event.data.score);
           const encryptedScore = await encryptScore(event.data.score);
-          const resp = await backendActor.game_over("Tetris", encryptedScore);
+          console.log("Encrypted score:", encryptedScore);
+          
+          const resp = await backendActor.game_over(gameName.name, encryptedScore);
+          console.log("Game over response:", resp);
+          
           if (resp.Ok) {
             setIsGameOver(true);
             toast.success("Score saved successfully");
           } else {
-            toast.error("Some error occurred");
+            console.error("Game over error:", resp.Err);
+            toast.error("Failed to save score");
           }
-        } catch (err) {
-          toast.error("Encryption failed");
-          console.error(err);
+        } catch (error) {
+          console.error("Score saving error:", error);
+          toast.error("Failed to encrypt score");
+        } finally {
+          setIsPopupLoading(false);
         }
-
-        setIsPopupLoading(false);
       }
     };
+    
     window.addEventListener("message", handleScore);
-    return () => {
-      window.removeEventListener("message", handleScore);
-    };
+    return () => window.removeEventListener("message", handleScore);
   }, []);
 
+  // Prevent accidental navigation
   useEffect(() => {
-    console.log("UPDATED BALANCE", userData.balance);
-  }, [userData.balance]);
-
-  useEffect(() => {
-    // Beforeunload handler
     const handleBeforeUnload = (event) => {
       event.preventDefault();
+      event.returnValue = "";
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
-
-  const gameName1 = { name: "Tetris" };
 
   return (
     <div>
       {isGameOver && (
-        <GameOverLeaderBoard gameName={gameName1} isGameOver={true} />
+        <GameOverLeaderBoard
+          game={gameName}
+          isGameOver={true}
+          shouldShowCross={true}
+          closeModal={() => setIsGameOver(false)}
+        />
       )}
       {isLoading ? (
         <LoadingWindow gameName="tetris" />
       ) : (
         <div>
-          <div className="absolute  mx-[9%] mt-4">
-            <div className="text-white font-mono font-[400] text-[18px] md:text-[26px] ">
-              {" "}
+          <div className="absolute mx-[9%] mt-4">
+            <div className="text-white font-mono font-[400] text-[18px] md:text-[26px]">
               TSIP: {userData.balance}
             </div>
           </div>
