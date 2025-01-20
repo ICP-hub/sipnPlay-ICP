@@ -66,6 +66,14 @@ const Rewards = () => {
         >
           Infinity Bubble
         </div>
+        <div
+          className={`hover:bg-stone-600 ${
+            gameName === "Block Tap" ? "bg-stone-600" : ""
+          } rounded-2xl py-3 cursor-pointer transition-colors duration-300`}
+          onClick={() => handleLinkClick("Block Tap")}
+        >
+          Block Tap
+        </div>
       </div>
       {isLoading ? (
         <Oval
