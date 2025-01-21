@@ -11,6 +11,7 @@ import { useFetching } from "../../utils/fetchingContext";
 import { Link } from "react-router-dom";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { RxCross1 } from "react-icons/rx";
+import { ToastContainer } from "react-toastify";
 
 const Header = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -141,25 +142,25 @@ const Header = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2"
+          className="md:hidden p-2 z-50"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? (
             <RxCross1 className="h-7 w-7" />
           ) : (
-            <RxHamburgerMenu
-              className="h-7 w-7"
-              onClick={() => setDetailsModalOpen(true)}
-            />
+            <RxHamburgerMenu className="h-7 w-7" />
           )}
         </button>
       </nav>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 md:hidden bg-black bg-opacity-90 z-60">
+        <div 
+          className="fixed inset-0 md:hidden bg-black bg-opacity-90 z-60"
+          onClick={(e) => e.stopPropagation()}
+        >
           {isAuthenticated ? (
-            <div className="absolute top-20 right-8">
+            <div className="absolute top-20 right-8" onClick={(e) => e.stopPropagation()}>
               <UserDetails
                 detailsModalOpen={detailsModalOpen}
                 setDetailsModalOpen={setDetailsModalOpen}
@@ -177,6 +178,7 @@ const Header = () => {
           )}
         </div>
       )}
+        <ToastContainer/>
     </>
   );
 };
