@@ -179,17 +179,17 @@ const Tetris = () => {
     return resultObject;
   };
 
-  // useEffect(() => {
-  //   if (!userData.id || !userData.email) {
-  //     toast.error("You are not logged in!");
-  //     navigate("/");
-  //   } else if (!isAuthenticated) {
-  //     navigate("/");
-  //     toast.error("You are not logged in!");
-  //   } else {
-  //     getDetails();
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!userData.id || !userData.email) {
+      toast.error("You are not logged in!");
+      navigate("/");
+    } else if (!isAuthenticated) {
+      navigate("/");
+      toast.error("You are not logged in!");
+    } else {
+      getDetails();
+    }
+  }, []);
 
   useEffect(() => {
     const handleScore = async (event) => {
