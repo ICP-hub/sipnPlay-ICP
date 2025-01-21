@@ -179,17 +179,17 @@ const Tetris = () => {
     return resultObject;
   };
 
-  useEffect(() => {
-    if (!userData.id || !userData.email) {
-      toast.error("You are not logged in!");
-      navigate("/");
-    } else if (!isAuthenticated) {
-      navigate("/");
-      toast.error("You are not logged in!");
-    } else {
-      getDetails();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!userData.id || !userData.email) {
+  //     toast.error("You are not logged in!");
+  //     navigate("/");
+  //   } else if (!isAuthenticated) {
+  //     navigate("/");
+  //     toast.error("You are not logged in!");
+  //   } else {
+  //     getDetails();
+  //   }
+  // }, []);
 
   useEffect(() => {
     const handleScore = async (event) => {
@@ -205,6 +205,12 @@ const Tetris = () => {
           console.log("Game over response:", resp);
           
           if (resp.Ok) {
+            // Exit fullscreen when game is over
+            if (document.fullscreenElement) {
+              document.exitFullscreen().catch((err) => {
+                console.error("Error exiting fullscreen:", err);
+              });
+            }
             setIsGameOver(true);
             toast.success("Score saved successfully");
           } else {
