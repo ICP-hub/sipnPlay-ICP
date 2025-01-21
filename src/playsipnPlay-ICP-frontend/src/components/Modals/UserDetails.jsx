@@ -68,25 +68,18 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
   }
 
   useEffect(() => {
-    function handleClick(e) {
-      if (ref.current && !ref.current.contains(e.target)) {
-        closeModal();
-      }
-    }
-
     function handleKeyDown(e) {
       if (e.key === "Escape") {
         closeModal();
       }
     }
-
-    document.addEventListener("click", handleClick, true);
+  
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener("click", handleClick, true);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
 
   return (
     <>
@@ -105,32 +98,29 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
           )}
         </HeaderButton>
       </div>
-      {detailsModalOpen && (
-        <div 
-          className="inset-0 z-20 flex items-center justify-center"
-          onClick={(e) => e.stopPropagation()}
+    {detailsModalOpen && (
+      <div className="inset-0 z-20 flex items-center justify-center">
+        <div
+          style={{
+            backgroundImage: `url(${bgImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+          className="absolute right-4 top-10 p-4 my-4 md:top-16 md:p-6 md:right-16 md:h-80 lg:top-16 lg:right-24 lg:h-96 lg:w-72 lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4 backdrop-filter backdrop-blur-lg bg-black min-h-fit"
+          ref={ref}
         >
-          <div
-            style={{
-              backgroundImage: `url(${bgImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-            className="absolute right-4 top-10 p-4 my-4 md:top-16 md:p-6 md:right-16 md:h-80 lg:top-16 lg:right-24 lg:h-96 lg:w-72 lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4 backdrop-filter backdrop-blur-lg bg-black min-h-fit"
-            ref={ref}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-end mb-4">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  closeModal();
-                }}
-                className="text-white absolute top-8 right-8"
-              >
-                <ImCross />
-              </button>
-            </div>
+          {/* Keep only the cross button's click handler */}
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                closeModal();
+              }}
+              className="text-white absolute top-8 right-8"
+            >
+              <ImCross />
+            </button>
+          </div>
 
             {isFetching ? (
               <div className="flex flex-col justify-start items-center gap-2 mb-4">
