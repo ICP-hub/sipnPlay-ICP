@@ -80,7 +80,6 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
     };
   }, []);
 
-
   return (
     <>
       <div className="flex">
@@ -106,7 +105,12 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
-          className="absolute right-4 top-10 p-4 my-4 md:top-16 md:p-6 md:right-16 md:h-80 lg:top-16 lg:right-24 lg:h-96 lg:w-72 lg:p-8 rounded-3xl flex flex-col justify-center items-center gap-4 backdrop-filter backdrop-blur-lg bg-black min-h-fit"
+          className="absolute right-4 top-10 p-4 my-4 
+                      md:top-16 md:p-6 md:right-16 md:h-80 
+                      lg:top-16 lg:right-24 lg:h-96 lg:w-72 lg:p-8 
+                      rounded-3xl flex flex-col justify-center items-center gap-4 
+                      backdrop-filter backdrop-blur-lg bg-black 
+                      min-h-fit w-[80vw] sm:w-[80%] md:w-[50%] lg:w-72"
           ref={ref}
         >
           {/* Keep only the cross button's click handler */}
@@ -156,10 +160,6 @@ const UserDetails = ({ detailsModalOpen, setDetailsModalOpen, isFetching }) => {
                       <button 
                         className="cursor-pointer p-2" 
                         onClick={handleCopyClick}
-                        onTouchStart={(e) => {
-                          e.stopPropagation();
-                          handleCopyClick(e);
-                        }}
                       >
                         {isPrincipalCopied ? (
                           <div className="relative flex flex-col justify-between">
