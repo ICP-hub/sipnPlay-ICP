@@ -10,7 +10,7 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     rollupOptions: {
-      external: ['js-sha256'],
+      external: [],
     },
   },
   optimizeDeps: {
