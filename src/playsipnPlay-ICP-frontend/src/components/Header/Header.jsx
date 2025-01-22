@@ -121,9 +121,7 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex gap-6">
-          <a href="https://discord.com/invite/6PmNCezvG4" target="_blank">
-            <AnimationButton>Get Tokens</AnimationButton>
-          </a>
+          
           {isAuthenticated ? (
             <>
               <UserDetails
@@ -159,8 +157,11 @@ const Header = () => {
           className="fixed inset-0 md:hidden bg-black bg-opacity-90 z-60"
           onClick={(e) => e.stopPropagation()}
         >
+          <a href="https://discord.com/invite/6PmNCezvG4" target="_blank" className="absolute top-20 right-8">
+            <AnimationButton>Get Tokens</AnimationButton>
+          </a>
           {isAuthenticated ? (
-            <div className="absolute top-20 right-8" onClick={(e) => e.stopPropagation()}>
+            <div className="absolute top-32 right-8 " onClick={(e) => e.stopPropagation()}>
               <UserDetails
                 detailsModalOpen={detailsModalOpen}
                 setDetailsModalOpen={setDetailsModalOpen}
