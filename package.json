@@ -28,6 +28,7 @@
     "caniuse-lite": "^1.0.30001690",
     "crypto-browserify": "^3.12.1",
     "crypto-js": "^4.2.0",
+    "esbuild": "^0.24.2",
     "framer-motion": "^11.17.0",
     "react-gtm-module": "^2.0.11",
     "react-hot-toast": "^2.4.1",

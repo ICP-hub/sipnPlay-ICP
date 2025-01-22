@@ -13,6 +13,7 @@ const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("waitlist");
   const [waitlist, setWaitlist] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
@@ -44,6 +45,29 @@ const AdminPanel = () => {
     } catch (error) {
       console.error("Error fetching waitlist data:", error);
       toast.error("Error fetching waitlist data");
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await backendActor.get_all_users();
+      console.log("All users", response);
+      if ("Err" in response) {
+        toast.error(response.Err);
+        setLoading(false);
+      } else {
+        const processedUsers = response.Ok.map((user, index) => ({
+          ...user,
+          number: index + 1,
+          date: BigInt(Date.now() * 1000000) // Converting current timestamp to nanoseconds
+        }));
+        setUsers(processedUsers);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      toast.error("Error fetching user data");
     }
   };
 
@@ -102,12 +126,27 @@ const AdminPanel = () => {
         fetchWaitlist();
       } else if (activeSection === "messages") {
         fetchMessages();
+      } else if (activeSection === "users") {
+        fetchUsers();
       }
     }
   }, [activeSection, isLoggedIn]);
 
   const handleDownload = () => {
-    const data = activeSection === "waitlist" ? waitlist : messages;
+    let data;
+    switch (activeSection) {
+      case "waitlist":
+        data = waitlist;
+        break;
+      case "messages":
+        data = messages;
+        break;
+      case "users":
+        data = users;
+        break;
+      default:
+        data = [];
+    }
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, activeSection);
@@ -170,39 +209,42 @@ const AdminPanel = () => {
         <div className="flex justify-around">
           <button
             onClick={() => setActiveSection("waitlist")}
-            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
-              activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
-            }`}
+            className={`w-full py-4 min-h-full text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "waitlist" ? "bg-[#ee3ec9] " : "bg-black "
+              }`}
           >
             Waitlist
           </button>
           <button
+            onClick={() => setActiveSection("users")}
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "users" ? "bg-[#EE3EC9] " : "bg-black "
+              }`}
+          >
+            Users
+          </button>
+          <button
             onClick={() => setActiveSection("messages")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${
-              activeSection === "messages"
-                ? "bg-[#EE3EC9] text-white"
-                : "bg-black "
-            }`}
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300 ${activeSection === "messages"
+              ? "bg-[#EE3EC9] text-white"
+              : "bg-black "
+              }`}
           >
             Messages
           </button>
           <button
             onClick={() => setActiveSection("resources")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${
-              activeSection === "resources"
-                ? "bg-[#EE3EC9] "
-                : "bg-black text-white"
-            }`}
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${activeSection === "resources"
+              ? "bg-[#EE3EC9] "
+              : "bg-black text-white"
+              }`}
           >
             Resources
           </button>
           <button
             onClick={() => setActiveSection("rewards")}
-            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${
-              activeSection === "rewards"
-                ? "bg-[#EE3EC9] "
-                : "bg-black text-white"
-            }`}
+            className={`w-full py-2 text-white rounded-lg hover:bg-[#e665ca] hover:rounded-lg transition-colors duration-300  ${activeSection === "rewards"
+              ? "bg-[#EE3EC9] "
+              : "bg-black text-white"
+              }`}
           >
             Rewards
           </button>
@@ -220,6 +262,9 @@ const AdminPanel = () => {
         <div>
           {activeSection === "waitlist" && (
             <PaginatedData title="Principal" data={waitlist} />
+          )}
+          {activeSection === "users" && (
+            <PaginatedData title="Users" data={users} />
           )}
           {activeSection === "messages" && (
             <PaginatedData title="Messages" data={messages} />
