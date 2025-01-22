@@ -52,7 +52,6 @@ const AdminPanel = () => {
     try {
       setLoading(true);
       const response = await backendActor.get_all_users();
-      console.log("All users", response);
       if ("Err" in response) {
         toast.error(response.Err);
         setLoading(false);
