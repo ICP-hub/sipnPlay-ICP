@@ -14,7 +14,8 @@ const APPROVED_PRINCIPALS: &[&str] = &[
     "2xtmc-5eo2k-c5422-e3fih-uyjbn-fiefs-u72o7-xgn4m-kveqk-7unet-3qe", // Chandan sir's plug
     "4hsxq-rcsvl-rw2wr-5i5ha-gttgh-ekyeu-wsawq-2tuib-2hyul-7hpzc-zqe", // Somiya Behera's Plug
     "ld4p7-wr47n-c4du2-g2brs-l3ueh-waqi3-m36uj-wkzzn-gpxm3-5yym7-qqe", // Somiya Behera's ICP
-    "57sj2-6uilb-7r5ib-xxfdu-24nn5-ievyg-w3xp2-j5hpq-5esuf-pslkd-fae", //Toshak 
+    "57sj2-6uilb-7r5ib-xxfdu-24nn5-ievyg-w3xp2-j5hpq-5esuf-pslkd-fae", // Toshak 
+    "3wrby-heoyj-sjyol-ndjy6-qhq25-nzyph-aynog-hrwww-6ayt7-bhoed-qqe"  // Harshya
 ];
 
 // Function to check if the caller is approved
