@@ -49,6 +49,29 @@ pub fn get_user() -> Result<UserCreationInput, String> {
     })
 }
 
+// Get all users
+#[ic_cdk::query]
+pub fn get_all_users() -> Result<Vec<UserCreationInput>, String> {
+    if !is_approved() {
+        return Err("You are not approved".to_string());
+    }
+
+    let users: Vec<UserCreationInput> = STATE.with(|state| {
+        state
+            .borrow()
+            .user_data
+            .iter()
+            .map(|(_, data)| data.clone())
+            .collect()
+    });
+
+    if users.is_empty() {
+        return Err("No users found".to_string());
+    }
+
+    Ok(users)
+}
+
 // Get the messages
 #[ic_cdk::query]
 fn get_messages(page_no: Nat, chunk_size: Nat) -> Result<PaginatedResult<MessageData>, String> {
