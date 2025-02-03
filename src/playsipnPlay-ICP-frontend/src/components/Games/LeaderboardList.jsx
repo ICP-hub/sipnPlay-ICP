@@ -25,12 +25,20 @@ const LeaderBoardList = ({
   useDisableScroll(showLeaderboard);
 
   const fetchLeaderboard = async (gameName) => {
-    console.log("Fetching leaderboard for game:", gameName);
+    // Change game name to Tetris if it is Blox
+    let newGameName = '';
+    if (gameName == 'Blox') {
+      newGameName = 'Tetris';
+    } else {
+      newGameName = gameName;
+    }
+
+    console.log("Fetching leaderboard for game:", newGameName);
     try {
       const [leaderboardResult, userRankResult] = await backendActor.get_leaderboard(
-        gameName
+        newGameName
       );
-      
+
       console.log("Leaderboard Result:", leaderboardResult);
       console.log("User Rank Result:", userRankResult);
 
