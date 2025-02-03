@@ -56,7 +56,7 @@ const Rewards = () => {
           } rounded-2xl py-3 cursor-pointer transition-colors duration-300`}
           onClick={() => handleLinkClick("Tetris")}
         >
-          Tetris
+          Blox
         </div>
         <div
           className={`hover:bg-stone-600 ${

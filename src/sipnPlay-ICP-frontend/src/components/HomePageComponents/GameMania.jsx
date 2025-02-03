@@ -14,8 +14,8 @@ import { Autoplay } from "swiper/modules";
 const GameMania = () => {
   const games = [
     { image: blackjack, name: "Black Jack", Description: "Play now" },
+    { image: tetris, name: "Blox", Description: "Play now" },
     { image: bubble, name: "Infinity Bubble", Description: "Play now" },
-    { image: tetris, name: "Tetris", Description: "Play now" },
     { image: blacktap, name: "Black Tap", Description: "Play now" },
   ];
 

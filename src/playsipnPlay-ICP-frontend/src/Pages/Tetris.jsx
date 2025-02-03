@@ -264,7 +264,7 @@ const Tetris = () => {
             <LoadingPopUp gameName="tetris" taskName={taskName} />
           )}
           <iframe
-            title="Tetris Game"
+            title="Blox Game"
             src="tetris/tetris.html"
             style={{ width: "100vw", height: "100vh", border: "none" }}
           />

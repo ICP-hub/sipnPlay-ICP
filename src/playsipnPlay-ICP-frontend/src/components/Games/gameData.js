@@ -17,10 +17,10 @@ export const games = [
     designColor: "#94AF26",
   },
   {
-    link: "tetris",
-    name: "Tetris",
+    link: "blox",
+    name: "Blox",
     img: tetrisLogo,
-    description: `Tetris is a classic puzzle video game where players must fit falling blocks, called Tetrominoes, into a grid. The goal is to complete horizontal lines without gaps, which causes the lines to disappear, earning points. As the game progresses, the blocks fall faster, increasing the challenge. Players must think quickly and strategically to prevent the screen from filling up, as the game ends when the blocks stack too high. Known for its simple yet addictive gameplay, Tetris has become one of the most iconic and enduring video games in history.`,
+    description: `Blox is a classic puzzle video game where players must fit falling blocks, called Tetrominoes, into a grid. The goal is to complete horizontal lines without gaps, which causes the lines to disappear, earning points. As the game progresses, the blocks fall faster, increasing the challenge. Players must think quickly and strategically to prevent the screen from filling up, as the game ends when the blocks stack too high. Known for its simple yet addictive gameplay, Blox has become one of the most iconic and enduring video games in history.`,
     controls:
       "Press the directional keys to move the active tetromino. Rotate the active tetromino by pressing the up arrow key. Speed up the falling tetromino by pressing the down arrow key. Press the escape key to pause the game. For phones or tablets, the directional arrow buttons can be pressed to move the active tetromino, the rotate button can be pressed to rotate the active tetromino, the speed up button can be pressed to speed up the falling tetromino, and the pause button can be pressed to pause the game.",
     leaderboard: true,

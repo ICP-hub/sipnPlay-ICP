@@ -23,7 +23,7 @@ function AllRoutes() {
           }
         />
         <Route path="/blackjack" element={<BlackJack />} />
-        <Route path="/tetris" element={<TetrisGame />} />
+        <Route path="/blox" element={<TetrisGame />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/infinity-bubble" element={<InfinityBubble />} />
         <Route path="/block-tap" element={<BlockTap />} />

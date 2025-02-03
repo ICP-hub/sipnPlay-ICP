@@ -148,7 +148,7 @@ const GamesList = () => {
                 initial="hidden"
                 animate="visible"
               >
-                <img draggable="false" src={currentGame.img} />
+                <img draggable="false" src={currentGame.img}/>
               </motion.div>
 
               {/* Description */}
