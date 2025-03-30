@@ -11,10 +11,18 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       external: [],
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+        },
+      },
     },
     esbuild: {
       worker: false,
     },
+    chunkSizeWarningLimit: 1000,
+    minify: "esbuild",
+    target: "esnext",
   },
   optimizeDeps: {
     esbuildOptions: {
@@ -22,6 +30,7 @@ export default defineConfig({
         global: "globalThis",
       },
     },
+    include: ["js-sha256"], // Changed from exclude to include
   },
   server: {
     proxy: {
@@ -41,9 +50,12 @@ export default defineConfig({
       {
         find: "declarations",
         replacement: fileURLToPath(new URL("../declarations", import.meta.url)),
-        assert: "assert",
-        crypto: "crypto-browserify",
-        stream: "stream-browserify",
+      },
+      {
+        find: "js-sha256",
+        replacement: fileURLToPath(
+          new URL("./node_modules/js-sha256/src/sha256.js", import.meta.url)
+        ),
       },
     ],
   },

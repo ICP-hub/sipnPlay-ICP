@@ -1,41 +1,47 @@
+use aes::Aes128; // AES-128 (16-byte key)
+use base64::engine::general_purpose;
+use base64::Engine;
+use block_modes::block_padding::Pkcs7;
+use block_modes::{BlockMode, Ecb};
 use candid::{Nat, Principal};
 use ic_cdk::api::time;
 use ic_cdk::{api::call::CallResult, call, caller, update};
 use ic_cdk_timers::set_timer_interval;
 use icrc_ledger_types::icrc1::transfer::{NumTokens, TransferArg};
 use icrc_ledger_types::{icrc1::account::Account, icrc2::transfer_from::TransferFromArgs};
-use std::time::Duration;
-use aes::Aes128; // AES-128 (16-byte key)
-use block_modes::{BlockMode, Ecb};
-use block_modes::block_padding::Pkcs7;
-use base64::engine::general_purpose;
-use base64::Engine;
 use std::str;
+use std::time::Duration;
 
 use crate::api_query::{is_approved, is_authenticated};
+use crate::config::SECURE_SECRET_KEY;
 use crate::state_handler::read_state;
 use crate::{state_handler::STATE, types::BalanceOfArgs, UserCreationInput};
 use crate::{
-    MessageData, LeaderboardData, WaitlistData, SortedLeaderboardData, RewardedPlayers,
-    TransferFromResult
+    LeaderboardData, MessageData, RewardedPlayers, SortedLeaderboardData, TransferFromResult,
+    WaitlistData,
 };
-use crate::config::SECURE_SECRET_KEY;
 
 // Your secret key must be 16 bytes long for AES-128, so ensure it's exactly 16 bytes.
 const SECRET_KEY: &[u8] = SECURE_SECRET_KEY; // 16-byte secret key for AES-128
-// const SECRET_KEY: &[u8] = SECRET_KEY;
+                                             // const SECRET_KEY: &[u8] = SECRET_KEY;
 
 type Aes128Ecb = Ecb<Aes128, Pkcs7>;
 
 // Decrypt function
 fn decrypt_score(encrypted_score: String) -> String {
     // Decode the base64 string
-    let encrypted_data = general_purpose::STANDARD.decode(&encrypted_score).expect("Failed to decode base64");
+    let encrypted_data = general_purpose::STANDARD
+        .decode(&encrypted_score)
+        .expect("Failed to decode base64");
     // Decrypt using AES ECB mode
     let cipher = Aes128Ecb::new_from_slices(SECRET_KEY, Default::default()).unwrap();
-    let decrypted_data = cipher.decrypt_vec(&encrypted_data).expect("Decryption failed");
+    let decrypted_data = cipher
+        .decrypt_vec(&encrypted_data)
+        .expect("Decryption failed");
 
-    str::from_utf8(&decrypted_data).expect("Invalid UTF-8").to_string()
+    str::from_utf8(&decrypted_data)
+        .expect("Invalid UTF-8")
+        .to_string()
 }
 
 #[update]
@@ -205,8 +211,6 @@ async fn deduct_money(amount: Nat) -> Result<String, String> {
     }
 }
 
-
-
 #[update]
 pub async fn withdraw_money_from_default(amount: u64) -> Result<Nat, String> {
     use ic_cdk::caller;
@@ -228,20 +232,17 @@ pub async fn withdraw_money_from_default(amount: u64) -> Result<Nat, String> {
             owner: user_principal,
             subaccount: None,
         },
-        fee: None, // Default
-        memo: None, // Default
+        fee: None,             // Default
+        memo: None,            // Default
         created_at_time: None, // Default
         amount: amount_tokens,
     };
 
     // Make the call
-    let (result,): (Result<Nat, String>,) = ic_cdk::call(
-        ledger_canister_id,
-        "icrc1_transfer",
-        (args,),
-    )
-    .await
-    .map_err(|e| format!("Transfer failed: {:?}", e))?;
+    let (result,): (Result<Nat, String>,) =
+        ic_cdk::call(ledger_canister_id, "icrc1_transfer", (args,))
+            .await
+            .map_err(|e| format!("Transfer failed: {:?}", e))?;
 
     // Handle response
     result.map_err(|err| format!("Transfer failed: {:?}", err))
@@ -253,11 +254,20 @@ async fn add_money(encrypted_score: String) -> Result<String, String> {
 
     let decrypted_score = decrypt_score(encrypted_score);
     ic_cdk::println!("Decrypted: {}", decrypted_score);
-    
-    // Parse the decrypted score
-    let amount = match decrypted_score.parse::<u32>() {
-        Ok(amount) => amount,
-        Err(e) => return Err(format!("Error parsing decrypted score: {}", e)),
+
+    // Clean the decrypted string to handle both integer and decimal parts
+    let cleaned_score = decrypted_score
+        .chars()
+        .filter(|c| c.is_digit(10) || *c == '.')
+        .collect::<String>();
+
+    // Parse the score and convert to whole number
+    let amount = match cleaned_score.parse::<f64>() {
+        Ok(score) => (score.round()) as u32, // Round to nearest whole number
+        Err(e) => {
+            ic_cdk::println!("Parsing error: {}, Original string: {}", e, decrypted_score);
+            return Err("Invalid score format".to_string());
+        }
     };
 
     ic_cdk::println!("Input Score : {}", amount);
@@ -270,10 +280,10 @@ async fn add_money(encrypted_score: String) -> Result<String, String> {
         return Err("User not found".to_string());
     }
 
-    // Multiple the bet_amount by 100_000_000 to adjust for token precision
+    // Convert to token precision (multiply by 100_000_000)
     let bet_amount = Nat::from(amount as u64) * Nat::from(100_000_000u64);
     ic_cdk::println!("Bet Amount : {}", bet_amount);
-    
+
     let ledger_canister_id_str = option_env!("CANISTER_ID_SIPNPLAY_TEST")
         .ok_or("Ledger canister ID not found in environment variables")?;
 
@@ -286,11 +296,11 @@ async fn add_money(encrypted_score: String) -> Result<String, String> {
             owner: caller_principal, // Transfer to the caller
             subaccount: None,
         },
-        fee: None,              // Optional fee
-        memo: None,             // Optional memo
-        from_subaccount: None,  // Default subaccount
-        created_at_time: None,  // No timestamp
-        amount: bet_amount, // Transfer the bet amount
+        fee: None,             // Optional fee
+        memo: None,            // Optional memo
+        from_subaccount: None, // Default subaccount
+        created_at_time: None, // No timestamp
+        amount: bet_amount,    // Transfer the bet amount
     };
 
     // Perform the inter-canister call to transfer tokens
@@ -392,7 +402,7 @@ pub async fn game_start(game_name: String) -> Result<String, String> {
         Nat::from(3000000000u64) // 30 tokens
     } else if game_name == "Block Tap" {
         Nat::from(3000000000u64) // 30 tokens
-    }else {
+    } else {
         Nat::from(0u64)
     };
 
@@ -445,9 +455,10 @@ pub async fn game_start(game_name: String) -> Result<String, String> {
 
     match response {
         Ok((TransferFromResult::Ok(_block_index),)) => {
+            
             // Add (caller, amount) to `tetris_data` map
             // STATE.with(|state| {
-            //     let mut state = state.borrow_mut();           
+            //     let mut state = state.borrow_mut();
             //     if game_name == "Tetris" {
             //         // Get the game play count of tetris_data of the current principal
             //         if let Some(mut data) = state.tetris_data.get(&caller_principal.to_text()) {
@@ -478,7 +489,7 @@ pub async fn game_start(game_name: String) -> Result<String, String> {
             //                 },
             //             );
             //         }
-                    
+
             //     } else if game_name == "Block Tap" {
             //         // Get the game play count of infinity_bubble_data of the current principal
             //         if let Some(mut data) = state.block_tap_data.get(&caller_principal.to_text()) {
@@ -494,8 +505,8 @@ pub async fn game_start(game_name: String) -> Result<String, String> {
             //                 },
             //             );
             //         }
-                    
-            //     }                       
+
+            //     }
             // });
 
             Ok(format!(
@@ -515,7 +526,7 @@ pub async fn game_over(game_name: String, encrypted_score: String) -> Result<Str
 
     let decrypted_score = decrypt_score(encrypted_score);
     ic_cdk::println!("Decrypted: {}", decrypted_score);
-    
+
     // Parse the decrypted score
     let input_score = match decrypted_score.parse::<u32>() {
         Ok(score) => score,
@@ -523,7 +534,7 @@ pub async fn game_over(game_name: String, encrypted_score: String) -> Result<Str
     };
 
     ic_cdk::println!("Input Score : {}", input_score);
-    
+
     // Only approved callers can add scores
     if !is_authenticated() {
         return Err("You are not authenticated".to_string());
@@ -542,7 +553,7 @@ pub async fn game_over(game_name: String, encrypted_score: String) -> Result<Str
             &mut state.infinity_bubble_leaderboard_data
         } else if game_name == "Block Tap" {
             &mut state.block_tap_leaderboard_data
-        }else {
+        } else {
             return Err("Invalid game name".to_string());
         };
 
@@ -597,7 +608,11 @@ pub async fn game_reset(game_name: String) -> Result<String, String> {
             while state.tetris_sorted_leaderboard_data.pop().is_some() {}
         } else if game_name == "Infinity Bubble" {
             state.infinity_bubble_leaderboard_data.clear_new();
-            while state.infinity_bubble_sorted_leaderboard_data.pop().is_some() {}
+            while state
+                .infinity_bubble_sorted_leaderboard_data
+                .pop()
+                .is_some()
+            {}
         } else if game_name == "Block Tap" {
             state.block_tap_leaderboard_data.clear_new();
             while state.block_tap_sorted_leaderboard_data.pop().is_some() {}
@@ -609,9 +624,7 @@ pub async fn game_reset(game_name: String) -> Result<String, String> {
 
 // Function for Destribution of the points to top ten players
 #[ic_cdk::update]
-pub async fn reward_distribution(
-    rewarded_players: Vec<RewardedPlayers>,
-) -> Result<Nat, String> {
+pub async fn reward_distribution(rewarded_players: Vec<RewardedPlayers>) -> Result<Nat, String> {
     // Check if the caller is approved
     if !is_approved() {
         return Err("You are not approved".to_string());
@@ -625,7 +638,7 @@ pub async fn reward_distribution(
 
     // Keep track of successful transfers and errors
     let mut total_rewards_transferred = Nat::from(0u64);
- // Track total successfully transferred rewards
+    // Track total successfully transferred rewards
     let mut error_messages = Vec::new();
 
     // Distribute the rewards to all rewarded players one by one
@@ -717,10 +730,16 @@ pub async fn get_crown_job_leaderboard() {
     ic_cdk::println!("Sorted Tetris Leaderboard data: {:#?}", tetris_leaderboard);
 
     infinity_bubble_leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
-    ic_cdk::println!("Sorted Infinity Bubble Leaderboard data: {:#?}", infinity_bubble_leaderboard);
+    ic_cdk::println!(
+        "Sorted Infinity Bubble Leaderboard data: {:#?}",
+        infinity_bubble_leaderboard
+    );
 
     block_tap_leaderboard.sort_by(|a, b| b.points.cmp(&a.points));
-    ic_cdk::println!("Sorted Block Tap Leaderboard data: {:#?}", block_tap_leaderboard);
+    ic_cdk::println!(
+        "Sorted Block Tap Leaderboard data: {:#?}",
+        block_tap_leaderboard
+    );
 
     // Clear all elements from the StableVec manually by popping each one
     STATE.with(|state| {
@@ -758,7 +777,7 @@ pub async fn get_crown_job_leaderboard() {
                 .expect("Failed to push data into StableVec");
         }
     });
-  
+
     STATE.with(|state| {
         let state = state.borrow_mut();
         for data in infinity_bubble_leaderboard {
@@ -806,7 +825,6 @@ pub async fn start_tetris_leaderboard_update() {
         });
     });
 }
-
 
 // // Benchmark example
 // #[cfg(feature = "canbench-rs")]

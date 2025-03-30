@@ -36,14 +36,14 @@ const BlackJack = () => {
 
   useEffect(() => {
     const tagManagerArgs = {
-        dataLayer: {
-            event: "pageView",
-            page: "BlackjackPage",
-            game: "Blackjack",
-        },
+      dataLayer: {
+        event: "pageView",
+        page: "BlackjackPage",
+        game: "Blackjack",
+      },
     };
     TagManager.dataLayer(tagManagerArgs);
-}, []);
+  }, []);
 
   const getBalance = async () => {
     let balance = await backendActor.get_caller_balance();
@@ -115,7 +115,7 @@ const BlackJack = () => {
   useEffect(() => {
     const handleScore = async (event) => {
       if (event.data.type === "save_score") {
-     
+
         try {
           const amnt = await getBalance();
           if (Math.trunc(event.data.score) > Math.trunc(amnt)) {
@@ -128,6 +128,7 @@ const BlackJack = () => {
             if (response.Ok) {
               toast.success("Tokens added successfully");
             } else {
+              console.log("Error", response.Err);
               toast.error("Failed to add points");
             }
           }
